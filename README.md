@@ -9,7 +9,10 @@
 Spring boot v3.5.3 w/ Spring Security, JPA  
 Elasticsearch v8.17.6 - 뉴스 기사 검색용  
 MariaDB v10.11.11 - 관리자 계정용  
-  
+
+# 접속 주소
+MariaDB : jdbc:mariadb://mariadb.3rdproject.o-r.kr:53306/newssearch (news / 1234)
+Elasticsearch : http://es.3rdproject.o-r.kr (elastic / 1234)
 # 아직 미정인 부분
 서버 주소 (설정중)
 프론트엔드 타임리프 vs jpa
