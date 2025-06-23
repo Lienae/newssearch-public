@@ -6,7 +6,7 @@
 관리자는 뉴스 기사 입력, 수정, 삭제가 가능  
   
 # 사용할 프로그램
-Spring boot v3.5.3 w/ Spring Security, JPA  
+Spring boot v3.5.3 w/ Spring Security, JPA, Thymeleaf  
 Elasticsearch v8.17.6 - 뉴스 기사 검색용  
 MariaDB v10.11.11 - 관리자 계정용  
 
