@@ -1,9 +1,10 @@
 package com.tjeoun.newssearch.entity;
 
-import com.tjeoun.newssearch.dto.UserSignUpDto;
+import com.tjeoun.newssearch.dto.SignUpDto;
 import com.tjeoun.newssearch.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 @Builder
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +31,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static Member createMenber(UserSignUpDto dto, PasswordEncoder passwordEncoder) {
+    public static Member createMenber(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .id(dto.getId())
                 .name(dto.getName())

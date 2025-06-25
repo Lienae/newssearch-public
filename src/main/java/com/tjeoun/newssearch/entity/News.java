@@ -1,6 +1,7 @@
 package com.tjeoun.newssearch.entity;
 
 import com.tjeoun.newssearch.document.NewsDocument;
+import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
 import jakarta.persistence.*;
@@ -56,5 +57,18 @@ public class News {
         doc.setCategory(news.getCategory().name());
         doc.setMediaCompany(news.getMediaCompany().name());
         return doc;
+    }
+    public static News createNewsFromDto(NewsDto dto) {
+        return News.builder()
+                .id(dto.getId())
+                .url(dto.getUrl())
+                .title(dto.getTitle())
+                .imageUrl(dto.getImageUrl())
+                .content(dto.getContent())
+                .publishDate(dto.getPublishDate())
+                .author(dto.getAuthor())
+                .category(dto.getCategory())
+                .mediaCompany(dto.getMediaCompany())
+                .build();
     }
 }

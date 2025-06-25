@@ -1,7 +1,7 @@
 package com.tjeoun.newssearch.dto;
 
-import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.News;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class BoardReplyDto {
+public class NewsReplyDto {
     public Long id;
     public String content;
-    public Board board;
+    public News news;
     public Member member;
     public String password;
 }
