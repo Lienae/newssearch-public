@@ -4,8 +4,12 @@ import com.tjeoun.newssearch.dto.SignUpDto;
 import com.tjeoun.newssearch.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -30,6 +34,13 @@ public class Member {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Column(nullable = false)
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     public static Member createMenber(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()

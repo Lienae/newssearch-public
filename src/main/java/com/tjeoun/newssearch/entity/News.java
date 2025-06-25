@@ -25,16 +25,17 @@ public class News {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String imageUrl;
 
     @Column(nullable = false)
+    @Lob
     private String content;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime publishDate;
 
-    @Column(nullable = false)
+    @Column
     private String author;
 
     @Column(nullable = false)

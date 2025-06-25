@@ -1,6 +1,7 @@
 package com.tjeoun.newssearch.entity;
 
 import com.tjeoun.newssearch.dto.BoardDto;
+import com.tjeoun.newssearch.enums.NewsCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +26,7 @@ public class Board {
     private String title;
 
     @Column(nullable = false)
+    @Lob
     private String content;
 
     @ManyToOne
@@ -41,6 +43,13 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
+    @ManyToOne
+    @JoinColumn(name = "news_id")
+    private News news;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NewsCategory newsCategory;
 
     public static Board createBoard(BoardDto dto, PasswordEncoder passwordEncoder) {
         return Board.builder()
