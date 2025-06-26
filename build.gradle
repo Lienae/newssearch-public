@@ -38,6 +38,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.rometools:rome:1.18.0' // 추가
+    implementation 'org.jsoup:jsoup:1.17.2' // 추가
+
 }
 
 tasks.named('test') {
