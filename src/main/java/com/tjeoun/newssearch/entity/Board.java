@@ -25,8 +25,7 @@ public class Board {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    @Lob
+    @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
     @ManyToOne
@@ -58,6 +57,7 @@ public class Board {
                 .content(dto.getContent())
                 .author(dto.getAuthor())
                 .password(passwordEncoder.encode(dto.getPassword()))
+                .newsCategory(dto.getNewsCategory())
                 .build();
     }
 }

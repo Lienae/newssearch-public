@@ -28,8 +28,7 @@ public class News {
     @Column
     private String imageUrl;
 
-    @Column(nullable = false)
-    @Lob
+    @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
     @Column(nullable = false)
