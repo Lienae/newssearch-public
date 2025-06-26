@@ -64,7 +64,7 @@ public class RssUtils {
         String link = entry.getLink();
         String content = extractFullText(link);
         String author = cleanAuthor(entry.getAuthor());
-        if (author.isBlank()) continue;
+        if (author == null) author = "";
 
         String dateStr = entry.getPublishedDate() != null
           ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(entry.getPublishedDate())
@@ -88,8 +88,9 @@ public class RssUtils {
           .build();
 
         result.add(dto);
-        Thread.sleep(500); // API 과부하 방지
+        Thread.sleep(500);
       }
+
 
     } catch (Exception e) {
       log.error("RSS 수집 오류: {}", e.getMessage());

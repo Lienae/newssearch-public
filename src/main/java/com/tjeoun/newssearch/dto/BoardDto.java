@@ -1,6 +1,7 @@
 package com.tjeoun.newssearch.dto;
 
 import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.enums.NewsCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,4 +15,5 @@ public class BoardDto {
     private String content;
     private Member author;
     private String password;
+    private NewsCategory newsCategory;
 }
