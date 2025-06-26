@@ -13,7 +13,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf-> csrf.csrfTokenRepository(new CookieCsrfTokenRepository()))
+        return http.csrf(csrf-> csrf
+            .ignoringRequestMatchers("/api/Ytn/test")
+            .csrfTokenRepository(new CookieCsrfTokenRepository()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry.anyRequest().permitAll())
