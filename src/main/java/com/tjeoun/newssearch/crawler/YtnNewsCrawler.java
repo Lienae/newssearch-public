@@ -26,6 +26,8 @@ import java.util.*;
 public class YtnNewsCrawler {
 
   private static final String BASE_URL = "https://www.ytn.co.kr/_ln/";
+  private static final String BASE_IMAGE_FOLDER = "images/YTN/";
+
 
   public List<Map<String, String>> fetchNewsList(String mcd, int page, List<String> pivots) {
     String url = "https://www.ytn.co.kr/ajax/getMoreNews.php";
@@ -120,7 +122,7 @@ public class YtnNewsCrawler {
       // 이미지 저장
       String savedImagePath = "";
       if (!imageUrl.isEmpty()) {
-        String folderPath = "images/YTN/" + date.toLocalDate();
+        String folderPath = BASE_IMAGE_FOLDER + date.toLocalDate();
         String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         savedImagePath = FileUtils.saveImage(imageUrl, folderPath, fileName);
       }
