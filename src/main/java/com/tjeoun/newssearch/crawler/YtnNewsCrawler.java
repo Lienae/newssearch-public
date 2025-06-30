@@ -99,11 +99,7 @@ public class YtnNewsCrawler {
       // DateUtils에서 변환한 문자열 (yyyy-MM-dd) 가져오기
       String formattedDateStr = DateUtils.convertDate(rawDate);
 
-      // ✅ [앵커]가 포함된 기사라면 저장하지 않음
-      if (content.contains("[앵커]")) {
-        log.info("[앵커] 포함된 기사 무시: {}", title);
-        return null;
-      }
+
       // 변환된 문자열을 LocalDateTime으로 변환 (자정 기준)
       LocalDateTime date;
       if (!formattedDateStr.isEmpty()) {
