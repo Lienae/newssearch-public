@@ -80,16 +80,19 @@
   list-style: none;
   padding: 0;
   display: flex;
-  max-width: 1200px;
+  width: 90%;
+  max-width: 1550px;
   margin: 40px auto 10px;
   background: #eee;
 }
+
 .filter-tabs li {
   flex: 1;
   text-align: center;
   padding: 12px 0;
   cursor: pointer;
   font-size: 14px;
+  width: 100%;
 }
 .filter-tabs li.active {
   background: #0066ff;
@@ -101,9 +104,10 @@
 }
 
 .category-section {
-  max-width: 1200px;
+  max-width: 1550px;
   margin: 0 auto 30px;
   display: flex;
+  justify-content: center;
 }
 .category-buttons {
   display: flex;
@@ -127,7 +131,7 @@
 }
 
 .news-section {
-  max-width: 1200px;
+  max-width: 1550px;
   margin: 30px auto;
 }
 
@@ -138,7 +142,7 @@
 }
 
 .category-block {
-  flex: 0 0 220px;
+  flex: 0 0 297px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -178,7 +182,148 @@
   margin: 5px 0;
 }
 
-.news-card p {
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-text {
   font-size: 12px;
   color: #555;
+  flex: 1; /* 요약 설명이 최대한 공간을 차지 */
+}
+
+.extra-info {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* find-password.html */
+.find-password-section {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.find-password-section h1 {
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1976d2;
+}
+.find-password-section p {
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+}
+.find-password-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.find-password-section input[type="email"] {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.find-password-section button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+.find-password-section button:hover {
+  background: #155a9c;
+}
+
+/* find-password-sent.html */
+.mail-sent-section {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+}
+.mail-sent-section h1 {
+  font-size: 22px;
+  color: #1976d2;
+  margin-bottom: 20px;
+}
+.mail-sent-section p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+.mail-sent-section a {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.mail-sent-section a:hover {
+  background: #155a9c;
+}
+
+/* delete-user.html */
+.withdraw-section {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.withdraw-section h1 {
+  font-size: 22px;
+  text-align: center;
+  color: #d32f2f;
+  margin-bottom: 20px;
+}
+.withdraw-section p {
+  font-size: 14px;
+  text-align: center;
+  color: #d32f2f;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.withdraw-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.withdraw-section input[type="email"] {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.withdraw-section button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+.withdraw-section button:hover {
+  background: #b71c1c;
 }

@@ -82,5 +82,20 @@ public class FrontendController {
     return "user/mypage";
   }
 
+  @GetMapping("/user/find-password")
+  public String findPassword() {
+    return "user/find-password";
+  }
+
+  @GetMapping("/user/find-password-sent")
+  public String findPasswordSent() {
+    return "user/find-password-sent";
+  }
+
+  @GetMapping("/user/delete-user")
+  public String deleteUser() {
+    return "user/delete-user";
+  }
+
 
 }

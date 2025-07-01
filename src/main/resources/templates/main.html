@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/main.css" />
 </head>
-
 <body>
+
 <div class="navbar">
   <a href="/main" class="logo">
     <img src="/img/NewsHub.png" alt="News Hub 로고" />
@@ -16,9 +16,9 @@
   <nav>
     <a href="/news/list">뉴스</a>
     <a href="/boarder/list">커뮤니티</a>
-    <a href="/admin/user-list" style="color: #d32f2f; font-weight: bold">사용자 관리</a>
-    <a href="/admin/boarder-list" style="color: #d32f2f; font-weight: bold">커뮤니티 관리</a>
-    <a href="/admin/news-list" style="color: #d32f2f; font-weight: bold">뉴스 관리</a>
+    <a href="/admin/user-list" class="admin-link">사용자 관리</a>
+    <a href="/admin/boarder-list" class="admin-link">커뮤니티 관리</a>
+    <a href="/admin/news-list" class="admin-link">뉴스 관리</a>
   </nav>
   <div class="auth">
     <a href="/user/login">로그인</a>
@@ -41,6 +41,12 @@
     · 한겨레<br />
     · 경향신문<br />
     · 중앙일보<br />
+  </div>
+  <div class="box">
+    <strong>최근 수집된 기사</strong><br />
+    · 정치: 제목1<br />
+    · 경제: 제목2<br />
+    · 사회: 제목3
   </div>
 </div>
 
@@ -72,23 +78,32 @@
     <a href="#">키워드4</a>
     <a href="#">키워드5</a>
     <a href="#">키워드6</a>
+    <a href="#">키워드7</a>
+    <a href="#">키워드8</a>
   </div>
 </div>
 
 <div class="news-section">
   <div class="category-row">
+
     <div class="category-block">
       <h3 class="category-title">정치</h3>
       <div class="news-list">
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="정치 이미지" />
           <h4>정치 이슈 1</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명 요약 설명 요약 설명 요약 설명 요약 설명 요약 설명</span>
+            <span class="extra-info">경향신문</span>
+          </div>
         </div>
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="정치 이미지" />
           <h4>정치 이슈 2</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">YTN</span>
+          </div>
         </div>
       </div>
     </div>
@@ -99,12 +114,18 @@
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="경제 이미지" />
           <h4>경제 이슈 1</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">경향신문</span>
+          </div>
         </div>
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="경제 이미지" />
           <h4>경제 이슈 2</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">YTN</span>
+          </div>
         </div>
       </div>
     </div>
@@ -115,7 +136,18 @@
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="사회 이미지" />
           <h4>사회 이슈 1</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">경향신문</span>
+          </div>
+        </div>
+        <div class="news-card">
+          <img src="https://placehold.co/200x100" alt="사회 이미지" />
+          <h4>사회 이슈 2</h4>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">YTN</span>
+          </div>
         </div>
       </div>
     </div>
@@ -126,7 +158,18 @@
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="문화 이미지" />
           <h4>문화 이슈 1</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">경향신문</span>
+          </div>
+        </div>
+        <div class="news-card">
+          <img src="https://placehold.co/200x100" alt="문화 이미지" />
+          <h4>문화 이슈 2</h4>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">YTN</span>
+          </div>
         </div>
       </div>
     </div>
@@ -137,10 +180,22 @@
         <div class="news-card">
           <img src="https://placehold.co/200x100" alt="스포츠 이미지" />
           <h4>스포츠 이슈 1</h4>
-          <p>요약 설명</p>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">경향신문</span>
+          </div>
+        </div>
+        <div class="news-card">
+          <img src="https://placehold.co/200x100" alt="스포츠 이미지" />
+          <h4>스포츠 이슈 2</h4>
+          <div class="news-meta">
+            <span class="summary-text">요약 설명</span>
+            <span class="extra-info">YTN</span>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 

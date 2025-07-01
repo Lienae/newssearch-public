@@ -21,8 +21,6 @@ body {
   padding: 0 30px;
   border-bottom: 1px solid #ddd;
   z-index: 1000;
-  font-size: 23px;
-  font-weight: bold;
 }
 .navbar nav {
   display: flex;
@@ -40,7 +38,7 @@ body {
 .navbar a {
   text-decoration: none;
   color: inherit;
-  font-size: 23px;
+  font-size: 18px;
   font-weight: bold;
 }
 .navbar a:hover {

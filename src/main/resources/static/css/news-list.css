@@ -7,7 +7,7 @@
 .main-content {
   margin-top: 80px;
   padding: 20px 40px;
-  max-width: 1200px;
+  max-width: 1550px;
   margin-left: 17px;
   margin-right: auto;
   flex: 1;
@@ -97,9 +97,9 @@
 }
 
 .news-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* flex 간격 */
 }
 
 .news-card {
@@ -109,6 +109,8 @@
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s ease;
+  width: calc(20% - 20px); /* 4개씩, gap 고려 */
+  min-width: 250px; /* 너무 작아지지 않도록 */
 }
 
 .news-card:hover {
