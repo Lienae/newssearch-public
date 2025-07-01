@@ -1,7 +1,7 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.repository.NewsRepository;
-import com.tjeoun.newssearch.repository.NewsSearchRepository;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import com.tjeoun.newssearch.service.KhanRssCollectorService;
 import com.tjeoun.newssearch.util.RssUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ public class KhanNewsControllerTest {
   private NewsRepository newsRepository;
 
   @MockBean
-  private NewsSearchRepository newsSearchRepository;
+  private NewsDocumentRepository newsDocumentRepository;
 
   @Test
   @DisplayName("뉴스 수집 API 응답이 200 OK인지 확인")

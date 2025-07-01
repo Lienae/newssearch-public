@@ -1,19 +1,23 @@
 package com.tjeoun.newssearch.service;
 
+import com.tjeoun.newssearch.document.NewsDocument;
+import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.helper.HaniCrawlerHelper;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import com.tjeoun.newssearch.helper.NewsSaveHelper;
+import com.tjeoun.newssearch.repository.NewsRepository;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,15 +30,21 @@ import static com.tjeoun.newssearch.helper.JoongangCrawlerHelper.getJoongangArti
 import static com.tjeoun.newssearch.helper.JoongangCrawlerHelper.parseArticle;
 
 @Service
+@RequiredArgsConstructor
 public class NewsCrawlerService {
+    private final NewsRepository newsRepository;
+    private final NewsDocumentRepository newsDocumentRepository;
+    private final NewsSaveHelper newsSaveHelper;
+
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
-    //@Value("${hani.images.base-path}")
-    String haniImageBasePath = "f:/hani_images";
+    @Value("${news.images.base-path.hani}")
+    String haniImageBasePath;
 
-    //@Value("${joongang.images.base-path}")
-    String joongangImageBasePath = "f:/joongang_images";
+    @Value("${news.images.base-path.joongang}")
+    String joongangImageBasePath;
 
+    @Transactional
     public void getHaniArticles() {
         final Map<String, String> rssFeeds = Map.of(
                 "정치", "https://www.hani.co.kr/rss/politics/",
@@ -113,33 +123,9 @@ public class NewsCrawlerService {
                 e.printStackTrace();
             }
         });
-        // todo: DB 입력으로 변환할 것
-        saveToCsv(articles, "hani_articles.csv");
+        saveToDatabase(articles);
     }
-
-
-    private void saveToCsv (List<Map<String, String>> articles, String filename){
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename), StandardCharsets.UTF_8);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
-                     .setHeader("언론사", "카테고리", "제목", "내용", "기자명", "날짜", "링크", "대표이미지").get())) {
-            for (Map<String, String> article : articles) {
-                csvPrinter.printRecord(
-                        article.get("언론사"),
-                        article.get("카테고리"),
-                        article.get("제목"),
-                        article.get("내용"),
-                        article.get("기자명"),
-                        article.get("날짜"),
-                        article.get("링크"),
-                        article.get("대표이미지")
-                );
-            }
-            csvPrinter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    @Transactional
     public void getJoongangArticles() {
         final Map<String, String> CATEGORY_URLS = Map.of(
                 "정치", "https://www.joongang.co.kr/politics/general",
@@ -165,8 +151,7 @@ public class NewsCrawlerService {
                 }
             }
         }
-        // todo: DB 입력으로 변환할 것
-        saveToCsv(articles, "joongang_articles.csv");
+        saveToDatabase(articles);
     }
 
     public static String downloadImage (String imageUrl, String basePath){
@@ -188,6 +173,19 @@ public class NewsCrawlerService {
             e.printStackTrace();
             return "";
         }
+    }
+    @Transactional
+    protected void saveToDatabase(List<Map<String, String>> articles) {
+        articles.forEach(article -> {
+            News news = News.createNewsFromMap(article);
+            newsRepository.save(news);
+            NewsDocument newsDocument = News.toDocument(news);
+            try {
+                newsDocumentRepository.save(newsDocument);
+            } catch (Exception e) {
+                throw new RuntimeException("Elasticsearch save failed. transaction rollback.");
+            }
+        });
     }
 
 

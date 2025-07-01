@@ -4,7 +4,7 @@ import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.repository.NewsRepository;
-import com.tjeoun.newssearch.repository.NewsSearchRepository;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import com.tjeoun.newssearch.util.RssUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.List;
 public class KhanRssCollectorService {
 
   private final NewsRepository newsRepository;
-  private final NewsSearchRepository newsSearchRepository;
+  private final NewsDocumentRepository newsDocumentRepository;
   private final RssUtils rssUtils;
 
   public void collectAndSaveArticles() {
@@ -31,7 +31,7 @@ public class KhanRssCollectorService {
 
       // ES 저장
       NewsDocument doc = News.toDocument(saved);
-      newsSearchRepository.save(doc);
+      newsDocumentRepository.save(doc);
     }
   }
 }

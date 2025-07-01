@@ -5,7 +5,7 @@ import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.repository.NewsRepository;
-import com.tjeoun.newssearch.repository.NewsSearchRepository;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.*;
 public class YtnNewsCollectorService {
 
   private final NewsRepository newsRepository;
-  private final NewsSearchRepository newsSearchRepository;
+  private final NewsDocumentRepository newsDocumentRepository;
   private final YtnNewsCrawler crawler;
 
   public void collectAndSaveArticles() {
@@ -55,7 +55,7 @@ public class YtnNewsCollectorService {
 
           // ES 저장
           NewsDocument document = News.toDocument(savedNews);
-          newsSearchRepository.save(document);
+          newsDocumentRepository.save(document);
 
           log.info("✅ YTN 기사 저장 완료: {}", dto.getTitle());
 
