@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - 유저 정보 수정</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/border-write.css" />
+</head>
+<body>
+<div class="navbar">
+  <a href="/main" class="logo">
+    <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  </a>
+  <nav>
+    <a href="/news/list">뉴스</a>
+    <a href="/boarder/list">커뮤니티</a>
+  </nav>
+  <div class="auth">
+    <a href="/user/login">로그인</a>
+    <a href="/user/register">회원가입</a>
+  </div>
+</div>
+
+<div class="write-container">
+  <h2>유저 정보 수정</h2>
+  <p class="info-text">관리자는 사용자 정보를 수정할 수 있습니다.</p>
+
+  <form class="post-form">
+    <div class="form-group">
+      <label for="id">ID</label>
+      <input
+              type="text"
+              id="id"
+              name="id"
+              value="1"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">이메일</label>
+      <input
+              type="text"
+              id="email"
+              name="email"
+              value="user@example.com"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="name">닉네임</label>
+      <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="닉네임을 입력하세요."
+              value="홍길동"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">비밀번호</label>
+      <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="비밀번호를 변경하려면 입력하세요."
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="role">권한</label>
+      <select id="role" name="role">
+        <option value="USER" selected>USER</option>
+        <option value="ADMIN">ADMIN</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="created_at">생성일</label>
+      <input
+              type="text"
+              id="created_at"
+              name="created_at"
+              value="2025-07-01 10:00:00"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="updated_at">최근 수정일</label>
+      <input
+              type="text"
+              id="updated_at"
+              name="updated_at"
+              value="2025-07-02 15:30:00"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn">취소</button>
+      <button type="submit" class="submit-btn">수정</button>
+      <button type="button" class="delete-btn">삭제</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>

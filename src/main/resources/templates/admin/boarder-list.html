@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - 게시판 리스트</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/boarder-list.css" />
+</head>
+<body>
+<div class="navbar">
+  <a href="/main" class="logo">
+    <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  </a>
+  <nav>
+    <a href="/news/list">뉴스</a>
+    <a href="/boarder/list">커뮤니티</a>
+  </nav>
+  <div class="auth">
+    <a href="/user/login">로그인</a>
+    <a href="/user/register">회원가입</a>
+  </div>
+</div>
+
+<div class="board-container">
+  <div class="category-section">
+    <div class="category-buttons">
+      <a href="#" class="active">전체</a>
+      <a href="#">정치</a>
+      <a href="#">경제</a>
+      <a href="#">사회</a>
+      <a href="#">문화</a>
+      <a href="#">스포츠</a>
+    </div>
+  </div>
+
+  <div class="board-header">
+    <div class="board-count">전체 <strong>159</strong>건</div>
+    <div class="board-search">
+      <select id="search-type">
+        <option value="title">제목</option>
+        <option value="content">내용</option>
+      </select>
+      <input type="text" placeholder="검색어를 입력해주세요." />
+      <button>검색</button>
+    </div>
+  </div>
+
+  <table class="board-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>제목</th>
+      <th>카테고리</th>
+      <th>작성자 ID</th>
+      <th>작성일</th>
+      <th>관리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>1</td>
+      <td>첫 게시글 제목</td>
+      <td>POLITICS</td>
+      <td>101</td>
+      <td>2025-07-01</td>
+      <td>
+        <button onclick="location.href='/admin/boarder-edit'">
+          수정
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>두 번째 게시글 제목</td>
+      <td>ECONOMY</td>
+      <td>102</td>
+      <td>2025-07-02</td>
+      <td>
+        <button onclick="location.href='/admin/boarder-edit'">
+          수정
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button disabled>«</button>
+    <button class="active">1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>»</button>
+  </div>
+</div>
+<script src="/js/boarder-list.js"></script>
+</body>
+</html>

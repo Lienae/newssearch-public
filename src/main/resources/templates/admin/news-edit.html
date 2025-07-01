@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - 뉴스 수정</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/border-write.css" />
+</head>
+<body>
+<div class="navbar">
+  <a href="/main" class="logo">
+    <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  </a>
+  <nav>
+    <a href="/news/list">뉴스</a>
+    <a href="/boarder/list">커뮤니티</a>
+  </nav>
+  <div class="auth">
+    <a href="/user/login">로그인</a>
+    <a href="/user/register">회원가입</a>
+  </div>
+</div>
+
+<div class="write-container">
+  <h2>뉴스 수정</h2>
+  <p class="info-text">관리자는 뉴스 기사를 수정할 수 있습니다.</p>
+
+  <form class="post-form">
+    <div class="form-group">
+      <label for="id">ID</label>
+      <input
+              type="text"
+              id="id"
+              name="id"
+              value="1"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="title">제목</label>
+      <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="제목을 입력하세요."
+              value="뉴스 제목 예시"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="author">기자명</label>
+      <input
+              type="text"
+              id="author"
+              name="author"
+              placeholder="작성자 이름"
+              value="홍길동"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="category">카테고리</label>
+      <select id="category" name="category">
+        <option value="POLITICS">POLITICS</option>
+        <option value="ECONOMY">ECONOMY</option>
+        <option value="SOCIAL">SOCIAL</option>
+        <option value="CULTURE">CULTURE</option>
+        <option value="SPORTS">SPORTS</option>
+        <option value="MISC">MISC</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="media_company">언론사</label>
+      <select id="media_company" name="media_company">
+        <option value="DONGA">DONGA</option>
+        <option value="HANI">HANI</option>
+        <option value="JOONGANG">JOONGANG</option>
+        <option value="KHAN">KHAN</option>
+        <option value="YTN">YTN</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="content">내용</label>
+      <textarea
+              id="content"
+              name="content"
+              rows="10"
+              placeholder="내용을 입력하세요."
+      >뉴스 내용 예시</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="image_url">이미지 URL</label>
+      <input
+              type="text"
+              id="image_url"
+              name="image_url"
+              placeholder="이미지 URL"
+              value="https://example.com/image.jpg"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="url">원문 URL</label>
+      <input
+              type="text"
+              id="url"
+              name="url"
+              placeholder="원문 링크를 입력하세요."
+              value="https://example.com/news/1"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="published_at">발행일</label>
+      <input
+              type="text"
+              id="published_at"
+              name="published_at"
+              value="2025-07-01 10:00:00"
+              readonly
+              class="readonly-input"
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn">취소</button>
+      <button type="submit" class="submit-btn">수정</button>
+      <button type="button" class="delete-btn">삭제</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>
