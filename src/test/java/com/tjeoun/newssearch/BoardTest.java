@@ -6,6 +6,7 @@ import com.tjeoun.newssearch.dto.SignUpDto;
 import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.BoardReply;
 import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.BoardReplyRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
@@ -18,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -41,7 +42,6 @@ public class BoardTest {
         String name = "테스트";
         UserRole role = UserRole.USER;
         SignUpDto dto = SignUpDto.builder()
-
                 .email(email)
                 .password(password)
                 .name(name)
@@ -57,12 +57,22 @@ public class BoardTest {
                 .content(content)
                 .author(saveMember)
                 .password(password)
+                .newsCategory(NewsCategory.POLITICS)
                 .build();
         Board board = Board.createBoard(boardDto, passwordEncoder);
+        BoardDto adminBoardDto = BoardDto.builder()
+                .title(title)
+                .content(content)
+                .author(saveMember)
+                .password(password)
+                .newsCategory(NewsCategory.POLITICS)
+                .isAdminArticle(true)
+                .build();
+        Board adminBoard = Board.createBoard(adminBoardDto, passwordEncoder);
 
         // when
         Board saveBoard = boardRepository.save(board);
-
+        Board saveAdminBoard = boardRepository.save(adminBoard);
         // then
         assertThatCode(() -> {
             Board loadBoard = boardRepository.findById(saveBoard.getId()).orElseThrow();
@@ -70,10 +80,11 @@ public class BoardTest {
             assertEquals(saveBoard.getContent(), loadBoard.getContent());
             assertEquals(saveBoard.getAuthor(), loadBoard.getAuthor());
             assertEquals(saveBoard.getPassword(), loadBoard.getPassword());
-
+            assertFalse(saveBoard.is_blind());
+            assertFalse(saveBoard.is_admin_article());
+            assertTrue(saveAdminBoard.is_admin_article());
         }).doesNotThrowAnyException();
     }
-
     @Test
     @DisplayName("댓글 달기 테스트")
     void boardReplyTest() {
@@ -99,6 +110,7 @@ public class BoardTest {
                 .content(content)
                 .author(saveMember)
                 .password(password)
+                .newsCategory(NewsCategory.POLITICS)
                 .build();
         Board board = Board.createBoard(boardDto, passwordEncoder);
         Board saveBoard = boardRepository.save(board);
