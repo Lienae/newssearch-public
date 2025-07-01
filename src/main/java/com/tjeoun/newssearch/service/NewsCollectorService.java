@@ -37,6 +37,8 @@ public class NewsCollectorService {
     private final NewsRepository newsRepository;
     private final NewsSearchRepository newsSearchRepository;
 
+    private static final String DEFAULT_IMAGE_PATH = "images/default.png";
+    private static final String BASE_IMAGE_SAVE_DIR = "images/donga/";
     private static final Map<NewsCategory, String> rssFeeds = new LinkedHashMap<>(Map.of(
             NewsCategory.POLITICS, "https://rss.donga.com/politics.xml",
             NewsCategory.ECONOMY, "https://rss.donga.com/economy.xml",
@@ -52,6 +54,7 @@ public class NewsCollectorService {
                 SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
                 int savedCount = 0;
 
+                // TODO: 20개 제한 없이 모든 새로운 기사를 수집하도록 변경
                 for (SyndEntry entry : feed.getEntries()) {
                     if (savedCount >= 20) break;
 
@@ -97,10 +100,8 @@ public class NewsCollectorService {
         return "default";
     }
 
-    private static final String DEFAULT_IMAGE_PATH = "images/default.png";
-
     private String downloadImage(String imageUrl, String articleDate) {
-        String saveDir = "images/donga/" + articleDate;
+        String saveDir = BASE_IMAGE_SAVE_DIR + articleDate;
         File dir = new File(saveDir);
         if (!dir.exists()) dir.mkdirs();
 
