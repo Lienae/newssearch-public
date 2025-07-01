@@ -29,7 +29,7 @@ public class Board {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member author;
 
     @Column(nullable = false)
@@ -50,6 +50,12 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private NewsCategory newsCategory;
 
+    @Column(nullable = false)
+    private boolean is_blind;
+
+    @Column(nullable = false)
+    private boolean is_admin_article;
+
     public static Board createBoard(BoardDto dto, PasswordEncoder passwordEncoder) {
         return Board.builder()
                 .id(dto.getId())
@@ -58,6 +64,7 @@ public class Board {
                 .author(dto.getAuthor())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .newsCategory(dto.getNewsCategory())
+                .is_admin_article(Boolean.TRUE.equals(dto.getIsAdminArticle()))
                 .build();
     }
 }

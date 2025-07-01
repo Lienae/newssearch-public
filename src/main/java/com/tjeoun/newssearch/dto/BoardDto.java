@@ -16,4 +16,5 @@ public class BoardDto {
     private Member author;
     private String password;
     private NewsCategory newsCategory;
+    private Boolean isAdminArticle;
 }
