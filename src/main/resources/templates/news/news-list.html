@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>뉴스 전체 보기</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/news-list.css" />
+</head>
+
+<body>
+<div class="navbar">
+  <a href="/main" class="logo">
+    <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  </a>
+  <nav>
+    <a href="/news/list">뉴스</a>
+    <a href="/boarder/list">커뮤니티</a>
+  </nav>
+  <div class="auth">
+    <a href="/user/login">로그인</a>
+    <a href="/user/register">회원가입</a>
+  </div>
+</div>
+
+<div class="main-wrapper">
+  <div class="main-content">
+    <div class="search-bar">
+      <select id="search-type">
+        <option value="title">제목</option>
+        <option value="content">내용</option>
+      </select>
+      <input type="text" placeholder="검색어를 입력하세요" />
+      <button>검색</button>
+    </div>
+
+    <div class="category-section">
+      <div class="press-filter-wrap">
+        <select id="press-filter">
+          <option value="all">언론사</option>
+          <option value="YTN">YTN</option>
+          <option value="동아일보">동아일보</option>
+          <option value="조선일보">조선일보</option>
+          <option value="중앙일보">중앙일보</option>
+          <option value="한겨레">한겨레</option>
+        </select>
+      </div>
+
+      <div class="category-buttons">
+        <a href="#" class="active">전체</a>
+        <a href="#">정치</a>
+        <a href="#">경제</a>
+        <a href="#">사회</a>
+        <a href="#">문화</a>
+        <a href="#">스포츠</a>
+      </div>
+    </div>
+
+    <div class="news-grid">
+      <div
+              class="news-card"
+              data-link="https://www.khan.co.kr/article/202506252112035/?utm_source=khan_rss&utm_medium=rss&utm_campaign=kh_sports"
+      >
+        <img src="https://placehold.co/300x150" alt="테스트 이미지" />
+        <div class="news-card-content">
+          <h4>‘무실점 행진’ 멈춰도 꿋꿋…‘10라운드 기적’ 계속된다</h4>
+          <p>
+            KIA 성영탁, 2년차에 1군 데뷔투심 패스트볼로 느린 구속 극복...
+          </p>
+          <div class="news-meta">2025.06.24 | 경향신문</div>
+        </div>
+      </div>
+
+      <div
+              class="news-card"
+              data-link="https://www.donga.com/news/Society/article/all/20250627/131895045/1"
+      >
+        <img src="https://placehold.co/300x150" alt="테스트 이미지" />
+        <div class="news-card-content">
+          <h4>‘코에 뿌리는’ 독감백신, 한국 상륙…“어린이 접종 큰 기여”</h4>
+          <p>
+            비강 스프레이형 약독화 생백신 “플루미스트, 접종률 향상 기대”...
+          </p>
+          <div class="news-meta">2025.06.24 | 동아일보</div>
+        </div>
+      </div>
+
+      <div
+              class="news-card"
+              data-link="https://www.yonhapnewstv.co.kr/news/MYH20250629141103607"
+      >
+        <img src="https://placehold.co/300x150" alt="테스트 이미지" />
+        <div class="news-card-content">
+          <h4>‘코에 뿌리는’ 독감백신, 한국 상륙…“어린이 접종 큰 기여”</h4>
+          <p>
+            비강 스프레이형 약독화 생백신 “플루미스트, 접종률 향상 기대”...
+          </p>
+          <div class="news-meta">2025.06.24 | YTN</div>
+        </div>
+      </div>
+
+      <div
+              class="news-card"
+              data-link="https://www.hani.co.kr/arti/politics/politics_general/1205265.html"
+      >
+        <img src="https://placehold.co/300x150" alt="테스트 이미지" />
+        <div class="news-card-content">
+          <h4>‘코에 뿌리는’ 독감백신, 한국 상륙…“어린이 접종 큰 기여”</h4>
+          <p>
+            비강 스프레이형 약독화 생백신 “플루미스트, 접종률 향상 기대”...
+          </p>
+          <div class="news-meta">2025.06.24 | 한겨레</div>
+        </div>
+      </div>
+
+      <div
+              class="news-card"
+              data-link="https://www.joongang.co.kr/article/25186325"
+      >
+        <img src="https://placehold.co/300x150" alt="테스트 이미지" />
+        <div class="news-card-content">
+          <h4>“세계 최고 AI 목표”…삼성, 초거대 AI 개발 본격화</h4>
+          <p>
+            삼성전자, 글로벌 AI 경쟁에 뛰어들어 초거대 AI 프로젝트 가속...
+          </p>
+          <div class="news-meta">2025.06.24 | 중앙일보</div>
+        </div>
+      </div>
+
+      <!-- 추가 카드들... -->
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="stats-box">
+      <h4>오늘의 뉴스 현황</h4>
+      <canvas id="newsChart" width="250" height="180"></canvas>
+      <a href="#" class="analyze-btn">뉴스 분석하기</a>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal" id="newsModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <iframe id="modalIframe" src=""></iframe>
+
+    <div class="comment-section">
+      <h3>총 0개의 의견</h3>
+      <form class="comment-form">
+        <input type="text" placeholder="의견을 작성해주세요." />
+        <button type="submit">의견 등록</button>
+      </form>
+    </div>
+
+    <a
+            href="/boarder/write"
+            class="write-post-btn"
+            id="writePostBtn"
+            target="_blank"
+    >게시글 작성</a>
+  </div>
+</div>
+
+<script src="/js/news-list.js"></script>
+</body>
+</html>
