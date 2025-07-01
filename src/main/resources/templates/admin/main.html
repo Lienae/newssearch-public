@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NewsHub 관리자 대시보드</title>
+  <link rel="stylesheet" href="/css/admin-main.css" />
+</head>
+<body>
+
+<div class="navbar">
+  <a href="/main" class="logo">
+    <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  </a>
+  <nav>
+    <a href="/news/list">뉴스</a>
+    <a href="/boarder/list">커뮤니티</a>
+  </nav>
+  <div class="auth">
+    <a href="/user/login">로그인</a>
+    <a href="/user/register">회원가입</a>
+  </div>
+</div>
+
+<div class="dashboard-container">
+  <div class="box">
+    <h3>최근 등록 기사 (카테고리/언론사)</h3>
+    <div class="scroll-wrapper">
+      <div class="category-row">
+        <div class="category-block">
+          <h3 class="category-title">정치</h3>
+          <div class="news-list">
+            <div class="news-card">
+              <img src="https://placehold.co/200x100" alt="정치" />
+              <h4>정치 이슈 1</h4>
+              <div class="news-meta">요약 설명 경향신문</div>
+            </div>
+          </div>
+        </div>
+        <div class="category-block">
+          <h3 class="category-title">경제</h3>
+          <div class="news-list">
+            <div class="news-card">
+              <img src="https://placehold.co/200x100" alt="경제" />
+              <h4>경제 이슈 1</h4>
+              <div class="news-meta">요약 설명 YTN</div>
+            </div>
+          </div>
+        </div>
+        <div class="category-block">
+          <h3 class="category-title">사회</h3>
+          <div class="news-list">
+            <div class="news-card">
+              <img src="https://placehold.co/200x100" alt="사회" />
+              <h4>사회 이슈 1</h4>
+              <div class="news-meta">요약 설명 MBC</div>
+            </div>
+          </div>
+        </div>
+        <div class="category-block">
+          <h3 class="category-title">문화</h3>
+          <div class="news-list">
+            <div class="news-card">
+              <img src="https://placehold.co/200x100" alt="문화" />
+              <h4>문화 이슈 1</h4>
+              <div class="news-meta">요약 설명 KBS</div>
+            </div>
+          </div>
+        </div>
+        <div class="category-block">
+          <h3 class="category-title">스포츠</h3>
+          <div class="news-list">
+            <div class="news-card">
+              <img src="https://placehold.co/200x100" alt="스포츠" />
+              <h4>스포츠 이슈 1</h4>
+              <div class="news-meta">요약 설명 SBS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>게시판 최근글</h3>
+    <div class="scroll-box">
+      <ul class="board-list">
+        <li>
+          <a href="/admin/boarder-edit?id=1">[POLITICS] 첫 게시글 제목</a>
+          <span class="meta">작성자: 101 | 2025-07-01</span>
+        </li>
+        <li>
+          <a href="/admin/boarder-edit?id=2">[ECONOMY] 두 번째 게시글 제목</a>
+          <span class="meta">작성자: 102 | 2025-07-02</span>
+        </li>
+        <li>
+          <a href="/admin/boarder-edit?id=3">[SOCIETY] 세 번째 게시글</a>
+          <span class="meta">작성자: 103 | 2025-07-03</span>
+        </li>
+        <li>
+          <a href="/admin/boarder-edit?id=4">[CULTURE] 네 번째 게시글</a>
+          <span class="meta">작성자: 104 | 2025-07-04</span>
+        </li>
+        <li>
+          <a href="/admin/boarder-edit?id=5">[SPORTS] 다섯 번째 게시글</a>
+          <span class="meta">작성자: 105 | 2025-07-05</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>카테고리별 / 언론사별 파이그래프</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+
+  <div class="box">
+    <h3>많이 검색된 키워드 (버블차트)</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+
+  <div class="box full-width">
+    <h3>키워드 연관 네트워크</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+
+  <div class="box full-width">
+    <h3>지역별 기사 dotplot 지도</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+</div>
+<script src="/js/main.js"></script>
+</body>
+</html>
