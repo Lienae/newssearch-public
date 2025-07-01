@@ -8,8 +8,8 @@ import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
-import com.tjeoun.newssearch.repository.NewsSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,8 +25,6 @@ import java.util.Map;
 import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
@@ -35,7 +32,7 @@ import java.util.UUID;
 public class NewsCollectorService {
 
     private final NewsRepository newsRepository;
-    private final NewsSearchRepository newsSearchRepository;
+    private final NewsDocumentRepository newsDocumentRepository;
 
     private static final String DEFAULT_IMAGE_PATH = "images/default.png";
     private static final String BASE_IMAGE_SAVE_DIR = "images/donga/";
@@ -65,7 +62,7 @@ public class NewsCollectorService {
                     if (article != null) {
                         News saved = newsRepository.save(article); // DB 저장
                         NewsDocument document = News.toDocument(saved); // ES용 변환
-                        newsSearchRepository.save(document); // Elasticsearch 저장
+                        newsDocumentRepository.save(document); // Elasticsearch 저장
                         savedCount++;
                         Thread.sleep(500); // 부하 방지
                     }
@@ -166,7 +163,7 @@ public class NewsCollectorService {
                     .mediaCompany(NewsMediaCompany.DONGA)
                     .category(category)
                     .title(entry.getTitle())
-                    .publishDate(publishedDate.atStartOfDay())
+                    .publishDate(publishedDate)
                     .url(link)
                     .content(content)
                     .author(reporter)

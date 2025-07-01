@@ -3,7 +3,6 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.helper.HaniCrawlerHelper;
-import com.tjeoun.newssearch.helper.NewsSaveHelper;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import jakarta.transaction.Transactional;
@@ -14,6 +13,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,25 +29,26 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
 import static com.tjeoun.newssearch.helper.JoongangCrawlerHelper.getJoongangArticleLinks;
 import static com.tjeoun.newssearch.helper.JoongangCrawlerHelper.parseArticle;
 
 @Service
 @RequiredArgsConstructor
 public class NewsCrawlerService {
-    private final NewsRepository newsRepository;
-    private final NewsDocumentRepository newsDocumentRepository;
-    private final NewsSaveHelper newsSaveHelper;
+
+    private final PlatformTransactionManager transactionManager;
 
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
+    private final NewsRepository newsRepository;
+    private final NewsDocumentRepository newsDocumentRepository;
     @Value("${news.images.base-path.hani}")
     String haniImageBasePath;
 
     @Value("${news.images.base-path.joongang}")
     String joongangImageBasePath;
 
-    @Transactional
     public void getHaniArticles() {
         final Map<String, String> rssFeeds = Map.of(
                 "정치", "https://www.hani.co.kr/rss/politics/",
@@ -174,19 +178,32 @@ public class NewsCrawlerService {
             return "";
         }
     }
-    @Transactional
-    protected void saveToDatabase(List<Map<String, String>> articles) {
-        articles.forEach(article -> {
-            News news = News.createNewsFromMap(article);
-            newsRepository.save(news);
-            NewsDocument newsDocument = News.toDocument(news);
-            try {
-                newsDocumentRepository.save(newsDocument);
-            } catch (Exception e) {
-                throw new RuntimeException("Elasticsearch save failed. transaction rollback.");
-            }
-        });
+
+    public void saveToDatabase(List<Map<String, String>> articles) {
+        for (Map<String, String> article : articles) {
+            saveSingleArticleWithCompensation(article);
+        }
     }
 
+    private void saveSingleArticleWithCompensation(Map<String, String> article) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("saveSingleArticleTx");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
+        TransactionStatus status = transactionManager.getTransaction(def);
+
+        News news;
+        try {
+            news = News.createNewsFromMap(article);
+            newsRepository.save(news);
+
+            NewsDocument document = News.toDocument(news);
+            newsDocumentRepository.save(document);
+
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+            System.err.println("저장 실패, 롤백 수행: " + article.get("title") + " / " + e.getMessage());
+        }
+    }
 }

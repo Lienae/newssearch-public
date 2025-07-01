@@ -4,12 +4,10 @@ import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -36,7 +34,7 @@ public class News {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime publishDate;
+    private LocalDate publishDate;
 
     @Column
     private String author;
@@ -83,9 +81,9 @@ public class News {
                 .content(article.get("내용"))
                 // 날짜 정보만 사용할 것이므로 시간정보는 00:00:00으로 통일하여 기록
                 .publishDate(
-                        LocalDateTime.parse(
-                                article.get("날짜") + " 00:00:00",
-                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        LocalDate.parse(
+                                article.get("날짜"),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd")
                         ))
                 .author(article.get("기자명"))
                 .category(switch(article.get("카테고리")) {
