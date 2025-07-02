@@ -25,13 +25,20 @@
 <div class="board-container">
   <div class="category-section">
     <div class="category-buttons">
-      <a href="#" class="active">전체</a>
-      <a href="#">정치</a>
-      <a href="#">경제</a>
-      <a href="#">사회</a>
-      <a href="#">문화</a>
-      <a href="#">스포츠</a>
+      <a th:href="@{/admin/boarders/list(category='ALL')}"
+         th:classappend="${currentCategory == 'ALL'} ? 'active' : ''">전체</a>
+      <a th:href="@{/admin/boarders/list(category='POLITICS')}"
+         th:classappend="${currentCategory == 'POLITICS'} ? 'active' : ''">정치</a>
+      <a th:href="@{/admin/boarders/list(category='ECONOMY')}"
+         th:classappend="${currentCategory == 'ECONOMY'} ? 'active' : ''">경제</a>
+      <a th:href="@{/admin/boarders/list(category='SOCIAL')}"
+         th:classappend="${currentCategory == 'SOCIAL'} ? 'active' : ''">사회</a>
+      <a th:href="@{/admin/boarders/list(category='CULTURE')}"
+         th:classappend="${currentCategory == 'CULTURE'} ? 'active' : ''">문화</a>
+      <a th:href="@{/admin/boarders/list(category='SPORTS')}"
+         th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
     </div>
+
   </div>
 
   <div class="board-header">
@@ -50,40 +57,45 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>1</td>
-      <td>첫 게시글 제목</td>
-      <td>POLITICS</td>
-      <td>101</td>
-      <td>2025-07-01</td>
+    <tr th:each="board : ${boardPage.content}">
+      <td th:text="${board.id}">1</td>
+      <td th:text="${board.title}">첫 게시글 제목</td>
+      <td th:text="${board.newsCategory}">POLITICS</td>
+      <td th:text="${board.authorId}">101</td>
+      <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</td>
       <td>
-        <button onclick="location.href='/admin/boarder-edit'">
-          수정
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>두 번째 게시글 제목</td>
-      <td>ECONOMY</td>
-      <td>102</td>
-      <td>2025-07-02</td>
-      <td>
-        <button onclick="location.href='/admin/boarder-edit'">
-          수정
-        </button>
+        <a th:href="@{/admin/boarders/edit(id=${board.id})}" class="btn">수정</a>
       </td>
     </tr>
     </tbody>
+
   </table>
 
   <div class="pagination">
-    <button disabled>«</button>
-    <button class="active">1</button>
-    <button>2</button>
-    <button>3</button>
-    <button>»</button>
+    <!-- 이전 -->
+    <a class="btn" th:if="${!boardPage.first}"
+       th:href="@{/admin/boarders/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
+      «
+    </a>
+    <a class="btn disabled"  th:if="${boardPage.first}">«</a>
+
+    <!-- 페이지 번호 -->
+    <span th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}">
+    <a class="btn" th:if="${i != boardPage.number}"
+       th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
+       th:text="${i + 1}"></a>
+    <a class="btn active disabled " th:if="${i == boardPage.number}" th:text="${i + 1}"></a>
+  </span>
+
+    <!-- 다음 -->
+    <a class="btn" th:if="${!boardPage.last}"
+       th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
+      »
+    </a>
+    <a class="btn disabled"  th:if="${boardPage.last}">»</a>
   </div>
+
+
   <div class="board-search">
     <select id="search-type">
       <option value="title">제목</option>
@@ -93,6 +105,5 @@
     <button>검색</button>
   </div>
 </div>
-<script src="/js/boarder-list.js"></script>
 </body>
 </html>

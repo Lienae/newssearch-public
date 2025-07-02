@@ -86,12 +86,9 @@
     <div class="form-group">
       <label for="role">권한</label>
       <select id="role" name="role">
-        <option value="USER" th:selected="${member.role == 'USER'}">
-          USER
-        </option>
-        <option value="ADMIN" th:selected="${member.role == 'ADMIN'}">
-          ADMIN
-        </option>
+        <option value="USER" th:selected="${member.role.name() == 'USER'}">USER</option>
+        <option value="ADMIN" th:selected="${member.role.name() == 'ADMIN'}">ADMIN</option>
+        <option value="SUSPENDED" th:selected="${member.role.name() == 'SUSPENDED'}">SUSPENDED</option>
       </select>
     </div>
 
