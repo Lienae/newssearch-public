@@ -38,6 +38,9 @@
             th:value="${_csrf.token}"
     />
 
+    <input type="hidden" name="page" th:value="${page}" />
+    <input type="hidden" name="size" th:value="${size}" />
+
     <div class="form-group">
       <label for="id">ID</label>
       <input
@@ -120,8 +123,7 @@
       <button
               type="button"
               class="cancel-btn"
-              onclick="location.href='/admin/members/list'"
-      >
+              th:onclick="'location.href=\'/admin/members/list?page=' + ${page} + '&size=' + ${size}  + '\''">
         취소
       </button>
       <button type="submit" class="submit-btn">수정</button>

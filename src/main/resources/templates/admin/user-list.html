@@ -56,7 +56,10 @@
       <td th:text="${member.email}">hong@test.com</td>
       <td th:text="${member.role}">ADMIN</td>
       <td>
-        <a th:href="@{'/admin/members/edit?id=' + ${member.id}}">수정</a>
+        <a th:href="@{/admin/members/edit(id=${member.id}, page=${page}, size=${size})}"
+           class="btn">
+          수정
+        </a>
       </td>
     </tr>
     </tbody>

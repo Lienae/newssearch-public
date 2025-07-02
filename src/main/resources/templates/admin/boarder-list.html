@@ -65,7 +65,11 @@
       <td th:text="${board.authorId}">101</td>
       <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</td>
       <td>
-        <a th:href="@{/admin/boarders/edit(id=${board.id})}" class="btn">수정</a>
+        <a th:href="@{/admin/boarders/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}"
+           class="btn">
+          수정
+        </a>
+
       </td>
     </tr>
     </tbody>

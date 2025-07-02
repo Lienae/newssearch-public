@@ -46,6 +46,8 @@ public class AdminBoardController {
     long totalCount = boardPage.getTotalElements();
 
     model.addAttribute("boardPage", boardPage);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
     model.addAttribute("currentCategory", category);
     model.addAttribute("totalCount", totalCount);
     return "admin/boarder-list";
@@ -53,7 +55,11 @@ public class AdminBoardController {
 
 
   @GetMapping("/edit")
-  public String editForm(@RequestParam Long id, Model model) {
+  public String editForm(@RequestParam Long id,
+                         @RequestParam(defaultValue = "0") int page,
+                         @RequestParam(defaultValue = "10") int size,
+                         @RequestParam(defaultValue = "ALL") String category,
+                         Model model) {
     Board board = boardRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("board not found"));
     AdminBoardDto dto = AdminBoardDto.builder()
@@ -68,11 +74,17 @@ public class AdminBoardController {
       .modifiedDate(board.getModifiedDate())
       .build();
     model.addAttribute("board", dto);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
+    model.addAttribute("currentCategory", category);
     return "admin/boarder-edit";
   }
 
   @PostMapping("/edit/{id}")
   public String edit(@PathVariable Long id,
+                     @RequestParam int page,
+                     @RequestParam int size,
+                     @RequestParam String category,
                      @ModelAttribute Board formBoard) {
     Board board = boardRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("board not found"));
@@ -82,7 +94,7 @@ public class AdminBoardController {
     board.setNewsCategory(formBoard.getNewsCategory());
     boardRepository.save(board);
 
-    return "redirect:/admin/boarders/list";
+    return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + category;
   }
 
   @PostMapping("/delete/{id}")
