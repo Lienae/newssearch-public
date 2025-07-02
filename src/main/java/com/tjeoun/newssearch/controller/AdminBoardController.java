@@ -43,8 +43,11 @@ public class AdminBoardController {
       .modifiedDate(board.getModifiedDate())
       .build());
 
+    long totalCount = boardPage.getTotalElements();
+
     model.addAttribute("boardPage", boardPage);
     model.addAttribute("currentCategory", category);
+    model.addAttribute("totalCount", totalCount);
     return "admin/boarder-list";
   }
 

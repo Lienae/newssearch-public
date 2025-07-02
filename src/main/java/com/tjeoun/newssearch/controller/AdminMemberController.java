@@ -22,7 +22,11 @@ public class AdminMemberController {
                      @RequestParam(defaultValue = "3") int size,
                      Model model) {
     Page<Member> members = memberRepository.findAll(PageRequest.of(page, size));
+
+    long totalCount = members.getTotalElements();
+
     model.addAttribute("members", members);
+    model.addAttribute("totalCount", totalCount);
     return "admin/user-list";
   }
 
