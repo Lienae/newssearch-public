@@ -19,6 +19,7 @@ public class AdminBoardDto {
   private String authorName;
   private String password;
   private NewsCategory newsCategory;
+  private String newsTitle;
   private Boolean isAdminArticle;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;

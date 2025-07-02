@@ -60,6 +60,7 @@ public class AdminBoardController {
       .authorId(board.getAuthor().getId())
       .authorName(board.getAuthor().getName())
       .newsCategory(board.getNewsCategory())
+      .newsTitle(board.getNews().getTitle())
       .createdDate(board.getCreatedDate())
       .modifiedDate(board.getModifiedDate())
       .build();
