@@ -43,7 +43,7 @@ class AdminMemberControllerTest {
 
   @Test
   void testListPage() throws Exception {
-    mockMvc.perform(get("/api/v1/admin/members/list"))
+    mockMvc.perform(get("/admin/members/list"))
       .andExpect(status().isOk())
       .andExpect(view().name("admin/user-list"))
       .andExpect(model().attributeExists("members"));
@@ -51,7 +51,7 @@ class AdminMemberControllerTest {
 
   @Test
   void testEditForm() throws Exception {
-    mockMvc.perform(get("/api/v1/admin/members/edit")
+    mockMvc.perform(get("/admin/members/edit")
         .param("id", testMemberId.toString()))
       .andExpect(status().isOk())
       .andExpect(view().name("admin/user-edit"))
@@ -60,7 +60,7 @@ class AdminMemberControllerTest {
 
   @Test
   void testEditProcess() throws Exception {
-    mockMvc.perform(post("/api/v1/admin/members/edit/" + testMemberId)
+    mockMvc.perform(post("/admin/members/edit/" + testMemberId)
         .with(csrf())
         .param("id", testMemberId.toString())
         .param("name", "홍길동수정")
@@ -68,7 +68,7 @@ class AdminMemberControllerTest {
         .param("role", "USER")
         .param("password", "1234"))  // 비밀번호도 같이 보내는 형태
       .andExpect(status().is3xxRedirection())
-      .andExpect(redirectedUrl("/api/v1/admin/members/list"));
+      .andExpect(redirectedUrl("/admin/members/list"));
 
     Member updated = memberRepository.findById(testMemberId).orElseThrow();
     assertEquals("홍길동수정", updated.getName());
@@ -77,10 +77,10 @@ class AdminMemberControllerTest {
 
   @Test
   void testDeleteProcess() throws Exception {
-    mockMvc.perform(post("/api/v1/admin/members/delete/" + testMemberId)
+    mockMvc.perform(post("/admin/members/delete/" + testMemberId)
         .with(csrf()))
       .andExpect(status().is3xxRedirection())
-      .andExpect(redirectedUrl("/api/v1/admin/members/list"));
+      .andExpect(redirectedUrl("/admin/members/list"));
 
     assertFalse(memberRepository.findById(testMemberId).isPresent());
   }

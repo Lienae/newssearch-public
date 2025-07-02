@@ -5,25 +5,27 @@ import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/api/v1/admin/members")
+@RequestMapping("admin/members")
 @RequiredArgsConstructor
 public class AdminMemberController {
 
   private final MemberRepository memberRepository;
 
   @GetMapping("/list")
-  public String list(Model model, @PageableDefault(size = 3) Pageable pageable) {
-    Page<Member> members = memberRepository.findAll(pageable);
+  public String list(@RequestParam(defaultValue = "0") int page,
+                     @RequestParam(defaultValue = "3") int size,
+                     Model model) {
+    Page<Member> members = memberRepository.findAll(PageRequest.of(page, size));
     model.addAttribute("members", members);
     return "admin/user-list";
   }
+
 
   @GetMapping("/edit")
   public String editForm(@RequestParam Long id, Model model) {
@@ -52,13 +54,13 @@ public class AdminMemberController {
     member.setPassword(dto.getPassword());
     member.setRole(dto.getRole());
     memberRepository.save(member);
-    return "redirect:/api/v1/admin/members/list";
+    return "redirect:/admin/members/list";
   }
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
     memberRepository.deleteById(id);
-    return "redirect:/api/v1/admin/members/list";
+    return "redirect:/admin/members/list";
   }
 
   // blind 컬럼 생기면 사용 예정
