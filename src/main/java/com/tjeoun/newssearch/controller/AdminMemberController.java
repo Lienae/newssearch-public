@@ -3,6 +3,7 @@ package com.tjeoun.newssearch.controller;
 import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
+import com.tjeoun.newssearch.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,42 +16,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminMemberController {
 
-  private final MemberRepository memberRepository;
+  private final MemberService memberService;
 
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "0") int page,
                      @RequestParam(defaultValue = "10") int size,
                      Model model) {
-    Page<Member> members = memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
-
-    long totalCount = members.getTotalElements();
-
+    Page<Member> members = memberService.getMembers(page, size);
     model.addAttribute("members", members);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
-    model.addAttribute("totalCount", totalCount);
+    model.addAttribute("totalCount", members.getTotalElements());
     return "admin/user-list";
   }
-
 
   @GetMapping("/edit")
   public String editForm(@RequestParam Long id,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
                          Model model) {
-    Member member = memberRepository.findById(id)
-      .orElseThrow(() -> new RuntimeException("Member not found"));
-
-    AdminMemberDto dto = AdminMemberDto.builder()
-      .id(member.getId())
-      .name(member.getName())
-      .email(member.getEmail())
-      .role(member.getRole())
-      //.isBlind(member.getIsBlind())
-      .createdDate(member.getCreatedDate())
-      .lastModifiedDate(member.getLastModifiedDate())
-      .build();
-
+    AdminMemberDto dto = memberService.getMemberDto(id);
     model.addAttribute("member", dto);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
@@ -61,26 +46,15 @@ public class AdminMemberController {
   public String edit(@PathVariable Long id,
                      @ModelAttribute AdminMemberDto dto,
                      @RequestParam int page,
-                     @RequestParam int size,
-                      Model model) {
-    Member member = memberRepository.findById(id)
-      .orElseThrow(() -> new RuntimeException("Member not found"));
-    member.setName(dto.getName());
-    member.setPassword(dto.getPassword());
-    member.setRole(dto.getRole());
-    memberRepository.save(member);
+                     @RequestParam int size) {
+    memberService.updateMember(id, dto);
     return "redirect:/admin/members/list?page=" + page + "&size=" + size;
   }
 
-
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
-    Member member = memberRepository.findById(id)
-      .orElseThrow(() -> new RuntimeException("Member not found"));
-    member.set_blind(true);
-    memberRepository.save(member);
+    memberService.softDeleteMember(id);
     return "redirect:/admin/members/list";
   }
-
-
 }
+

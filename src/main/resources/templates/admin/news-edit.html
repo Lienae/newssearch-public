@@ -46,12 +46,12 @@
 
     <div class="form-group">
       <label for="author">기자명</label>
-      <input type="text" id="author" name="author" th:value="${news.author}" readonly class="readonly-input"/>
+      <input type="text" id="author" name="author" th:value="${news.author}"/>
     </div>
 
     <div class="form-group">
       <label for="category">카테고리</label>
-      <select id="category" name="category">
+      <select id="category" name="category" disabled>
         <option th:each="c : ${T(com.tjeoun.newssearch.enums.NewsCategory).values()}"
                 th:value="${c.name()}"
                 th:selected="${news.category.name() == c.name()}"
@@ -62,7 +62,7 @@
 
     <div class="form-group">
       <label for="media_company">언론사</label>
-      <select id="media_company" name="mediaCompany">
+      <select id="media_company" name="mediaCompany" disabled>
         <option th:each="m : ${T(com.tjeoun.newssearch.enums.NewsMediaCompany).values()}"
                 th:value="${m.name()}"
                 th:selected="${news.mediaCompany.name() == m.name()}"
@@ -82,7 +82,7 @@
 
     <div class="form-group">
       <label for="url">원문 URL</label>
-      <input type="text" id="url" name="url" placeholder="원문 링크를 입력하세요." th:value="${news.url}" />
+      <input type="text" id="url" name="url" placeholder="원문 링크를 입력하세요." th:value="${news.url}" readonly class="readonly-input" />
     </div>
 
     <div class="form-group">

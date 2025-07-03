@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.dto;
 
+import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,17 @@ public class AdminMemberDto {
   private UserRole role;
   private LocalDateTime createdDate;
   private LocalDateTime lastModifiedDate;
-  private boolean is_blind;
+  private Boolean is_blind;
+
+  public static AdminMemberDto from(Member member) {
+    return AdminMemberDto.builder()
+      .id(member.getId())
+      .name(member.getName())
+      .email(member.getEmail())
+      .role(member.getRole())
+      .createdDate(member.getCreatedDate())
+      .lastModifiedDate(member.getLastModifiedDate())
+      .is_blind(member.is_blind())
+      .build();
+  }
 }
