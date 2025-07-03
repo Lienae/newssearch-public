@@ -1,7 +1,7 @@
 package com.tjeoun.newssearch.dto;
 
+
 import com.tjeoun.newssearch.entity.Board;
-import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import lombok.Builder;
 import lombok.Getter;
