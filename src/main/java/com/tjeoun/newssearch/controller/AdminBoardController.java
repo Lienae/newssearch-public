@@ -4,11 +4,14 @@ import com.tjeoun.newssearch.dto.AdminBoardDto;
 import com.tjeoun.newssearch.service.AdminBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Controller
 @RequestMapping("/admin/boarders")
 @RequiredArgsConstructor
@@ -56,8 +59,16 @@ public class AdminBoardController {
                      @RequestParam int page,
                      @RequestParam int size,
                      @RequestParam String category,
-                     @ModelAttribute AdminBoardDto dto) {
-    adminBoardService.updateBoard(id, dto);
+                     //@ModelAttribute AdminBoardDto dto,
+                     @RequestParam(value = "file", required = false) MultipartFile file) {
+    if (file != null && !file.isEmpty()) {
+      log.info("파일 이름: {}", file.getOriginalFilename());
+      log.info("파일 크기: {} bytes", file.getSize());
+      log.info("Content-Type: {}", file.getContentType());
+    } else {
+      log.info("파일이 첨부되지 않았습니다.");
+    }
+    //adminBoardService.updateBoard(id, dto);
     return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + category;
   }
 

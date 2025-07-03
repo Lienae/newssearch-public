@@ -1,127 +1,110 @@
-  <!DOCTYPE html>
-  <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <head>
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>관리자 - 게시글 수정</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/border-write.css" />
-  </head>
-  <body>
-  <div class="navbar">
+</head>
+<body>
+<div class="navbar">
     <a href="/main" class="logo">
-      <img src="/img/NewsHub.png" alt="News Hub 로고" />
+        <img src="/img/NewsHub.png" alt="News Hub 로고" />
     </a>
     <nav>
-      <a href="/news/list">뉴스</a>
-      <a href="/boarder/list">커뮤니티</a>
+        <a href="/news/list">뉴스</a>
+        <a href="/boarder/list">커뮤니티</a>
     </nav>
     <div class="auth">
-      <a href="/user/login">로그인</a>
-      <a href="/user/register">회원가입</a>
+        <a href="/user/login">로그인</a>
+        <a href="/user/register">회원가입</a>
     </div>
-  </div>
+</div>
 
-  <div class="write-container">
+<div class="write-container">
     <h2>게시글 수정</h2>
     <p class="info-text">관리자는 게시글 정보를 수정할 수 있습니다.</p>
 
-    <form th:action="@{'/admin/boarders/edit/' + ${board.id}}" method="post" class="post-form">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-      <input type="hidden" name="page" th:value="${page}" />
-      <input type="hidden" name="size" th:value="${size}" />
-      <input type="hidden" name="category" th:value="${currentCategory}" />
+    <form th:action="@{'/admin/boarders/edit/' + ${board.id}}" method="post"
+          enctype="multipart/form-data" th:object="${board}" class="post-form">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="page" th:value="${page}" />
+        <input type="hidden" name="size" th:value="${size}" />
+        <input type="hidden" name="category" th:value="${currentCategory}" />
+
+        <div class="form-group">
+            <label>게시글 ID</label>
+            <span th:text="*{id}" class="readonly-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>작성자 닉네임</label>
+            <span th:text="*{authorName}" class="readonly-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>게시글 제목</label>
+            <input type="text" id="title" th:field="*{title}" placeholder="제목을 입력하세요." />
+        </div>
+
+        <div class="form-group">
+            <label>기사 제목</label>
+            <span th:text="*{newsTitle}" class="readonly-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>카테고리</label>
+            <span th:text="*{newsCategory.name()}" class="readonly-text"></span>
+            <input type="hidden" name="newsCategory" th:value="*{newsCategory.name()}" />
+        </div>
+
+        <div class="form-group">
+            <label>내용</label>
+            <textarea th:field="*{content}" id="content" rows="10" placeholder="내용을 입력하세요."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>생성일</label>
+            <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm:ss')}" class="readonly-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>최근 수정일</label>
+            <span th:text="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}" class="readonly-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="file">파일 첨부</label>
+            <input type="file" id="file" name="file" accept="image/*" />
+            <small style="color: #666;">이미지 파일만 첨부 가능합니다.</small>
+        </div>
 
 
-      <div class="form-group">
-        <label for="id">게시글 ID</label>
-        <input type="text" id="id" name="id" th:value="${board.id}" readonly class="readonly-input" />
-      </div>
-
-      <div class="form-group">
-        <label for="author_name">작성자 닉네임</label>
-        <input type="text" id="author_name" name="author_name" th:value="${board.authorName}" readonly class="readonly-input" />
-      </div>
-
-      <div class="form-group">
-        <label for="title">게시글 제목</label>
-        <input type="text" id="title" name="title" th:value="${board.title}" placeholder="제목을 입력하세요." />
-      </div>
-
-      <div class="form-group">
-        <label for="news_title">기사 제목</label>
-        <input type="text" id="news_title" name="news_title" th:value="${board.newsTitle}" readonly class="readonly-input" />
-      </div>
-
-      <div class="form-group">
-        <label for="news_category">카테고리</label>
-        <select id="news_category" name="newsCategory" disabled>
-          <option value="POLITICS" th:selected="${board.newsCategory.name() == 'POLITICS'}">POLITICS</option>
-          <option value="SOCIAL" th:selected="${board.newsCategory.name() == 'SOCIAL'}">SOCIAL</option>
-          <option value="SPORTS" th:selected="${board.newsCategory.name() == 'SPORTS'}">SPORTS</option>
-          <option value="CULTURE" th:selected="${board.newsCategory.name() == 'CULTURE'}">CULTURE</option>
-          <option value="ECONOMY" th:selected="${board.newsCategory.name() == 'ECONOMY'}">ECONOMY</option>
-          <option value="MISC" th:selected="${board.newsCategory.name() == 'MISC'}">MISC</option>
-        </select>
-        <input type="hidden" name="newsCategory" th:value="${board.newsCategory.name()}" />
-      </div>
-
-
-      <div class="form-group">
-        <label for="content">내용</label>
-        <textarea id="content" name="content" rows="10" placeholder="내용을 입력하세요."
-                  th:text="${board.content}"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="created_at">생성일</label>
-        <input type="text" id="created_at" name="created_at"
-               th:value="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm:ss')}"
-               readonly class="readonly-input" />
-      </div>
-
-      <div class="form-group">
-        <label for="updated_at">최근 수정일</label>
-        <input type="text" id="updated_at" name="updated_at"
-               th:value="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}"
-               readonly class="readonly-input" />
-      </div>
-
-      <div class="form-group">
-        <label for="file">파일 첨부</label>
-        <input
-                type="file"
-                id="file"
-                name="file"
-                accept="image/*"
-        />
-        <small style="color: #666;">이미지 파일만 첨부 가능합니다.</small>
-      </div>
-
-      <div class="form-actions">
-        <button type="button"
-                class="cancel-btn"
-                th:attr="data-url=@{/admin/boarders/list(page=${page}, size=${size}, category=${currentCategory})}"
-                onclick="location.href = this.dataset.url">
-          취소
-        </button>
-
-        <button type="submit" class="submit-btn">수정</button>
-        <button type="button" class="delete-btn" onclick="submitDeleteForm()">삭제</button>
-      </div>
+        <div class="form-actions">
+            <button type="button"
+                    class="cancel-btn"
+                    th:attr="data-url=@{/admin/boarders/list(page=${page}, size=${size}, category=${currentCategory})}"
+                    onclick="location.href = this.dataset.url">
+                취소
+            </button>
+            <button type="submit" class="submit-btn">수정</button>
+            <button type="button" class="delete-btn" onclick="submitDeleteForm()">삭제</button>
+        </div>
     </form>
 
-    <!-- 삭제 form -->
     <form id="deleteForm" th:action="@{'/admin/boarders/delete/' + ${board.id}}" method="post" style="display: none;">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     </form>
-  </div>
-  <script>
+</div>
+
+<script>
     function submitDeleteForm() {
-      if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
-        document.getElementById('deleteForm').submit();
-      }
+        if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+            document.getElementById('deleteForm').submit();
+        }
     }
-  </script>
-  </body>
-  </html>
+</script>
+</body>
+</html>
