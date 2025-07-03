@@ -23,5 +23,6 @@ public class AdminBoardDto {
   private Boolean isAdminArticle;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  private boolean is_blind;
   // private Boolean isAdmin;
 }

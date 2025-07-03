@@ -28,19 +28,22 @@ public class AdminBoardController {
     Page<Board> boards;
 
     if ("ALL".equals(category)) {
-      boards = boardRepository.findAll(PageRequest.of(page, size));
+      boards = boardRepository.findByIs_blindFalse(PageRequest.of(page, size));
     } else {
-      boards = boardRepository.findByNewsCategory(NewsCategory.valueOf(category), PageRequest.of(page, size));
+      boards = boardRepository.findByNewsCategoryAndIs_blindFalse(
+        NewsCategory.valueOf(category),
+        PageRequest.of(page, size));
     }
 
     Page<AdminBoardDto> boardPage = boards.map(board -> AdminBoardDto.builder()
       .id(board.getId())
       .title(board.getTitle())
-      .authorId(board.getAuthor() != null ? board.getAuthor().getId() : null)
-      .authorName(board.getAuthor() != null ? board.getAuthor().getName() : null)
+      .authorId(board.getAuthor().getId())
+      .authorName(board.getAuthor().getName())
       .newsCategory(board.getNewsCategory())
       .createdDate(board.getCreatedDate())
       .modifiedDate(board.getModifiedDate())
+      .is_blind(board.is_blind())
       .build());
 
     long totalCount = boardPage.getTotalElements();

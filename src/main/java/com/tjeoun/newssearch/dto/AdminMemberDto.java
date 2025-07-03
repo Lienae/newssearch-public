@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class MemberDto {
+public class AdminMemberDto {
   private Long id;
   private String name;
   private String email;
   private String password;
   private UserRole role;
-  // private Boolean isBlind;
   private LocalDateTime createdDate;
   private LocalDateTime lastModifiedDate;
+  private boolean is_blind;
 }

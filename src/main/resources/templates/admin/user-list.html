@@ -50,7 +50,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="member : ${members}">
+    <tr th:each="member : ${members}" th:if="${!member.is_blind}">
       <td th:text="${member.id}">1</td>
       <td th:text="${member.name}">홍길동</td>
       <td th:text="${member.email}">hong@test.com</td>

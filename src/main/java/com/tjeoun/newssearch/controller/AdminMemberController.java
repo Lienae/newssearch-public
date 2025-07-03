@@ -1,6 +1,6 @@
 package com.tjeoun.newssearch.controller;
 
-import com.tjeoun.newssearch.dto.MemberDto;
+import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AdminMemberController {
   public String list(@RequestParam(defaultValue = "0") int page,
                      @RequestParam(defaultValue = "10") int size,
                      Model model) {
-    Page<Member> members = memberRepository.findAll(PageRequest.of(page, size));
+    Page<Member> members = memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
 
     long totalCount = members.getTotalElements();
 
@@ -41,7 +41,7 @@ public class AdminMemberController {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    MemberDto dto = MemberDto.builder()
+    AdminMemberDto dto = AdminMemberDto.builder()
       .id(member.getId())
       .name(member.getName())
       .email(member.getEmail())
@@ -59,7 +59,7 @@ public class AdminMemberController {
 
   @PostMapping("/edit/{id}")
   public String edit(@PathVariable Long id,
-                     @ModelAttribute MemberDto dto,
+                     @ModelAttribute AdminMemberDto dto,
                      @RequestParam int page,
                      @RequestParam int size,
                       Model model) {
@@ -72,21 +72,15 @@ public class AdminMemberController {
     return "redirect:/admin/members/list?page=" + page + "&size=" + size;
   }
 
+
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
-    memberRepository.deleteById(id);
+    Member member = memberRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Member not found"));
+    member.set_blind(true);
+    memberRepository.save(member);
     return "redirect:/admin/members/list";
   }
-
-  // blind 컬럼 생기면 사용 예정
-//  @PostMapping("/delete/{id}")
-//  public String delete(@PathVariable Long id) {
-//    Member member = memberRepository.findById(id)
-//      .orElseThrow(() -> new RuntimeException("Member not found"));
-//    member.setIsBlind(true);
-//    memberRepository.save(member);
-//    return "redirect:/api/v1/member/list";
-//  }
 
 
 }

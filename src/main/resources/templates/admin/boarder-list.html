@@ -58,7 +58,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="board : ${boardPage.content}">
+    <tr th:each="board : ${boardPage.content}" th:if="${!board.is_blind}">
       <td th:text="${board.id}">1</td>
       <td th:text="${board.title}">첫 게시글 제목</td>
       <td th:text="${board.newsCategory}">POLITICS</td>
