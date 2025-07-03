@@ -10,9 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin/news")
@@ -92,4 +90,35 @@ public class AdminNewsController {
     return "admin/news-edit";
   }
 
+  @PostMapping("/edit/{id}")
+  public String edit(@PathVariable Long id,
+                     @RequestParam int page,
+                     @RequestParam int size,
+                     @RequestParam String category,
+                     @RequestParam String mediaCompany,
+                     @ModelAttribute AdminNewsDto dto){
+    News news = newsRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("News not found"));
+
+    news.setTitle(dto.getTitle());
+    news.setContent(dto.getContent());
+    news.setCategory(dto.getCategory());
+    news.setMediaCompany(dto.getMediaCompany());
+    news.setImageUrl(dto.getImageUrl());
+    news.setUrl(dto.getUrl());
+
+    newsRepository.save(news);
+
+    return "redirect:/admin/news/list?page=" + page + "&size=" + size +
+      "&category=" + category + "&mediaCompany=" + mediaCompany;
+  }
+
+  @PostMapping("/delete/{id}")
+  public String delete(@PathVariable Long id) {
+    News news = newsRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("News not found"));
+    news.set_blind(true);
+    newsRepository.save(news);
+    return "redirect:/admin/news/list";
+  }
 }

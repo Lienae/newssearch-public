@@ -1,7 +1,6 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.AdminBoardDto;
-import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.repository.BoardRepository;
