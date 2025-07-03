@@ -1,7 +1,7 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.AdminBoardDto;
-import com.tjeoun.newssearch.service.BoardService;
+import com.tjeoun.newssearch.service.AdminBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminBoardController {
 
-  private final BoardService boardService;
+  private final AdminBoardService adminBoardService;
 
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "0") int page,
@@ -22,7 +22,7 @@ public class AdminBoardController {
                      @RequestParam(defaultValue = "ALL") String category,
                      Model model) {
 
-    Page<AdminBoardDto> boardPage = boardService.getBoards(page, size, category);
+    Page<AdminBoardDto> boardPage = adminBoardService.getBoards(page, size, category);
 
     long totalCount = boardPage.getTotalElements();
 
@@ -41,7 +41,7 @@ public class AdminBoardController {
                          @RequestParam(defaultValue = "10") int size,
                          @RequestParam(defaultValue = "ALL") String category,
                          Model model) {
-    AdminBoardDto dto = boardService.getBoardDto(id);
+    AdminBoardDto dto = adminBoardService.getBoardDto(id);
 
     model.addAttribute("board", dto);
     model.addAttribute("page", page);
@@ -57,13 +57,13 @@ public class AdminBoardController {
                      @RequestParam int size,
                      @RequestParam String category,
                      @ModelAttribute AdminBoardDto dto) {
-    boardService.updateBoard(id, dto);
+    adminBoardService.updateBoard(id, dto);
     return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + category;
   }
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
-    boardService.softDeleteBoard(id);
+    adminBoardService.softDeleteBoard(id);
     return "redirect:/admin/boarders/list";
   }
 }

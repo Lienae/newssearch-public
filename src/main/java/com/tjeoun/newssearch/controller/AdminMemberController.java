@@ -1,7 +1,7 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.AdminMemberDto;
-import com.tjeoun.newssearch.service.MemberService;
+import com.tjeoun.newssearch.service.AdminMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminMemberController {
 
-  private final MemberService memberService;
+  private final AdminMemberService adminMemberService;
 
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "0") int page,
                      @RequestParam(defaultValue = "10") int size,
                      Model model) {
-    Page<AdminMemberDto> members = memberService.getMembers(page, size);
+    Page<AdminMemberDto> members = adminMemberService.getMembers(page, size);
     model.addAttribute("members", members);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
@@ -32,7 +32,7 @@ public class AdminMemberController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
                          Model model) {
-    AdminMemberDto dto = memberService.getMemberDto(id);
+    AdminMemberDto dto = adminMemberService.getMemberDto(id);
     model.addAttribute("member", dto);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
@@ -44,13 +44,13 @@ public class AdminMemberController {
                      @ModelAttribute AdminMemberDto dto,
                      @RequestParam int page,
                      @RequestParam int size) {
-    memberService.updateMember(id, dto);
+    adminMemberService.updateMember(id, dto);
     return "redirect:/admin/members/list?page=" + page + "&size=" + size;
   }
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
-    memberService.softDeleteMember(id);
+    adminMemberService.softDeleteMember(id);
     return "redirect:/admin/members/list";
   }
 }

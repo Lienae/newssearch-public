@@ -5,6 +5,7 @@ import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
 import com.tjeoun.newssearch.repository.NewsRepository;
+import com.tjeoun.newssearch.service.AdminNewsService;
 import com.tjeoun.newssearch.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminNewsController {
 
-  private final NewsService newsService;
+  private final AdminNewsService adminNewsService;
 
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "0") int page,
@@ -26,7 +27,7 @@ public class AdminNewsController {
                      @RequestParam(defaultValue = "ALL") String category,
                      @RequestParam(defaultValue = "ALL") String mediaCompany,
                      Model model) {
-    Page<AdminNewsDto> newsPage = newsService.getNewsPage(page, size, category, mediaCompany);
+    Page<AdminNewsDto> newsPage = adminNewsService.getNewsPage(page, size, category, mediaCompany);
     model.addAttribute("newsPage", newsPage);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
@@ -43,7 +44,7 @@ public class AdminNewsController {
                          @RequestParam(defaultValue = "ALL") String category,
                          @RequestParam(defaultValue = "ALL") String mediaCompany,
                          Model model) {
-    AdminNewsDto dto = newsService.getNewsDto(id);
+    AdminNewsDto dto = adminNewsService.getNewsDto(id);
     model.addAttribute("news", dto);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
@@ -59,14 +60,14 @@ public class AdminNewsController {
                      @RequestParam String category,
                      @RequestParam String mediaCompany,
                      @ModelAttribute AdminNewsDto dto){
-    newsService.updateNews(id, dto);
+    adminNewsService.updateNews(id, dto);
     return "redirect:/admin/news/list?page=" + page + "&size=" + size +
       "&category=" + category + "&mediaCompany=" + mediaCompany;
   }
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
-    newsService.softDeleteNews(id);
+    adminNewsService.softDeleteNews(id);
     return "redirect:/admin/news/list";
   }
 }
