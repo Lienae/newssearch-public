@@ -62,4 +62,34 @@ public class AdminNewsController {
     return "admin/news-list";
   }
 
+  @GetMapping("/edit")
+  public String editForm(@RequestParam Long id,
+                         @RequestParam(defaultValue = "0") int page,
+                         @RequestParam(defaultValue = "10") int size,
+                         @RequestParam(defaultValue = "ALL") String category,
+                         @RequestParam(defaultValue = "ALL") String mediaCompany,
+                         Model model) {
+    News news = newsRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("News not found"));
+
+    AdminNewsDto dto = AdminNewsDto.builder()
+      .id(news.getId())
+      .title(news.getTitle())
+      .author(news.getAuthor())
+      .category(news.getCategory())
+      .mediaCompany(news.getMediaCompany())
+      .content(news.getContent())
+      .imageUrl(news.getImageUrl())
+      .url(news.getUrl())
+      .publishDate(news.getPublishDate())
+      .build();
+
+    model.addAttribute("news", dto);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
+    model.addAttribute("currentCategory", category);
+    model.addAttribute("currentMediaCompany", mediaCompany);
+    return "admin/news-edit";
+  }
+
 }

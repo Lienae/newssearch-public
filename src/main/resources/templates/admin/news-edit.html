@@ -26,114 +26,93 @@
   <h2>뉴스 수정</h2>
   <p class="info-text">관리자는 뉴스 기사를 수정할 수 있습니다.</p>
 
-  <form class="post-form">
+  <form class="post-form"
+        th:action="@{'/admin/news/edit/' + ${news.id} + '?page=' + ${page} + '&size=' + ${size} + '&category=' + ${currentCategory} + '&mediaCompany=' + ${currentMediaCompany}}"
+        method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <input type="hidden" name="page" th:value="${page}" />
+    <input type="hidden" name="size" th:value="${size}" />
+    <input type="hidden" name="category" th:value="${currentCategory}" />
+
     <div class="form-group">
       <label for="id">ID</label>
-      <input
-              type="text"
-              id="id"
-              name="id"
-              value="1"
-              readonly
-              class="readonly-input"
-      />
+      <input type="text" id="id" name="id" th:value="${news.id}" readonly class="readonly-input"/>
     </div>
 
     <div class="form-group">
       <label for="title">제목</label>
-      <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="제목을 입력하세요."
-              value="뉴스 제목 예시"
-      />
+      <input type="text" id="title" name="title" placeholder="제목을 입력하세요." th:value="${news.title}" />
     </div>
 
     <div class="form-group">
       <label for="author">기자명</label>
-      <input
-              type="text"
-              id="author"
-              name="author"
-              placeholder="작성자 이름"
-              value="홍길동"
-      />
+      <input type="text" id="author" name="author" th:value="${news.author}" readonly class="readonly-input"/>
     </div>
 
     <div class="form-group">
       <label for="category">카테고리</label>
       <select id="category" name="category">
-        <option value="POLITICS">POLITICS</option>
-        <option value="ECONOMY">ECONOMY</option>
-        <option value="SOCIAL">SOCIAL</option>
-        <option value="CULTURE">CULTURE</option>
-        <option value="SPORTS">SPORTS</option>
-        <option value="MISC">MISC</option>
+        <option th:each="c : ${T(com.tjeoun.newssearch.enums.NewsCategory).values()}"
+                th:value="${c.name()}"
+                th:selected="${news.category.name() == c.name()}"
+                th:text="${c.name()}"></option>
+
       </select>
     </div>
 
     <div class="form-group">
       <label for="media_company">언론사</label>
-      <select id="media_company" name="media_company">
-        <option value="DONGA">DONGA</option>
-        <option value="HANI">HANI</option>
-        <option value="JOONGANG">JOONGANG</option>
-        <option value="KHAN">KHAN</option>
-        <option value="YTN">YTN</option>
+      <select id="media_company" name="mediaCompany">
+        <option th:each="m : ${T(com.tjeoun.newssearch.enums.NewsMediaCompany).values()}"
+                th:value="${m.name()}"
+                th:selected="${news.mediaCompany.name() == m.name()}"
+                th:text="${m.name()}"></option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea
-              id="content"
-              name="content"
-              rows="10"
-              placeholder="내용을 입력하세요."
-      >뉴스 내용 예시</textarea>
+      <textarea id="content" name="content" rows="10" placeholder="내용을 입력하세요." th:text="${news.content}"></textarea>
     </div>
 
     <div class="form-group">
       <label for="image_url">이미지 URL</label>
-      <input
-              type="text"
-              id="image_url"
-              name="image_url"
-              placeholder="이미지 URL"
-              value="https://example.com/image.jpg"
-      />
+      <input type="text" id="image_url" name="imageUrl" placeholder="이미지 URL" th:value="${news.imageUrl}" />
     </div>
 
     <div class="form-group">
       <label for="url">원문 URL</label>
-      <input
-              type="text"
-              id="url"
-              name="url"
-              placeholder="원문 링크를 입력하세요."
-              value="https://example.com/news/1"
-      />
+      <input type="text" id="url" name="url" placeholder="원문 링크를 입력하세요." th:value="${news.url}" />
     </div>
 
     <div class="form-group">
-      <label for="published_at">발행일</label>
-      <input
-              type="text"
-              id="published_at"
-              name="published_at"
-              value="2025-07-01 10:00:00"
-              readonly
-              class="readonly-input"
-      />
+      <label for="publishDate">발행일</label>
+      <input type="text" id="publishDate" th:value="${#temporals.format(news.publishDate, 'yyyy-MM-dd HH:mm:ss')}" readonly class="readonly-input"/>
     </div>
 
     <div class="form-actions">
-      <button type="button" class="cancel-btn">취소</button>
+      <button type="button"
+              class="cancel-btn"
+              th:attr="data-url=@{/admin/news/list(page=${page}, size=${size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+              onclick="location.href = this.dataset.url">
+        취소
+      </button>
+
       <button type="submit" class="submit-btn">수정</button>
-      <button type="button" class="delete-btn">삭제</button>
+      <button type="button" class="delete-btn" onclick="submitDeleteForm()">삭제</button>
     </div>
   </form>
+  <!-- 삭제 form -->
+  <form id="deleteForm" th:action="@{'/admin/news/delete/' + ${news.id}}" method="post" style="display: none;">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+  </form>
 </div>
+<script>
+  function submitDeleteForm() {
+    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      document.getElementById('deleteForm').submit();
+    }
+  }
+</script>
 </body>
 </html>
