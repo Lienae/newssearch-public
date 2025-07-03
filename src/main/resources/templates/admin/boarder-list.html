@@ -82,14 +82,18 @@
        th:href="@{/admin/boarders/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
       «
     </a>
-    <a class="btn disabled"  th:if="${boardPage.first}">«</a>
+    <a class="btn disabled" th:if="${boardPage.first}">«</a>
 
-    <!-- 페이지 번호 -->
-    <span th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}">
+    <!-- 현재 페이지 중심 ±2 범위 -->
+    <span th:each="i : ${#numbers.sequence(
+      T(java.lang.Math).max(0, boardPage.number - 2),
+      T(java.lang.Math).min(boardPage.totalPages - 1, boardPage.number + 2)
+    )}">
     <a class="btn" th:if="${i != boardPage.number}"
        th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
        th:text="${i + 1}"></a>
-    <a class="btn active disabled " th:if="${i == boardPage.number}" th:text="${i + 1}"></a>
+    <a class="btn active disabled" th:if="${i == boardPage.number}"
+       th:text="${i + 1}"></a>
   </span>
 
     <!-- 다음 -->
@@ -97,7 +101,7 @@
        th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
       »
     </a>
-    <a class="btn disabled"  th:if="${boardPage.last}">»</a>
+    <a class="btn disabled" th:if="${boardPage.last}">»</a>
   </div>
 
 
