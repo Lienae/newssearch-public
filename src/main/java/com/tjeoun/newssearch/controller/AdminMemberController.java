@@ -1,12 +1,9 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.AdminMemberDto;
-import com.tjeoun.newssearch.entity.Member;
-import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +19,7 @@ public class AdminMemberController {
   public String list(@RequestParam(defaultValue = "0") int page,
                      @RequestParam(defaultValue = "10") int size,
                      Model model) {
-    Page<Member> members = memberService.getMembers(page, size);
+    Page<AdminMemberDto> members = memberService.getMembers(page, size);
     model.addAttribute("members", members);
     model.addAttribute("page", page);
     model.addAttribute("size", size);

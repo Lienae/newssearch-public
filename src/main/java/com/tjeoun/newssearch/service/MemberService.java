@@ -15,15 +15,16 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
 
-  public Page<Member> getMembers(int page, int size) {
-    return memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
+  public Page<AdminMemberDto> getMembers(int page, int size) {
+    Page<Member> members = memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
+    return members.map(AdminMemberDto::convertToDto);
   }
 
   public AdminMemberDto getMemberDto(Long id) {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    return AdminMemberDto.from(member);
+    return AdminMemberDto.convertToDto(member);
   }
 
   @Transactional

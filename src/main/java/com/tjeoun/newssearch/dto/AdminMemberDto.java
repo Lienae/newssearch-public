@@ -21,7 +21,7 @@ public class AdminMemberDto {
   private LocalDateTime lastModifiedDate;
   private Boolean is_blind;
 
-  public static AdminMemberDto from(Member member) {
+  public static AdminMemberDto convertToDto(Member member) {
     return AdminMemberDto.builder()
       .id(member.getId())
       .name(member.getName())
