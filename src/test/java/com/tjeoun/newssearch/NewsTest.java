@@ -109,7 +109,7 @@ public class NewsTest {
         String name = "테스트";
         UserRole role = UserRole.USER;
         Member savedMember = memberRepository.save(
-                Member.createMenber(SignUpDto.builder()
+                Member.createMember(SignUpDto.builder()
                             .email(email)
                             .password(password)
                             .name(name)

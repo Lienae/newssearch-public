@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,7 +23,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false, unique = true)
@@ -42,13 +43,16 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public static Member createMenber(SignUpDto dto, PasswordEncoder passwordEncoder) {
+    public static Member createMember(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .id(dto.getId())
                 .name(dto.getName())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .email(dto.getEmail())
                 .role(dto.getRole())
                 .build();
+    }
+
+    public List<UserRole> getRoleList() {
+        return List.of(UserRole.ADMIN, UserRole.USER, UserRole.SUSPENDED);
     }
 }
