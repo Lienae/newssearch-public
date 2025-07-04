@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="navbar" th:fragment="header">
+    <a href="/main" class="logo">
+        <img src="/img/NewsHub.png" alt="News Hub 로고" />
+    </a>
+    <nav>
+        <a href="/news/list">뉴스</a>
+        <a href="/boarder/list">커뮤니티</a>
+        <a href="/admin/user-list" class="admin-link">사용자 관리</a>
+        <a href="/admin/boarder-list" class="admin-link">커뮤니티 관리</a>
+        <a href="/admin/news-list" class="admin-link">뉴스 관리</a>
+    </nav>
+    <div class="auth">
+        <th:block sec:authorize="isAnonymous()">
+            <a th:href="@{/member/login}">로그인</a>
+            <a th:href="@{/member/register}">회원가입</a>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+            <a th:href="@{/member/mypage}">마이페이지</a>
+            <form th:action="@{/member/logout}" method="post" class="logout-form">
+                <button type="submit" class="logout-button">로그아웃</button>
+            </form>
+        </th:block>
+    </div>
+</div>
+</body>
+</html>

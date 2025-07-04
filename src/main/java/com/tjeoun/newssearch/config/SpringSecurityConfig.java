@@ -21,13 +21,22 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SpringSecurityConfig {
     private final PrincipalDetailsService principalDetailsService;
     private final PasswordEncoder passwordEncoder;
+
+    private final String[] whitelist = new String[] {
+            "/member/login",
+            "/member/register",
+            "/css/**",
+            "/js/**",
+            "/member/findpassword",
+            "/member/resetpassword"
+    };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf-> csrf
                 .csrfTokenRepository(new CookieCsrfTokenRepository()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/member/login", "/member/register", "/css/**", "/js/**").permitAll()
+                        .requestMatchers(whitelist).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**", "/board/**").authenticated()
                         .anyRequest().permitAll()

@@ -1,9 +1,12 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.SignUpDto;
+import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.service.MemberService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +51,49 @@ public class MemberController {
     public String update(@ModelAttribute(name = "member") SignUpDto dto) {
         memberService.update(dto);
         return "redirect:/";
+    }
+    @GetMapping("/findpassword")
+    public String findpassword() {
+        return "member/find-password";
+    }
+    @PostMapping("/findpassword")
+    public String findpassword(@RequestParam String email, Model model) {
+        try {
+            memberService.sendEmailForPasswordReset(email);
+            return "member/find-password-sent";
+        } catch (MessagingException e) {
+            model.addAttribute("errormsg", "메일 전송에 실패했습니다. 다시 시도해 주세요.");
+            return "member/find-password";
+        } catch (UsernameNotFoundException e) {
+            model.addAttribute("errormsg", e.getMessage());
+            return "member/find-password";
+        }
+    }
+    @GetMapping("/resetpassword")
+    public String resetpassword(@RequestParam String token, Model model) {
+        try {
+            Member member = memberService.getMemberFromToken(token);
+            model.addAttribute("SignUpDto", SignUpDto.builder()
+                            .id(member.getId())
+                            .build());
+            model.addAttribute("token", token);
+            return "member/reset-password";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errormsg", e.getMessage());
+            return "member/find-password";
+        }
+    }
+
+    @PostMapping("/resetpassword")
+    public String resetPassword(@ModelAttribute(name = "member") SignUpDto dto,
+                                @RequestParam String token,
+                                Model model) {
+        try {
+            memberService.updatePassword(dto, token);
+            return "member/passwordupdatesuccess";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errormsg", e.getMessage());
+            return "member/find-password";
+        }
     }
 }
