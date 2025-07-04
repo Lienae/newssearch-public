@@ -31,7 +31,9 @@
   <h1>회원 탈퇴</h1>
   <p>⚠ 회원 탈퇴 시 계정과 데이터가 모두 삭제되며 복구가 불가능합니다.</p>
   <form action="/user/delete-account-confirm" method="POST">
-    <input type="email" name="email" placeholder="가입하신 이메일 입력" required />
+    <label>
+      <input type="email" name="email" placeholder="가입하신 이메일 입력" required />
+    </label>
     <button type="submit">정말 탈퇴하시겠습니까?</button>
   </form>
 </div>
