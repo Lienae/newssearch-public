@@ -3,6 +3,7 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.dto.AdminBoardDto;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tjeoun.newssearch.dto.AdminNewsDto;
@@ -28,23 +29,29 @@ public class AdminNewsService {
   private final AttachFileService attachFileService;
 
   public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany) {
+    Pageable pageable = PageRequest.of(page, size);
     Page<News> news;
-    if ("ALL".equals(category) && "ALL".equals(mediaCompany)) {
-      news = newsRepository.findByIs_blindFalse(PageRequest.of(page, size));
-    } else if (!"ALL".equals(category) && "ALL".equals(mediaCompany)) {
-      news = newsRepository.findByCategoryAndIs_blindFalse(NewsCategory.valueOf(category), PageRequest.of(page, size));
-    } else if ("ALL".equals(category)) {
-      news = newsRepository.findByMediaCompanyAndIs_blindFalse(NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
+
+    boolean isAllCategory = "ALL".equals(category);
+    boolean isAllMedia = "ALL".equals(mediaCompany);
+
+    if (isAllCategory && isAllMedia) {
+      news = newsRepository.findByIs_blindFalse(pageable);
+    } else if (!isAllCategory && isAllMedia) {
+      NewsCategory newsCategory = NewsCategory.valueOf(category);
+      news = newsRepository.findByCategoryAndIs_blindFalse(newsCategory, pageable);
+    } else if (isAllCategory) {
+      NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
+      news = newsRepository.findByMediaCompanyAndIs_blindFalse(newsMedia, pageable);
     } else {
-      news = newsRepository.findByCategoryAndMediaCompanyAndIs_blindFalse(
-        NewsCategory.valueOf(category),
-        NewsMediaCompany.valueOf(mediaCompany),
-        PageRequest.of(page, size)
-      );
+      NewsCategory newsCategory = NewsCategory.valueOf(category);
+      NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
+      news = newsRepository.findByCategoryAndMediaCompanyAndIs_blindFalse(newsCategory, newsMedia, pageable);
     }
 
     return news.map(AdminNewsDto::fromEntity);
   }
+
 
   public AdminNewsDto getNewsDto(Long id) {
     News news = newsRepository.findById(id)

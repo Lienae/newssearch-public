@@ -86,6 +86,12 @@
     </div>
 
     <div class="form-actions">
+      <button type="button"
+              class="cancel-btn"
+              th:attr="data-url=@{/admin/news/list(page=${page}, size=${size}, filterCategory=${currentCategory}, filterMediaCompany=${currentMediaCompany})}"
+              onclick="location.href = this.dataset.url">
+        취소
+      </button>
       <button type="submit" class="submit-btn">수정</button>
       <button type="button" class="delete-btn" onclick="submitDeleteForm()">삭제</button>
     </div>

@@ -3,6 +3,7 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,9 +18,11 @@ public class AdminMemberService {
   private final MemberRepository memberRepository;
 
   public Page<AdminMemberDto> getMembers(int page, int size) {
-    Page<Member> members = memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
-    return members.map(AdminMemberDto::fromEntity);
+    Pageable pageable = PageRequest.of(page, size);
+    return memberRepository.findByIs_blindFalse(pageable)
+      .map(AdminMemberDto::fromEntity);
   }
+
 
   public AdminMemberDto getMemberDto(Long id) {
     Member member = memberRepository.findById(id)

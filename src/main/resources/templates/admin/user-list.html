@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,17 +23,6 @@
 </div>
 
 <div class="board-container">
-  <!-- <div class="category-section">
-<div class="category-buttons">
-  <a href="#" class="active">전체</a>
-  <a href="#">정치</a>
-  <a href="#">경제</a>
-  <a href="#">사회</a>
-  <a href="#">문화</a>
-  <a href="#">스포츠</a>
-</div>
-</div> -->
-
   <div class="board-header">
     <div class="board-count">전체 <strong th:text="${totalCount}">159</strong>건</div>
   </div>
@@ -50,15 +38,13 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="member : ${members}" th:if="${!member.is_blind}">
+    <tr th:each="member : ${members.content}">
       <td th:text="${member.id}">1</td>
       <td th:text="${member.name}">홍길동</td>
       <td th:text="${member.email}">hong@test.com</td>
       <td th:text="${member.role}">ADMIN</td>
       <td>
-        <a th:href="@{/admin/members/edit(id=${member.id}, page=${page}, size=${size})}">
-          수정
-        </a>
+        <a th:href="@{/admin/members/edit(id=${member.id}, page=${page}, size=${size})}">수정</a>
       </td>
     </tr>
     </tbody>
@@ -72,17 +58,15 @@
 
     <!-- 현재 페이지 중심 ±2 -->
     <span th:each="i : ${#numbers.sequence(
-        T(java.lang.Math).max(0, members.number - 2),
-        T(java.lang.Math).min(members.totalPages - 1, members.number + 2)
-      )}">
-    <a class="btn"
-       th:if="${i != members.number}"
-       th:href="@{/admin/members/list(page=${i}, size=${members.size})}"
-       th:text="${i + 1}"></a>
-    <a class="btn active disabled"
-       th:if="${i == members.number}"
-       th:text="${i + 1}"></a>
-  </span>
+          T(java.lang.Math).max(0, members.number - 2),
+          T(java.lang.Math).min(members.totalPages - 1, members.number + 2)
+        )}">
+        <a class="btn" th:if="${i != members.number}"
+           th:href="@{/admin/members/list(page=${i}, size=${members.size})}"
+           th:text="${i + 1}"></a>
+        <a class="btn active disabled" th:if="${i == members.number}"
+           th:text="${i + 1}"></a>
+      </span>
 
     <!-- 다음 -->
     <a class="btn" th:if="${!members.last}"
@@ -99,6 +83,7 @@
     <button>검색</button>
   </div>
 </div>
+
 <script>
   const params = new URLSearchParams(window.location.search);
   const success = params.get('success');
@@ -108,6 +93,5 @@
     alert("수정이 완료되었습니다.");
   }
 </script>
-
 </body>
 </html>

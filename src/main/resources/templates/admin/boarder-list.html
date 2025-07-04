@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,13 +38,11 @@
       <a th:href="@{/admin/boarders/list(category='SPORTS')}"
          th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
     </div>
-
   </div>
 
   <div class="board-header">
     <div class="board-count">전체 <strong th:text="${totalCount}">159</strong>건</div>
   </div>
-
 
   <table class="board-table">
     <thead>
@@ -58,7 +56,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="board : ${boardPage.content}" th:if="${!board.is_blind}">
+    <tr th:each="board : ${boardPage.content}">
       <td th:text="${board.id}">1</td>
       <td th:text="${board.title}">첫 게시글 제목</td>
       <td th:text="${board.newsCategory}">POLITICS</td>
@@ -68,41 +66,35 @@
         <a th:href="@{/admin/boarders/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}">
           수정
         </a>
-
       </td>
     </tr>
     </tbody>
-
   </table>
 
   <div class="pagination">
-    <!-- 이전 -->
     <a class="btn" th:if="${!boardPage.first}"
        th:href="@{/admin/boarders/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
       «
     </a>
     <a class="btn disabled" th:if="${boardPage.first}">«</a>
 
-    <!-- 현재 페이지 중심 ±2 범위 -->
     <span th:each="i : ${#numbers.sequence(
-      T(java.lang.Math).max(0, boardPage.number - 2),
-      T(java.lang.Math).min(boardPage.totalPages - 1, boardPage.number + 2)
-    )}">
-    <a class="btn" th:if="${i != boardPage.number}"
-       th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
-       th:text="${i + 1}"></a>
-    <a class="btn active disabled" th:if="${i == boardPage.number}"
-       th:text="${i + 1}"></a>
-  </span>
+        T(java.lang.Math).max(0, boardPage.number - 2),
+        T(java.lang.Math).min(boardPage.totalPages - 1, boardPage.number + 2)
+      )}">
+        <a class="btn" th:if="${i != boardPage.number}"
+           th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
+           th:text="${i + 1}"></a>
+        <a class="btn active disabled" th:if="${i == boardPage.number}"
+           th:text="${i + 1}"></a>
+      </span>
 
-    <!-- 다음 -->
     <a class="btn" th:if="${!boardPage.last}"
        th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
       »
     </a>
     <a class="btn disabled" th:if="${boardPage.last}">»</a>
   </div>
-
 
   <div class="board-search">
     <select id="search-type">
@@ -113,6 +105,7 @@
     <button>검색</button>
   </div>
 </div>
+
 <script>
   const params = new URLSearchParams(window.location.search);
   const success = params.get('success');
