@@ -99,4 +99,11 @@ public class AdminBoardService {
       .map(AdminAttachFileDto::fromEntity)
       .toList();
   }
+
+  public List<AdminBoardDto> getRecentBoardList() {
+    return boardRepository.findTop5ByOrderByCreatedDateDesc()
+      .stream()
+      .map(AdminBoardDto::fromEntity)
+      .toList();
+  }
 }

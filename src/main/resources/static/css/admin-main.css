@@ -153,6 +153,15 @@ iframe {
     color: #777;
 }
 
+.ellipsis {
+    white-space: nowrap;        /* 한 줄로 표시 */
+    overflow: hidden;           /* 넘치는 부분 숨김 */
+    text-overflow: ellipsis;    /* 넘치는 부분에 ... 표시 */
+    max-width: 200px;           /* 적절한 최대 너비 지정 */
+    display: inline-block;      /* block or inline-block 필수 */
+}
+
+
 /* 게시글 리스트 */
 .scroll-box {
     max-height: 200px;

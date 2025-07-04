@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface NewsRepository extends JpaRepository<News, Long> {
@@ -29,4 +31,6 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     Page<News> findByCategoryAndMediaCompanyAndIs_blindFalse(@Param("category") NewsCategory newsCategory, @Param("mediaCompany") NewsMediaCompany mediaCompany, Pageable pageable);
     void deleteByTitle(String title);
     Optional<News> findByTitle(String title);
+
+    List<News> findTop5ByOrderByPublishDateDesc();
 }
