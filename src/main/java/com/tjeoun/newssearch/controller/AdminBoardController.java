@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.controller;
 
+import com.tjeoun.newssearch.dto.AdminAttachFileDto;
 import com.tjeoun.newssearch.dto.AdminBoardDto;
 import com.tjeoun.newssearch.service.AdminBoardService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -45,8 +49,10 @@ public class AdminBoardController {
                          @RequestParam(defaultValue = "ALL") String category,
                          Model model) {
     AdminBoardDto dto = adminBoardService.getBoardDto(id);
+    List<AdminAttachFileDto> files = adminBoardService.getAttachFiles(id);
 
     model.addAttribute("board", dto);
+    model.addAttribute("files", files != null ? files : List.of());
     model.addAttribute("page", page);
     model.addAttribute("size", size);
     model.addAttribute("currentCategory", category);
@@ -59,18 +65,19 @@ public class AdminBoardController {
                      @RequestParam int page,
                      @RequestParam int size,
                      @RequestParam String category,
-                     //@ModelAttribute AdminBoardDto dto,
-                     @RequestParam(value = "file", required = false) MultipartFile file) {
-    if (file != null && !file.isEmpty()) {
-      log.info("파일 이름: {}", file.getOriginalFilename());
-      log.info("파일 크기: {} bytes", file.getSize());
-      log.info("Content-Type: {}", file.getContentType());
-    } else {
-      log.info("파일이 첨부되지 않았습니다.");
+                     @ModelAttribute AdminBoardDto dto,
+                     @RequestParam(value = "files", required = false) List<MultipartFile> files,
+                     RedirectAttributes redirectAttributes) {
+
+    try {
+      adminBoardService.updateBoardWithFiles(id, dto, files);
+    } catch (Exception e) {
+      log.error("파일 업로드 실패", e);
+      redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드 실패: " + e.getMessage());
     }
-    //adminBoardService.updateBoard(id, dto);
     return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + category;
   }
+
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {

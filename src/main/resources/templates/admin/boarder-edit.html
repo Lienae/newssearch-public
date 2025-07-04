@@ -75,14 +75,20 @@
             <span th:text="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}" class="readonly-text"></span>
         </div>
 
-        <div class="form-group">
-            <label for="file">파일 첨부</label>
-            <input type="file" id="file" name="file" accept="image/*" />
-            <small style="color: #666;">이미지 파일만 첨부 가능합니다.</small>
+      <div class="form-group">
+        <label for="file">파일 첨부</label>
+        <input type="file" id="file" name="files" multiple accept="image/*" onchange="showSelectedFiles(this)" />
+        <div id="selectedFiles">
+          <div th:if="${#lists.isEmpty(files)}">등록된 파일 없음</div>
+          <ul th:if="${!#lists.isEmpty(files)}">
+            <li th:each="file : ${files}" th:text="${file.fileName}"></li>
+          </ul>
         </div>
 
+        <small style="color: #666;">이미지 파일 여러 개를 한 번에 선택할 수 있습니다.</small>
+      </div>
 
-        <div class="form-actions">
+      <div class="form-actions">
             <button type="button"
                     class="cancel-btn"
                     th:attr="data-url=@{/admin/boarders/list(page=${page}, size=${size}, category=${currentCategory})}"
@@ -100,11 +106,21 @@
 </div>
 
 <script>
-    function submitDeleteForm() {
-        if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
-            document.getElementById('deleteForm').submit();
-        }
+  function showSelectedFiles(input) {
+    const fileListDiv = document.getElementById('selectedFiles');
+    fileListDiv.innerHTML = ''; // 기존 내용 지우기
+
+    if (input.files.length > 0) {
+      Array.from(input.files).forEach(file => {
+        const p = document.createElement('p');
+        p.textContent = file.name;
+        fileListDiv.appendChild(p);
+      });
+    } else {
+      fileListDiv.textContent = '등록된 파일 없음';
     }
+  }
 </script>
+
 </body>
 </html>
