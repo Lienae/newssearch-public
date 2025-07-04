@@ -121,7 +121,7 @@ public class BoardTest {
                 .member(saveMember)
                 .password(password)
                 .build();
-        BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto, passwordEncoder);
+        BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto);
 
         // when
         BoardReply saveBoardReply = boardReplyRepository.save(boardReply);
@@ -132,7 +132,6 @@ public class BoardTest {
             assertEquals(saveBoardReply.getContent(), loadBoardReply.getContent());
             assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
             assertEquals(saveBoardReply.getMember(), loadBoardReply.getMember());
-            assertEquals(saveBoardReply.getPassword(), loadBoardReply.getPassword());
             assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
 
         }).doesNotThrowAnyException();

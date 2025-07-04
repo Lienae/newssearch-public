@@ -1,7 +1,8 @@
 package com.tjeoun.newssearch.dto;
 
-import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.News;
+import com.tjeoun.newssearch.enums.EmoticonEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class BoardReplyDto {
+public class EmoticonDto {
     private Long id;
-    private String content;
-    private Board board;
     private Member member;
-    private String password;
-    private Boolean isBlind;
+    private News news;
+    private EmoticonEnum emoticonEnum;
 }
