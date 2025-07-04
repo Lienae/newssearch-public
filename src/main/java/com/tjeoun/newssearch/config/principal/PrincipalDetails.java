@@ -31,20 +31,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !member.getRole().equals(UserRole.SUSPENDED);
-    }
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+        return !member.getRole().equals(UserRole.WITHDRAWAL);
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

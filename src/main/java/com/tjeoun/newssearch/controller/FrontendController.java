@@ -82,15 +82,15 @@ public class FrontendController {
 //    return "member/mypage";
 //  }
 
-  @GetMapping("/member/find-password")
-  public String findPassword() {
-    return "member/find-password";
-  }
-
-  @GetMapping("/member/find-password-sent")
-  public String findPasswordSent() {
-    return "member/find-password-sent";
-  }
+//  @GetMapping("/member/find-password")
+//  public String findPassword() {
+//    return "member/find-password";
+//  }
+//
+//  @GetMapping("/member/find-password-sent")
+//  public String findPasswordSent() {
+//    return "member/find-password-sent";
+//  }
 
   @GetMapping("/member/delete-user")
   public String deleteUser() {

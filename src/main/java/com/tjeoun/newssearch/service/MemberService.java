@@ -4,6 +4,7 @@ import com.tjeoun.newssearch.dto.MailDto;
 import com.tjeoun.newssearch.dto.SignUpDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.entity.PasswordToken;
+import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.repository.PasswordTokenRepository;
 import jakarta.mail.MessagingException;
@@ -36,7 +37,7 @@ public class MemberService {
         if(memberRepository.existsByEmail(signUpDto.getEmail())) throw new IllegalStateException("이미 사용중인 이메일입니다.");
     }
     public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + "user not found"));
+        return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일과 연결된 계정이 없습니다."));
     }
     public void update(SignUpDto signUpDto) {
         Member member = findByEmail(signUpDto.getEmail());
@@ -81,5 +82,12 @@ public class MemberService {
             memberRepository.save(memberFromDto);
             passwordTokenRepository.deleteByToken(token);
         } else throw new IllegalStateException("계정이 일치하지 않습니다. 다시 시도해주세요.");
+    }
+    public void withdrawl(String email, String password) {
+        Member member = findByEmail(email);
+        if(passwordEncoder.matches(password, member.getPassword())) {
+            member.setRole(UserRole.WITHDRAWAL);
+            memberRepository.save(member);
+        } else throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
     }
 }

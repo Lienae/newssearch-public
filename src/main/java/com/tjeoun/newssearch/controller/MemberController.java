@@ -5,8 +5,13 @@ import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.service.MemberService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -94,6 +99,29 @@ public class MemberController {
         } catch (IllegalStateException e) {
             model.addAttribute("errormsg", e.getMessage());
             return "member/find-password";
+        }
+    }
+
+    @GetMapping("/withdrawal")
+    public String withdrawal() {
+        return "member/delete-user";
+    }
+    @PostMapping("/withdrawal")
+    public String withdrawal(@RequestParam String email,
+                             @RequestParam String password,
+                             Model model,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            if(authentication != null) {
+                memberService.withdrawl(email, password);
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+            }
+            return "redirect:/";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errormsg", e.getMessage());
+            return "member/delete-user";
         }
     }
 }
