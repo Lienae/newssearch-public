@@ -13,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminNewsService {
 
   private final NewsRepository newsRepository;
+  private final AttachFileService attachFileService;
 
   public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany) {
     Page<News> news;
@@ -47,15 +51,35 @@ public class AdminNewsService {
   }
 
   @Transactional
-  public void updateNews(Long id, AdminNewsDto dto) {
+  public void updateNewsWithFile(Long id, AdminNewsDto dto, MultipartFile file) throws Exception {
     News news = newsRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("News not found"));
     news.setTitle(dto.getTitle());
     news.setContent(dto.getContent());
     news.setCategory(dto.getCategory());
     news.setMediaCompany(dto.getMediaCompany());
-    news.setImageUrl(dto.getImageUrl());
+    // news.setImageUrl(dto.getImageUrl());
     news.setUrl(dto.getUrl());
+
+    // 기존 이미지 파일 삭제 (파일명 추출은 imageUrl에서 경로 분리 필요)
+    if (news.getImageUrl() != null && file != null && !file.isEmpty()) {
+      String oldFileName = extractFileNmaeFromUrl(news.getImageUrl());
+      attachFileService.deleteFile(oldFileName);
+    }
+
+    // 새 이미지 파일 저장
+    if (file != null && !file.isEmpty()) {
+      String serverFilename = attachFileService.saveFile(file.getOriginalFilename(), file.getBytes());
+      String imageUrl = "/images/upload/" + serverFilename;
+      news.setImageUrl(imageUrl);
+    }
+
+  }
+
+  private String extractFileNmaeFromUrl(String imageUrl) {
+    if (imageUrl == null) return null;
+    int idx = imageUrl.lastIndexOf("/");
+    return idx >= 0 ? imageUrl.substring(idx + 1) : imageUrl;
   }
 
   @Transactional

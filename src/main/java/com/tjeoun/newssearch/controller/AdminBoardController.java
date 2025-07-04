@@ -62,21 +62,21 @@ public class AdminBoardController {
 
   @PostMapping("/edit/{id}")
   public String edit(@PathVariable Long id,
-                     @RequestParam int page,
-                     @RequestParam int size,
-                     @RequestParam String category,
+                     @RequestParam("page") int page,
+                     @RequestParam("size") int size,
+                     @RequestParam("filterCategory") String currentCategory,
                      @ModelAttribute AdminBoardDto dto,
                      @RequestParam(value = "files", required = false) List<MultipartFile> files,
                      RedirectAttributes redirectAttributes) {
-
     try {
       adminBoardService.updateBoardWithFiles(id, dto, files);
     } catch (Exception e) {
-      log.error("파일 업로드 실패", e);
-      redirectAttributes.addFlashAttribute("errorMessage", "파일 업로드 실패: " + e.getMessage());
+      log.error("게시글 수정 실패", e);
+      redirectAttributes.addFlashAttribute("errorMessage", "게시글 수정 실패: " + e.getMessage());
     }
-    return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + category;
+    return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + currentCategory;
   }
+
 
 
   @PostMapping("/delete/{id}")

@@ -1,18 +1,13 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.AdminNewsDto;
-import com.tjeoun.newssearch.entity.News;
-import com.tjeoun.newssearch.enums.NewsCategory;
-import com.tjeoun.newssearch.enums.NewsMediaCompany;
-import com.tjeoun.newssearch.repository.NewsRepository;
 import com.tjeoun.newssearch.service.AdminNewsService;
-import com.tjeoun.newssearch.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/admin/news")
@@ -57,13 +52,15 @@ public class AdminNewsController {
   public String edit(@PathVariable Long id,
                      @RequestParam int page,
                      @RequestParam int size,
-                     @RequestParam String category,
-                     @RequestParam String mediaCompany,
-                     @ModelAttribute AdminNewsDto dto){
-    adminNewsService.updateNews(id, dto);
+                     @RequestParam("filterCategory") String filterCategory,
+                     @RequestParam("filterMediaCompany") String filterMediaCompany,
+                     @ModelAttribute AdminNewsDto dto,
+                     @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
+    adminNewsService.updateNewsWithFile(id, dto, file);
     return "redirect:/admin/news/list?page=" + page + "&size=" + size +
-      "&category=" + category + "&mediaCompany=" + mediaCompany;
+      "&category=" + filterCategory  + "&mediaCompany=" + filterMediaCompany;
   }
+
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
