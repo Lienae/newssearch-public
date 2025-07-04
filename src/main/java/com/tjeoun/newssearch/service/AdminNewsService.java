@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminNewsService {
 
@@ -36,13 +37,13 @@ public class AdminNewsService {
       );
     }
 
-    return news.map(AdminNewsDto::convertToDto);
+    return news.map(AdminNewsDto::fromEntity);
   }
 
   public AdminNewsDto getNewsDto(Long id) {
     News news = newsRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("News not found"));
-    return AdminNewsDto.convertToDto(news);
+    return AdminNewsDto.fromEntity(news);
   }
 
   @Transactional

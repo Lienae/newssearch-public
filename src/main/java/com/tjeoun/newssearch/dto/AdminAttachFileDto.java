@@ -13,11 +13,13 @@ import lombok.NoArgsConstructor;
 public class AdminAttachFileDto {
   private String fileName;
   private Long fileSize;
+  private String serverFilename;
 
   public static AdminAttachFileDto fromEntity(AttachFile file) {
     return AdminAttachFileDto.builder()
       .fileName(file.getOriginalFilename())
       .fileSize(file.getSize())
+      .serverFilename(file.getServerFilename())
       .build();
   }
 }

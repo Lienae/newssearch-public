@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class AdminBoardDto {
   private Boolean is_blind; // boolean 타입은 null 값을 허용하지 않음
   // private Boolean isAdmin;
 
-  public static AdminBoardDto convertToDto(Board board) {
+  public static AdminBoardDto fromEntity(Board board) {
     return AdminBoardDto.builder()
       .id(board.getId())
       .title(board.getTitle())

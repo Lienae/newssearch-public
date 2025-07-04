@@ -23,7 +23,7 @@ public class AdminNewsDto {
   private NewsCategory category;
   private NewsMediaCompany mediaCompany;
 
-  public static AdminNewsDto convertToDto(News news) {
+  public static AdminNewsDto fromEntity(News news) {
     return AdminNewsDto.builder()
       .id(news.getId())
       .url(news.getUrl())

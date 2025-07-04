@@ -3,13 +3,14 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminMemberService {
 
@@ -17,14 +18,14 @@ public class AdminMemberService {
 
   public Page<AdminMemberDto> getMembers(int page, int size) {
     Page<Member> members = memberRepository.findByIs_blindFalse(PageRequest.of(page, size));
-    return members.map(AdminMemberDto::convertToDto);
+    return members.map(AdminMemberDto::fromEntity);
   }
 
   public AdminMemberDto getMemberDto(Long id) {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    return AdminMemberDto.convertToDto(member);
+    return AdminMemberDto.fromEntity(member);
   }
 
   @Transactional

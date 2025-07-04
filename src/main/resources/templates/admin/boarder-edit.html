@@ -81,10 +81,15 @@
         <div id="selectedFiles">
           <div th:if="${#lists.isEmpty(files)}">등록된 파일 없음</div>
           <ul th:if="${!#lists.isEmpty(files)}">
-            <li th:each="file : ${files}" th:text="${file.fileName}"></li>
+            <li th:each="file : ${files}">
+              <span th:text="${file.fileName}"></span><br />
+              <img th:src="@{'/images/upload/' + ${file.serverFilename}}"
+                   alt="첨부 이미지"
+                   style="max-width: 150px; max-height: 150px; margin-top: 5px;" />
+
+            </li>
           </ul>
         </div>
-
         <small style="color: #666;">이미지 파일 여러 개를 한 번에 선택할 수 있습니다.</small>
       </div>
 

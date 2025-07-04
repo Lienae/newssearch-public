@@ -20,8 +20,8 @@ import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AdminBoardService {
 
   private final BoardRepository boardRepository;
@@ -36,14 +36,14 @@ public class AdminBoardService {
       boards = boardRepository.findByNewsCategoryAndIs_blindFalse(
         NewsCategory.valueOf(category), PageRequest.of(page, size));
     }
-    return boards.map(AdminBoardDto::convertToDto);
+    return boards.map(AdminBoardDto::fromEntity);
   }
 
   public AdminBoardDto getBoardDto(Long id) {
     Board board = boardRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
 
-    return AdminBoardDto.convertToDto(board);
+    return AdminBoardDto.fromEntity(board);
   }
 
   @Transactional
