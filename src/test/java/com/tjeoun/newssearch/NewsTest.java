@@ -118,13 +118,10 @@ public class NewsTest {
                         passwordEncoder)
         );
         NewsReply newsReply = NewsReply.createNewsReply(
-                NewsReplyDto.builder()
-                        .content(content)
-                        .news(savedNews)
-                        .member(savedMember)
-                        .password(password)
-                        .build(),
-                passwordEncoder
+                content,       // 댓글 내용
+                savedNews,     // DB에서 조회한 News
+                savedMember,   // DB에서 조회한 Member
+                password       // 테스트용 비밀번호
         );
         // when
         NewsReply savedNewsReply = newsReplyRepository.save(newsReply);

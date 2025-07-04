@@ -56,10 +56,10 @@ public class FrontendController {
     return "boarder/boarder-detail";
   }
 
-  @GetMapping("/news/list")
-  public String newsList() {
-    return "news/news-list";
-  }
+//  @GetMapping("/news/list")
+//  public String newsList() {
+//    return "news/news-list";
+//  }
 
   @GetMapping("/error")
   public String error404() {

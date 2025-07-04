@@ -1,0 +1,72 @@
+package com.tjeoun.newssearch.service;
+
+import com.tjeoun.newssearch.dto.NewsReplyDto;
+import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.News;
+import com.tjeoun.newssearch.entity.NewsReply;
+import com.tjeoun.newssearch.repository.MemberRepository;
+import com.tjeoun.newssearch.repository.NewsReplyRepository;
+import com.tjeoun.newssearch.repository.NewsRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class NewsCommentService {
+
+    private final NewsReplyRepository newsReplyRepository;
+    private final NewsRepository newsRepository;
+    private final MemberRepository memberRepository;
+
+    @Transactional
+    public NewsReplyDto addComment(NewsReplyDto dto, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+
+        // URL 기준으로 뉴스 검색
+        News news = newsRepository.findById(dto.getNewsId())
+                .orElseThrow(() -> new RuntimeException("뉴스 없음"));
+
+        NewsReply reply = NewsReply.builder()
+                .member(member)
+                .news(news)
+                .content(dto.getContent())
+                .password("1234") // 테스트용 비밀번호
+                .build();
+
+        newsReplyRepository.save(reply);
+        return new NewsReplyDto(reply);
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+
+        NewsReply reply = newsReplyRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("댓글 없음"));
+
+        if (!reply.getMember().getId().equals(member.getId())) {
+            throw new RuntimeException("본인 댓글만 삭제할 수 있습니다.");
+        }
+
+        // soft delete 처리 (isBlind 필드 필요)
+        reply.setBlind(true);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsReplyDto> findCommentsByNewsUrl(String url) {
+        News news = newsRepository.findByUrl(url)
+                .orElseThrow(() -> new RuntimeException("해당 뉴스 URL이 존재하지 않습니다."));
+
+        List<NewsReply> replies = newsReplyRepository.findByNewsAndIsBlindFalse(news);
+        return replies.stream()
+                .map(NewsReplyDto::new)
+                .collect(Collectors.toList());
+    }
+
+}

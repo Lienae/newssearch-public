@@ -42,15 +42,18 @@ public class NewsReply {
     @CreatedDate
     private LocalDateTime createdDate;
 
+    @Column(nullable = false)
+    private boolean isBlind = false;
+
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    public static NewsReply createNewsReply(NewsReplyDto dto, PasswordEncoder passwordEncoder) {
+    public static NewsReply createNewsReply(String content, News news, Member member, String password) {
         return NewsReply.builder()
-                .content(dto.getContent())
-                .news(dto.getNews())
-                .member(dto.getMember())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .content(content)
+                .news(news)
+                .member(member)
+                .password(password)
                 .build();
     }
 }
