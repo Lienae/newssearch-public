@@ -104,6 +104,11 @@
 </div>
 
 <script>
+    function submitDeleteForm() {
+        if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
   function showSelectedFiles(input) {
     const fileListDiv = document.getElementById('selectedFiles');
     fileListDiv.innerHTML = ''; // 기존 내용 지우기

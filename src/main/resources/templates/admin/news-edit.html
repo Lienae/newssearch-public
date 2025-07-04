@@ -87,6 +87,7 @@
 
     <div class="form-actions">
       <button type="submit" class="submit-btn">수정</button>
+      <button type="button" class="delete-btn" onclick="submitDeleteForm()">삭제</button>
     </div>
   </form>
 
@@ -98,7 +99,7 @@
 
 <script>
   function submitDeleteForm() {
-    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+    if (confirm('정말로 이 뉴스를 삭제하시겠습니까?')) {
       document.getElementById('deleteForm').submit();
     }
   }

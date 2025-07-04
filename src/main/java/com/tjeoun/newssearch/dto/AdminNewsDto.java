@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ public class AdminNewsDto {
   private String title;
   private String imageUrl;
   private String content;
-  private LocalDateTime publishDate;
+  private LocalDate publishDate;
   private String author;
   private NewsCategory category;
   private NewsMediaCompany mediaCompany;
