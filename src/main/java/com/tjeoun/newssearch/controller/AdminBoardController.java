@@ -74,7 +74,7 @@ public class AdminBoardController {
       log.error("게시글 수정 실패", e);
       redirectAttributes.addFlashAttribute("errorMessage", "게시글 수정 실패: " + e.getMessage());
     }
-    return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + currentCategory;
+    return "redirect:/admin/boarders/list?page=" + page + "&size=" + size + "&category=" + currentCategory + "&success=update";
   }
 
 
@@ -82,6 +82,6 @@ public class AdminBoardController {
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
     adminBoardService.softDeleteBoard(id);
-    return "redirect:/admin/boarders/list";
+    return "redirect:/admin/boarders/list?success=delete";
   }
 }

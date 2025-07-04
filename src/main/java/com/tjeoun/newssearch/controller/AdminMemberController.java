@@ -45,13 +45,13 @@ public class AdminMemberController {
                      @RequestParam int page,
                      @RequestParam int size) {
     adminMemberService.updateMember(id, dto);
-    return "redirect:/admin/members/list?page=" + page + "&size=" + size;
+    return "redirect:/admin/members/list?page=" + page + "&size=" + size + "&success=update";
   }
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
     adminMemberService.softDeleteMember(id);
-    return "redirect:/admin/members/list";
+    return "redirect:/admin/members/list?success=delete";
   }
 }
 

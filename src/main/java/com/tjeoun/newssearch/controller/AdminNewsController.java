@@ -58,14 +58,14 @@ public class AdminNewsController {
                      @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
     adminNewsService.updateNewsWithFile(id, dto, file);
     return "redirect:/admin/news/list?page=" + page + "&size=" + size +
-      "&category=" + filterCategory  + "&mediaCompany=" + filterMediaCompany;
+      "&category=" + filterCategory  + "&mediaCompany=" + filterMediaCompany + "&success=update";
   }
 
 
   @PostMapping("/delete/{id}")
   public String delete(@PathVariable Long id) {
     adminNewsService.softDeleteNews(id);
-    return "redirect:/admin/news/list";
+    return "redirect:/admin/news/list?success=delete";
   }
 }
 
