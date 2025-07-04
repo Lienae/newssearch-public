@@ -77,10 +77,10 @@ public class FrontendController {
 //    return "member/register";
 //  }
 
-  @GetMapping("/member/mypage")
-  public String mypage() {
-    return "member/mypage";
-  }
+//  @GetMapping("/member/mypage")
+//  public String mypage() {
+//    return "member/mypage";
+//  }
 
   @GetMapping("/member/find-password")
   public String findPassword() {

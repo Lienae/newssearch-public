@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/member")
 @RequiredArgsConstructor
@@ -25,9 +27,26 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute(name = "SignUpDto") SignUpDto dto) {
+    public String register(@ModelAttribute(name = "SignUpDto") SignUpDto dto, Model model) {
         dto.setRole(UserRole.USER);
-        memberService.save(dto);
+        try {
+            memberService.save(dto);
+        } catch (IllegalStateException e) {
+            model.addAttribute("errormsg", e.getMessage());
+            return "member/register";
+        }
         return "redirect:/member/login";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(Model model, Principal principal) {
+        model.addAttribute("member", memberService.findByEmail(principal.getName()));
+        return "member/mypage";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute(name = "member") SignUpDto dto) {
+        memberService.update(dto);
+        return "redirect:/";
     }
 }

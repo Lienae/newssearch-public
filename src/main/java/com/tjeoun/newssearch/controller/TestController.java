@@ -3,8 +3,9 @@ package com.tjeoun.newssearch.controller;
 import com.tjeoun.newssearch.dto.MailDto;
 import com.tjeoun.newssearch.service.MailService;
 import com.tjeoun.newssearch.util.CustomMultipartFile;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -12,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-@RestController
+@Controller
 public class TestController {
     private final MailService mailService;
 
@@ -21,13 +22,13 @@ public class TestController {
     }
 
     @GetMapping("/")
-
     public String index() {
-        return "index";
+        return "main";
     }
 
     // 이메일 전송 (첨부파일 포함) 예제
     @GetMapping("/mailtest")
+    @ResponseBody
     public String mailtest()  {
         try {
             // 하드디스크의 파일을 multipartfile로 변환하는 과정
