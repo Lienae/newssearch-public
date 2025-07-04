@@ -14,4 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   @Query("SELECT m FROM Member m WHERE m.is_blind = false")
   Page<Member> findByIs_blindFalse(Pageable pageable);
 
+  Page<Member> findAll(Pageable pageable);
+
 }

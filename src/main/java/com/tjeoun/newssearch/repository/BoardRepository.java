@@ -19,5 +19,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   Page<Board> findByNewsCategoryAndIs_blindFalse(@Param("newsCategory") NewsCategory newsCategory, Pageable pageable);
 
 
+  Page<Board> findAll(Pageable pageable);
+  Page<Board> findByNewsCategory(NewsCategory category, Pageable pageable);
+
+
   List<Board> findTop5ByOrderByCreatedDateDesc();
 }

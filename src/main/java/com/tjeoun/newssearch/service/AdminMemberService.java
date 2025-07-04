@@ -19,9 +19,10 @@ public class AdminMemberService {
 
   public Page<AdminMemberDto> getMembers(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
-    return memberRepository.findByIs_blindFalse(pageable)
+    return memberRepository.findAll(pageable)
       .map(AdminMemberDto::fromEntity);
   }
+
 
 
   public AdminMemberDto getMemberDto(Long id) {

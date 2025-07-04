@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -36,22 +35,21 @@ public class AdminNewsService {
     boolean isAllMedia = "ALL".equals(mediaCompany);
 
     if (isAllCategory && isAllMedia) {
-      news = newsRepository.findByIs_blindFalse(pageable);
+      news = newsRepository.findAll(pageable);
     } else if (!isAllCategory && isAllMedia) {
       NewsCategory newsCategory = NewsCategory.valueOf(category);
-      news = newsRepository.findByCategoryAndIs_blindFalse(newsCategory, pageable);
+      news = newsRepository.findByCategory(newsCategory, pageable);
     } else if (isAllCategory) {
       NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
-      news = newsRepository.findByMediaCompanyAndIs_blindFalse(newsMedia, pageable);
+      news = newsRepository.findByMediaCompany(newsMedia, pageable);
     } else {
       NewsCategory newsCategory = NewsCategory.valueOf(category);
       NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
-      news = newsRepository.findByCategoryAndMediaCompanyAndIs_blindFalse(newsCategory, newsMedia, pageable);
+      news = newsRepository.findByCategoryAndMediaCompany(newsCategory, newsMedia, pageable);
     }
 
     return news.map(AdminNewsDto::fromEntity);
   }
-
 
   public AdminNewsDto getNewsDto(Long id) {
     News news = newsRepository.findById(id)
@@ -67,22 +65,18 @@ public class AdminNewsService {
     news.setContent(dto.getContent());
     news.setCategory(dto.getCategory());
     news.setMediaCompany(dto.getMediaCompany());
-    // news.setImageUrl(dto.getImageUrl());
     news.setUrl(dto.getUrl());
 
-    // 기존 이미지 파일 삭제 (파일명 추출은 imageUrl에서 경로 분리 필요)
     if (news.getImageUrl() != null && file != null && !file.isEmpty()) {
       String oldFileName = extractFileNmaeFromUrl(news.getImageUrl());
       attachFileService.deleteFile(oldFileName);
     }
 
-    // 새 이미지 파일 저장
     if (file != null && !file.isEmpty()) {
       String serverFilename = attachFileService.saveFile(file.getOriginalFilename(), file.getBytes());
       String imageUrl = "/images/upload/" + serverFilename;
       news.setImageUrl(imageUrl);
     }
-
   }
 
   private String extractFileNmaeFromUrl(String imageUrl) {

@@ -22,6 +22,7 @@ public class AdminNewsDto {
   private String author;
   private NewsCategory category;
   private NewsMediaCompany mediaCompany;
+  private Boolean is_blind;
 
   public static AdminNewsDto fromEntity(News news) {
     return AdminNewsDto.builder()
@@ -34,6 +35,7 @@ public class AdminNewsDto {
       .author(news.getAuthor())
       .category(news.getCategory())
       .mediaCompany(news.getMediaCompany())
+      .is_blind(news.is_blind())
       .build();
   }
 }

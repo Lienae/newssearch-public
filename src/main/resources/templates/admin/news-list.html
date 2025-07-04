@@ -70,17 +70,20 @@
       <th>언론사</th>
       <th>작성자</th>
       <th>발행일</th>
+      <th>Blind 여부</th>
       <th>관리</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="news : ${newsPage.content}">
+    <tr th:each="news : ${newsPage.content}"
+        th:classappend="${news.is_blind} ? 'blind-row' : ''">
       <td th:text="${news.id}">1</td>
       <td th:text="${news.title}">첫 뉴스 제목</td>
       <td th:text="${news.category}">POLITICS</td>
       <td th:text="${news.mediaCompany}">YTN</td>
       <td th:text="${news.author}">홍길동</td>
       <td th:text="${#temporals.format(news.publishDate, 'yyyy-MM-dd')}">2025-07-01</td>
+      <td th:text="${news.is_blind} ? 'Y' : 'N'">N</td>
       <td>
         <a th:href="@{/admin/news/edit(id=${news.id}, page=${page}, size=${size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">
           수정

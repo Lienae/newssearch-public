@@ -150,7 +150,10 @@ th:nth-child(1) {
 .board-table tr:hover {
   background-color: #f3f3f3;
 }
-
+.blind-row {
+  background-color: #f5f5f5;
+  color: #999;
+}
 .board-table a {
   text-decoration: none;
   color: #333;

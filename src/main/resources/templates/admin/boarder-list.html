@@ -52,16 +52,19 @@
       <th>카테고리</th>
       <th>작성자 ID</th>
       <th>작성일</th>
+      <th>Blind 여부</th>
       <th>관리</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="board : ${boardPage.content}">
+    <tr th:each="board : ${boardPage.content}"
+        th:classappend="${board.is_blind} ? 'blind-row' : ''">
       <td th:text="${board.id}">1</td>
       <td th:text="${board.title}">첫 게시글 제목</td>
       <td th:text="${board.newsCategory}">POLITICS</td>
       <td th:text="${board.authorId}">101</td>
       <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</td>
+      <td th:text="${board.is_blind ? 'Y' : 'N'}">N</td>
       <td>
         <a th:href="@{/admin/boarders/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}">
           수정
@@ -82,12 +85,12 @@
         T(java.lang.Math).max(0, boardPage.number - 2),
         T(java.lang.Math).min(boardPage.totalPages - 1, boardPage.number + 2)
       )}">
-        <a class="btn" th:if="${i != boardPage.number}"
-           th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
-           th:text="${i + 1}"></a>
-        <a class="btn active disabled" th:if="${i == boardPage.number}"
-           th:text="${i + 1}"></a>
-      </span>
+      <a class="btn" th:if="${i != boardPage.number}"
+         th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
+         th:text="${i + 1}"></a>
+      <a class="btn active disabled" th:if="${i == boardPage.number}"
+         th:text="${i + 1}"></a>
+    </span>
 
     <a class="btn" th:if="${!boardPage.last}"
        th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">

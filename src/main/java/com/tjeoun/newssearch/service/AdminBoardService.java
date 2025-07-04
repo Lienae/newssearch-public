@@ -34,14 +34,15 @@ public class AdminBoardService {
     Page<Board> boards;
 
     if ("ALL".equals(category)) {
-      boards = boardRepository.findByIs_blindFalse(pageable);
+      boards = boardRepository.findAll(pageable); // blind 관계없이 전체
     } else {
       NewsCategory newsCategory = NewsCategory.valueOf(category);
-      boards = boardRepository.findByNewsCategoryAndIs_blindFalse(newsCategory, pageable);
+      boards = boardRepository.findByNewsCategory(newsCategory, pageable); // blind 관계없이
     }
 
     return boards.map(AdminBoardDto::fromEntity);
   }
+
 
 
   public AdminBoardDto getBoardDto(Long id) {

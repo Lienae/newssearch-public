@@ -32,5 +32,14 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     void deleteByTitle(String title);
     Optional<News> findByTitle(String title);
 
+    Page<News> findAll(Pageable pageable);
+
+    Page<News> findByCategory(NewsCategory category, Pageable pageable);
+
+    Page<News> findByMediaCompany(NewsMediaCompany mediaCompany, Pageable pageable);
+
+    Page<News> findByCategoryAndMediaCompany(NewsCategory category, NewsMediaCompany mediaCompany, Pageable pageable);
+
+
     List<News> findTop5ByOrderByPublishDateDesc();
 }
