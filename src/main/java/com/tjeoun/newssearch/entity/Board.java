@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -51,20 +53,27 @@ public class Board {
     private NewsCategory newsCategory;
 
     @Column(nullable = false)
-    private boolean is_blind;
+    private Boolean isBlind;
 
     @Column(nullable = false)
-    private boolean is_admin_article;
+    private boolean isAdminArticle;
 
-    public static Board createBoard(BoardDto dto, PasswordEncoder passwordEncoder) {
+
+
+    public static Board createBoard(BoardDto dto) {
+
+
+        System.out.println("DEBUG: author = " + dto.getAuthor());
+        System.out.println("DEBUG: author pw = " + dto.getAuthor().getPassword());
         return Board.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .author(dto.getAuthor())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .password(dto.getPassword() != null ? dto.getPassword() : "mockpw")
                 .newsCategory(dto.getNewsCategory())
-                .is_admin_article(Boolean.TRUE.equals(dto.getIsAdminArticle()))
+                .isAdminArticle(Boolean.TRUE.equals(dto.getIsAdminArticle()))
+                .isBlind(false)
                 .build();
     }
 }

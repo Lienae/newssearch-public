@@ -59,7 +59,7 @@ public class BoardTest {
                 .password(password)
                 .newsCategory(NewsCategory.POLITICS)
                 .build();
-        Board board = Board.createBoard(boardDto, passwordEncoder);
+        Board board = Board.createBoard(boardDto);
         BoardDto adminBoardDto = BoardDto.builder()
                 .title(title)
                 .content(content)
@@ -68,7 +68,7 @@ public class BoardTest {
                 .newsCategory(NewsCategory.POLITICS)
                 .isAdminArticle(true)
                 .build();
-        Board adminBoard = Board.createBoard(adminBoardDto, passwordEncoder);
+        Board adminBoard = Board.createBoard(adminBoardDto);
 
         // when
         Board saveBoard = boardRepository.save(board);
@@ -80,9 +80,9 @@ public class BoardTest {
             assertEquals(saveBoard.getContent(), loadBoard.getContent());
             assertEquals(saveBoard.getAuthor(), loadBoard.getAuthor());
             assertEquals(saveBoard.getPassword(), loadBoard.getPassword());
-            assertFalse(saveBoard.is_blind());
-            assertFalse(saveBoard.is_admin_article());
-            assertTrue(saveAdminBoard.is_admin_article());
+            assertFalse(saveBoard.getIsBlind());
+            assertFalse(saveBoard.isAdminArticle());
+            assertTrue(saveAdminBoard.isAdminArticle());
         }).doesNotThrowAnyException();
     }
     @Test
@@ -112,7 +112,7 @@ public class BoardTest {
                 .password(password)
                 .newsCategory(NewsCategory.POLITICS)
                 .build();
-        Board board = Board.createBoard(boardDto, passwordEncoder);
+        Board board = Board.createBoard(boardDto);
         Board saveBoard = boardRepository.save(board);
 
         BoardReplyDto boardReplyDto = BoardReplyDto.builder()
@@ -121,7 +121,7 @@ public class BoardTest {
                 .member(saveMember)
                 .password(password)
                 .build();
-        BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto, passwordEncoder);
+        BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto);
 
         // when
         BoardReply saveBoardReply = boardReplyRepository.save(boardReply);
@@ -132,7 +132,6 @@ public class BoardTest {
             assertEquals(saveBoardReply.getContent(), loadBoardReply.getContent());
             assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
             assertEquals(saveBoardReply.getMember(), loadBoardReply.getMember());
-            assertEquals(saveBoardReply.getPassword(), loadBoardReply.getPassword());
             assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
 
         }).doesNotThrowAnyException();

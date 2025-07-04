@@ -53,7 +53,7 @@ public class AttachFileTest {
                 .author(member)
                 .password("test")
                 .newsCategory(NewsCategory.CULTURE)
-                .build(), passwordEncoder);
+                .build());
         boardRepository.save(board);
 
         AttachFileDto dto = AttachFileDto.builder()

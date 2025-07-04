@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,14 +28,13 @@
     이 게시판은 기사와 관련된 의견 및 게시글을 작성하는 곳입니다.
   </p>
 
-  <form class="post-form" method="POST" enctype="multipart/form-data">
+  <form th:action="@{/boarder}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
     <div class="form-group">
-      <label for="news_category">뉴스 카테고리</label>
+      <label for="newsCategory">뉴스 카테고리</label>
       <input
               type="text"
-              id="news_category"
-              name="news_category"
-              value="정치"
+              id="newsCategory"
+              th:field="*{newsCategory}"
               readonly
               class="readonly-input"
       />
@@ -58,7 +57,7 @@
       <input
               type="text"
               id="title"
-              name="title"
+              th:field="*{title}"
               placeholder="제목을 입력하세요."
       />
     </div>
@@ -67,19 +66,20 @@
       <label for="content">내용</label>
       <textarea
               id="content"
-              name="content"
+              th:field="*{content}"
               rows="10"
               placeholder="내용을 입력하세요."
       ></textarea>
     </div>
 
     <div class="form-group">
-      <label for="file">파일 첨부</label>
+      <label for="files">파일 첨부</label>
       <input
               type="file"
-              id="file"
-              name="file"
+              id="files"
+              name="files"
               accept="image/*"
+              multiple
       />
       <small style="color: #666;">이미지 파일만 첨부 가능합니다.</small>
     </div>
@@ -89,7 +89,7 @@
 <!--    </div>-->
 
     <div class="form-actions">
-      <button type="button" class="cancel-btn">취소</button>
+      <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
       <button type="submit" class="submit-btn">등록</button>
     </div>
   </form>

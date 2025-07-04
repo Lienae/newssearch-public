@@ -41,16 +41,24 @@ public class BoardReply {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    // DB에서 직접 삭제하고 싶었는데 실행할 때마다 새로 생성되어서 null 허용했습니다
+    @Column(nullable = true)
     private String password;
 
-    public static BoardReply createBoardReply(BoardReplyDto dto, PasswordEncoder passwordEncoder) {
+
+    // 임의로 넣었습니다
+    @Column(nullable = false)
+    private Boolean isBlind;
+
+
+
+    public static BoardReply createBoardReply(BoardReplyDto dto) {
         return BoardReply.builder()
                 .id(dto.getId())
                 .board(dto.getBoard())
                 .member(dto.getMember())
                 .content(dto.getContent())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .isBlind(false) // 댓글 생성 시 기본은 false
                 .build();
     }
 }
