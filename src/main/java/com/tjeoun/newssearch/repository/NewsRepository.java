@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface NewsRepository extends JpaRepository<News, Long> {
     boolean existsByUrl(String url);
 
@@ -25,4 +27,6 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
     @Query("SELECT n FROM News n WHERE n.category = :category AND n.mediaCompany = :mediaCompany AND n.is_blind = false")
     Page<News> findByCategoryAndMediaCompanyAndIs_blindFalse(@Param("category") NewsCategory newsCategory, @Param("mediaCompany") NewsMediaCompany mediaCompany, Pageable pageable);
+    void deleteByTitle(String title);
+    Optional<News> findByTitle(String title);
 }

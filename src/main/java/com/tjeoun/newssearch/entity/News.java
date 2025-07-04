@@ -7,7 +7,9 @@ import com.tjeoun.newssearch.enums.NewsMediaCompany;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Entity
 @Data
@@ -19,7 +21,7 @@ public class News {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String url;
 
     @Column(nullable = false)
@@ -32,7 +34,7 @@ public class News {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime publishDate;
+    private LocalDate publishDate;
 
     @Column
     private String author;
@@ -74,4 +76,36 @@ public class News {
                 .mediaCompany(dto.getMediaCompany())
                 .build();
     }
+    public static News createNewsFromMap(Map<String, String> article) {
+        return News.builder()
+                .url(article.get("링크"))
+                .title(article.get("제목"))
+                .imageUrl(article.get("대표이미지"))
+                .content(article.get("내용"))
+                // 날짜 정보만 사용할 것이므로 시간정보는 00:00:00으로 통일하여 기록
+                .publishDate(
+                        LocalDate.parse(
+                                article.get("날짜"),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        ))
+                .author(article.get("기자명"))
+                .category(switch(article.get("카테고리")) {
+                    case "정치" -> NewsCategory.POLITICS;
+                    case "경제" -> NewsCategory.ECONOMY;
+                    case "사회" -> NewsCategory.SOCIAL;
+                    case "문화" -> NewsCategory.CULTURE;
+                    case "스포츠" -> NewsCategory.SPORTS;
+                    default -> NewsCategory.MISC;
+                })
+                .mediaCompany(switch(article.get("언론사")) {
+                    case "한겨레" -> NewsMediaCompany.HANI;
+                    case "중앙일보" -> NewsMediaCompany.JOONGANG;
+                    case "동아일보" -> NewsMediaCompany.DONGA;
+                    case "YTN" -> NewsMediaCompany.YTN;
+                    default -> NewsMediaCompany.KHAN;
+                })
+                .build();
+
+    }
+
 }
