@@ -7,7 +7,7 @@ import com.tjeoun.newssearch.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Component
 public class MockNewsFactory {
@@ -19,7 +19,7 @@ public class MockNewsFactory {
     public News createNews() {
         return newsRepository.save(
                 News.builder()
-                        .publishDate(LocalDateTime.now())
+                        .publishDate(LocalDate.now())
                         .author("test")
                         .content("text")
                         .imageUrl("test/url/file.jpg")

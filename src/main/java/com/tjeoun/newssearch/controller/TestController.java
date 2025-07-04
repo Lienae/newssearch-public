@@ -2,39 +2,28 @@ package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.service.NewsCrawlerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-@Controller
+@RestController
+@RequestMapping("/api/test")
 @RequiredArgsConstructor
 public class TestController {
     private final NewsCrawlerService newsCrawlerService;
-
-    @GetMapping("/gethani")
-    @ResponseBody
-    public String gethani() {
+    @GetMapping("/test")
+    public String test() {
         try {
-            newsCrawlerService.getHaniArticles();
-            return "success";
+            newsCrawlerService.getDongaArticles();
+            return "test success!";
         } catch (Exception e) {
-            e.printStackTrace();
-            return Arrays.toString(e.getStackTrace());
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            return sw.toString();
         }
-
     }
-    @GetMapping("/getjoongang")
-    @ResponseBody
-    public String getjoongang() {
-        try {
-            newsCrawlerService.getJoongangArticles();
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Arrays.toString(e.getStackTrace());
-        }
 
-    }
 }

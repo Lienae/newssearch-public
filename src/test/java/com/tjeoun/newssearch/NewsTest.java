@@ -123,8 +123,7 @@ public class NewsTest {
                         .news(savedNews)
                         .member(savedMember)
                         .password(password)
-                        .build(),
-                passwordEncoder
+                        .build()
         );
         // when
         NewsReply savedNewsReply = newsReplyRepository.save(newsReply);
