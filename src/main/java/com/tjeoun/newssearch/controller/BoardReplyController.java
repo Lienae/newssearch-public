@@ -36,7 +36,7 @@ public class BoardReplyController {
     Member loginMember = (Member) session.getAttribute("loginUser");
     if (loginMember == null) {
       // 로그인 안 되어있으면 id=1 회원을 임의로 가져오기 (익명 사용자)
-      loginMember = memberRepository.findById(3L)
+      loginMember = memberRepository.findById(1L)
         .orElseThrow(() -> new IllegalStateException("기본 사용자(익명 사용자)를 찾을 수 없습니다."));
     }
     Board board = boardService.findById(boardId);  // 게시글 찾아오기
@@ -93,7 +93,7 @@ public class BoardReplyController {
     // 로그인 정보 없으면 mock 데이터 강제 세팅 (테스트용)
     if (loginUser == null) {
       loginUser = new Member();
-      loginUser.setId(3L);       // 임의 아이디
+      loginUser.setId(1L);       // 임의 아이디
       loginUser.setName("테스트유저");  // 임의 이름
       // 필요한 다른 필드도 세팅 가능
     }
@@ -107,7 +107,7 @@ public class BoardReplyController {
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null) {
       loginUser = new Member();
-      loginUser.setId(3L);       // 임의 아이디
+      loginUser.setId(1L);       // 임의 아이디
       loginUser.setName("테스트유저");  // 임의 이름
       // 필요한 다른 필드도 세팅 가능
     }

@@ -33,7 +33,7 @@ public class BoardModifyController {
   private Member getLoginUser(HttpSession session) {
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null) {
-      loginUser = memberRepository.findById(3L).orElse(null);   // ★ 테스트 계정
+      loginUser = memberRepository.findById(1L).orElse(null);   // ★ 테스트 계정
       session.setAttribute("loginUser", loginUser);
     }
     return loginUser;

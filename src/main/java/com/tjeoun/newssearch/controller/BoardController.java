@@ -44,7 +44,7 @@ public class BoardController {
   public String saveBoard(@ModelAttribute BoardDto boardDto) {
 
     // DB에서 실제 회원 조회
-    Member member = memberRepository.findById(3L)
+    Member member = memberRepository.findById(1L)
       .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
 
     boardDto.setAuthor(member);  // DB에서 조회한 회원 객체 넣기
@@ -131,7 +131,7 @@ public class BoardController {
     Member loginUser = (Member) session.getAttribute("loginUser");
     // 로그인 유저가 없으면 테스트용 임시 유저 넣기
     if (loginUser == null) {
-      loginUser = memberRepository.findById(3L)
+      loginUser = memberRepository.findById(1L)
         .orElse(null);
     }
     model.addAttribute("loginUser", loginUser);
