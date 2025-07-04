@@ -14,6 +14,9 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
     private final Member member;
+    public UserRole getUserRole() {
+        return member.getRole();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return member.getRoleList().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).toList();

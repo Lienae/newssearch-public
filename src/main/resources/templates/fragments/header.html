@@ -13,9 +13,11 @@
     <nav>
         <a href="/news/list">뉴스</a>
         <a href="/boarder/list">커뮤니티</a>
-        <a href="/admin/user-list" class="admin-link">사용자 관리</a>
-        <a href="/admin/boarder-list" class="admin-link">커뮤니티 관리</a>
-        <a href="/admin/news-list" class="admin-link">뉴스 관리</a>
+        <th:block th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <a href="/admin/user-list" class="admin-link">사용자 관리</a>
+            <a href="/admin/boarder-list" class="admin-link">커뮤니티 관리</a>
+            <a href="/admin/news-list" class="admin-link">뉴스 관리</a>
+        </th:block>
     </nav>
     <div class="auth">
         <th:block sec:authorize="isAnonymous()">
@@ -29,6 +31,7 @@
             </form>
         </th:block>
     </div>
+
 </div>
 </body>
 </html>

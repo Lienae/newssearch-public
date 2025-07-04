@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -53,6 +54,7 @@ public class Member {
     }
 
     public List<UserRole> getRoleList() {
-        return List.of(UserRole.ADMIN, UserRole.USER, UserRole.SUSPENDED);
+        if(this.role == null) return Collections.emptyList();
+        return List.of(this.role);
     }
 }
