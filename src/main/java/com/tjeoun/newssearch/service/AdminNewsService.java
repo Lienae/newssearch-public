@@ -4,6 +4,7 @@ import com.tjeoun.newssearch.dto.AdminBoardDto;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.tjeoun.newssearch.dto.AdminNewsDto;
@@ -28,7 +29,7 @@ public class AdminNewsService {
   private final AttachFileService attachFileService;
 
   public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany) {
-    Pageable pageable = PageRequest.of(page, size);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishDate"));
     Page<News> news;
 
     boolean isAllCategory = "ALL".equals(category);

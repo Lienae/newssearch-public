@@ -59,23 +59,27 @@
        th:href="@{/admin/members/list(page=${members.number - 1}, size=${members.size})}">«</a>
     <a class="btn disabled" th:if="${members.first}">«</a>
 
-    <!-- 현재 페이지 중심 ±2 -->
-    <span th:each="i : ${#numbers.sequence(
-          T(java.lang.Math).max(0, members.number - 2),
-          T(java.lang.Math).min(members.totalPages - 1, members.number + 2)
-        )}">
-        <a class="btn" th:if="${i != members.number}"
-           th:href="@{/admin/members/list(page=${i}, size=${members.size})}"
-           th:text="${i + 1}"></a>
-        <a class="btn active disabled" th:if="${i == members.number}"
-           th:text="${i + 1}"></a>
-      </span>
+    <!-- 페이지 번호 -->
+    <span th:with="
+      start=${T(java.lang.Math).max(0, members.number - 2)},
+      end=${T(java.lang.Math).min(members.totalPages - 1, start + 4)},
+      start=${T(java.lang.Math).max(0, end - 4)}
+    ">
+    <span th:each="i : ${#numbers.sequence(start, end)}">
+      <a class="btn" th:if="${i != members.number}"
+         th:href="@{/admin/members/list(page=${i}, size=${members.size})}"
+         th:text="${i + 1}"></a>
+      <a class="btn active disabled" th:if="${i == members.number}"
+         th:text="${i + 1}"></a>
+    </span>
+  </span>
 
     <!-- 다음 -->
     <a class="btn" th:if="${!members.last}"
        th:href="@{/admin/members/list(page=${members.number + 1}, size=${members.size})}">»</a>
     <a class="btn disabled" th:if="${members.last}">»</a>
   </div>
+
 
   <div class="board-search">
     <select id="search-type">

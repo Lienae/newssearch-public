@@ -94,26 +94,32 @@
   </table>
 
   <div class="pagination">
+    <!-- 이전 페이지 버튼 -->
     <a class="btn" th:if="${!newsPage.first}"
        th:href="@{/admin/news/list(page=${newsPage.number - 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">«</a>
     <a class="btn disabled" th:if="${newsPage.first}">«</a>
 
-    <span th:each="i : ${#numbers.sequence(
-        T(java.lang.Math).max(0, newsPage.number - 2),
-        T(java.lang.Math).min(newsPage.totalPages - 1, newsPage.number + 2)
-      )}">
+    <!-- 페이지 번호 -->
+    <span th:with="
+      start=${T(java.lang.Math).max(0, newsPage.number - 2)},
+      end=${T(java.lang.Math).min(newsPage.totalPages - 1, start + 4)},
+      start=${T(java.lang.Math).max(0, end - 4)}
+    ">
+    <span th:each="i : ${#numbers.sequence(start, end)}">
       <a class="btn" th:if="${i != newsPage.number}"
          th:href="@{/admin/news/list(page=${i}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
          th:text="${i + 1}"></a>
       <a class="btn active disabled" th:if="${i == newsPage.number}"
          th:text="${i + 1}"></a>
     </span>
+  </span>
 
-
+    <!-- 다음 페이지 버튼 -->
     <a class="btn" th:if="${!newsPage.last}"
        th:href="@{/admin/news/list(page=${newsPage.number + 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">»</a>
     <a class="btn disabled" th:if="${newsPage.last}">»</a>
   </div>
+
 
   <div class="board-search">
     <select id="search-type">

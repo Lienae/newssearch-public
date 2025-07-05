@@ -75,29 +75,36 @@
   </table>
 
   <div class="pagination">
+    <!-- 이전 페이지 버튼 -->
     <a class="btn" th:if="${!boardPage.first}"
        th:href="@{/admin/boarders/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
       «
     </a>
     <a class="btn disabled" th:if="${boardPage.first}">«</a>
 
-    <span th:each="i : ${#numbers.sequence(
-        T(java.lang.Math).max(0, boardPage.number - 2),
-        T(java.lang.Math).min(boardPage.totalPages - 1, boardPage.number + 2)
-      )}">
+    <!-- 페이지 번호 -->
+    <span th:with="
+      start=${T(java.lang.Math).max(0, boardPage.number - 2)},
+      end=${T(java.lang.Math).min(boardPage.totalPages - 1, start + 4)},
+      start=${T(java.lang.Math).max(0, end - 4)}
+    ">
+    <span th:each="i : ${#numbers.sequence(start, end)}">
       <a class="btn" th:if="${i != boardPage.number}"
          th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
          th:text="${i + 1}"></a>
       <a class="btn active disabled" th:if="${i == boardPage.number}"
          th:text="${i + 1}"></a>
     </span>
+  </span>
 
+    <!-- 다음 페이지 버튼 -->
     <a class="btn" th:if="${!boardPage.last}"
        th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
       »
     </a>
     <a class="btn disabled" th:if="${boardPage.last}">»</a>
   </div>
+
 
   <div class="board-search">
     <select id="search-type">
