@@ -68,7 +68,7 @@ public class AdminBoardService {
     // 게시글 제목, 내용 업데이트, 블라인드
     board.setTitle(dto.getTitle());
     board.setContent(dto.getContent());
-    board.set_blind(dto.getIs_blind());
+    board.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
 
     // 기존 첨부 파일 삭제
     List<AttachFile> existingFiles = attachFileRepository.findByBoard(board);

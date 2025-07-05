@@ -40,7 +40,7 @@ public class AdminMemberService {
     member.setName(dto.getName());
     member.setPassword(dto.getPassword());
     member.setRole(dto.getRole());
-    member.set_blind(dto.getIs_blind());
+    member.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
   }
 
   @Transactional

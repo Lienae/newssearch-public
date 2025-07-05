@@ -67,7 +67,7 @@ public class AdminNewsService {
     news.setCategory(dto.getCategory());
     news.setMediaCompany(dto.getMediaCompany());
     news.setUrl(dto.getUrl());
-    news.set_blind(dto.getIs_blind());
+    news.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
 
     if (news.getImageUrl() != null && file != null && !file.isEmpty()) {
       String oldFileName = extractFileNmaeFromUrl(news.getImageUrl());
