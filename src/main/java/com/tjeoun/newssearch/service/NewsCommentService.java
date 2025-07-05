@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,20 @@ public class NewsCommentService {
 
         // soft delete 처리 (isBlind 필드 필요)
         reply.setBlind(true);
+    }
+
+    @Transactional
+    public void updateComment(Long commentId, String newContent, String email) {
+        NewsReply reply = newsReplyRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+
+        // 작성자 체크 (로그인 후 활성화)
+        // if (!reply.getWriterEmail().equals(email)) {
+        //     throw new AccessDeniedException("권한이 없습니다.");
+        // }
+
+        reply.setContent(newContent);
+        reply.setModifiedDate(LocalDateTime.now());
     }
 
     @Transactional(readOnly = true)

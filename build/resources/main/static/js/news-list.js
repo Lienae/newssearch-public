@@ -124,6 +124,85 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+   // 댓글 수정 버튼 클릭
+    commentList.addEventListener("click", (e) => {
+      if (e.target.classList.contains("edit-comment")) {
+        const li = e.target.closest("li");
+        const contentDiv = li.querySelector(".comment-content");
+        const buttonGroup = li.querySelector(".button-group");
+        const originalContent = contentDiv.innerText;
+
+        // 이미 수정 중이면 return
+        if (li.querySelector(".edit-input")) return;
+
+        // input 생성
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = originalContent;
+        input.className = "edit-input";
+        input.style.width = "70%";
+
+        // 기존 content 숨기기 + input 삽입
+        contentDiv.style.display = "none";
+        contentDiv.insertAdjacentElement("afterend", input);
+
+        // 기존 버튼 그룹 비우기
+        buttonGroup.innerHTML = `
+        <button class="save-edit">저장</button>
+        <button class="cancel-edit">취소</button>
+      `;
+      }
+    });
+
+  // 저장, 취소 버튼 처리
+    commentList.addEventListener("click", async (e) => {
+      const li = e.target.closest("li");
+      const commentId = li.dataset.id;
+      const input = li.querySelector(".edit-input");
+      const contentDiv = li.querySelector(".comment-content");
+      const buttonGroup = li.querySelector(".button-group");
+
+      if (e.target.classList.contains("save-edit")) {
+        const newContent = input.value.trim();
+        if (!newContent) {
+          alert("내용이 비어있습니다.");
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/v1/comment/update", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: commentId,
+              content: newContent
+            })
+          });
+
+          if (res.ok) {
+            // 성공 시 다시 로드
+            loadComments(currentUrl);
+          } else {
+            const text = await res.text();
+            alert("수정 실패: " + text);
+          }
+        } catch (err) {
+          alert("요청 중 오류 발생");
+        }
+      }
+
+      if (e.target.classList.contains("cancel-edit")) {
+        // input 제거, content 표시, 버튼 원래대로
+        input.remove();
+        contentDiv.style.display = "";
+        buttonGroup.innerHTML = `
+        <button class="edit-comment">수정</button>
+        <button class="delete-comment">삭제</button>
+      `;
+      }
+    });
 
   // 모달 닫기
   closeBtn.addEventListener("click", function () {

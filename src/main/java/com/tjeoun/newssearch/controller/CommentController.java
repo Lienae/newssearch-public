@@ -41,6 +41,17 @@ public class CommentController {
         return ResponseEntity.ok("댓글 삭제 완료 (isBlind = true)");
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<String> updateComment(
+            @RequestBody NewsReplyDto dto
+            // @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        // 임시: 로그인 없이 처리 (로그인 완성되면 권한 체크 추가)
+        String email = "test@example.com";
+        commentService.updateComment(dto.getId(), dto.getContent(), email);
+        return ResponseEntity.ok("댓글 수정 완료");
+    }
+
     // 댓글 목록 조회: GET /api/v1/comment/list?url={뉴스URL}
     @GetMapping("/list")
     public ResponseEntity<List<NewsReplyDto>> getCommentsByUrl(@RequestParam String url) {
