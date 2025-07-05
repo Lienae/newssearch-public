@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,35 +8,26 @@
   <link rel="stylesheet" href="/css/mypage.css" />
 </head>
 <body>
-<div class="navbar">
-  <a href="/main" class="logo">
-    <img src="/img/NewsHub.png" alt="News Hub 로고" />
-  </a>
-  <nav>
-    <a href="/news/list">뉴스</a>
-    <a href="/boarder/list">커뮤니티</a>
-  </nav>
-  <div class="auth">
-    <a href="/user/login">로그인</a>
-    <a href="/user/register">회원가입</a>
-  </div>
-</div>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
 
 <div class="mypage-container">
   <h2>마이페이지</h2>
 
-  <form class="mypage-form">
+  <form class="mypage-form" th:action="@{/member/update}" th:object="${member}" method="post">
     <label for="email">아이디(E-mail)</label>
-    <input type="email" id="email" value="user@example.com" disabled />
-
-    <label for="nickname">닉네임</label>
-    <input type="text" id="nickname" value="사용자닉네임" disabled />
+    <input type="email" id="email" th:field="*{email}" th:readonly="true" />
+    <input type="hidden" th:field="*{id}"/>
+    <label for="name">닉네임</label>
+    <input type="text" id="name" th:field="*{name}" />
 
     <label for="newPassword">새 비밀번호</label>
     <input
             type="password"
             id="newPassword"
             placeholder="새 비밀번호 입력"
+            th:field="*{password}"
     />
 
     <label for="newPasswordConfirm">새 비밀번호 확인</label>
@@ -47,8 +38,8 @@
     />
 
     <div class="button-group">
-      <button type="submit" class="btn-submit">비밀번호 변경</button>
-      <button type="button" class="btn-cancel">취소</button>
+      <button type="submit" class="btn-submit">회원정보 변경</button>
+      <button type="button" class="btn-cancel" onclick="history.back()">취소</button>
     </div>
 
     <!-- 추가된 탈퇴 버튼 -->
