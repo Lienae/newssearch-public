@@ -35,8 +35,9 @@
           <h3 class="category-title" th:text="${news.category.name()}">카테고리</h3>
           <div class="news-list">
             <div class="news-card">
-              <img th:src="${news.imageUrl != null ? news.imageUrl : '/img/default-news.png'}"
-                   th:alt="${news.category.name()}" />
+<!--              <img th:src="${news.imageUrl != null ? news.imageUrl : '/images/default.png'}"-->
+<!--                   th:alt="${news.category.name()}" />-->
+              <img src="/img/default.png" alt="테스트 이미지" />
               <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
               <div class="news-meta" th:text="${news.mediaCompany.name()}">언론사</div>
             </div>
