@@ -56,62 +56,74 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // 댓글 목록 불러오기
   function loadComments(url) {
     fetch(`/api/v1/comment/list?url=${encodeURIComponent(url)}`)
-      .then(res => res.json())
-      .then(data => {
-        commentList.innerHTML = "";
-        commentCount.innerText = `총 ${data.length}개의 의견`;
+        .then(res => res.json())
+        .then(data => {
+          commentList.innerHTML = "";
+          commentCount.innerText = `총 ${data.length}개의 의견`;
 
-        data.forEach(comment => {
-          const li = document.createElement("li");
-          li.dataset.id = comment.id;
+          data.forEach(comment => {
+            const li = document.createElement("li");
+            li.className = "comment-item";
+            li.dataset.id = comment.id;
 
-          li.innerHTML = `
-                    <span><strong>${comment.writerName || "작성자"}</strong> : ${comment.content}</span>
-                    <button class="delete-comment" style="margin-left: 10px;">삭제</button>
-                  `;
-          commentList.appendChild(li);
+            li.innerHTML = `
+          <div class="comment-header">
+            <span class="comment-writer">${comment.writerName || "작성자"}</span>
+            <span class="comment-date">${comment.createdDate || ""}</span>
+          </div>
+          <div class="comment-body">
+            <div class="comment-content">${comment.content}</div>
+            <div class="button-group">
+              <button class="edit-comment">수정</button>
+              <button class="delete-comment">삭제</button>
+            </div>
+          </div>
+        `;
+            commentList.appendChild(li);
+          });
+        })
+        .catch(err => {
+          console.error("댓글 불러오기 실패:", err);
+          commentCount.innerText = "총 0개의 의견";
         });
-      })
-      .catch(err => {
-        console.error("댓글 불러오기 실패:", err);
-        commentCount.innerText = "총 0개의 의견";
-      });
   }
 
-    // 댓글 삭제 이벤트 (댓글 내 삭제 버튼 클릭 시)
-    commentList.addEventListener("click", async (e) => {
-      if (e.target.classList.contains("delete-comment")) {
-        const li = e.target.closest("li");
-        const commentId = li.dataset.id;
 
-        if (!commentId) return;
+  // 댓글 삭제 이벤트 (댓글 내 삭제 버튼 클릭 시)
+  commentList.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("delete-comment")) {
+      const li = e.target.closest("li");
+      const commentId = li.dataset.id;
 
-        const confirmed = confirm("댓글을 삭제하시겠습니까?");
-        if (!confirmed) return;
+      if (!commentId) return;
 
-        try {
-          const res = await fetch("/api/v1/comment/remove", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `commentId=${commentId}`
-          });
+      const confirmed = confirm("댓글을 삭제하시겠습니까?");
+      if (!confirmed) return;
 
-          if (res.ok) {
-            li.remove(); // 삭제 성공 시 UI에서 제거
-          } else {
-            const text = await res.text();
-            alert("삭제 실패: " + text);
-          }
-        } catch (err) {
-          alert("요청 중 오류 발생");
+      try {
+        const res = await fetch("/api/v1/comment/remove", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: `commentId=${commentId}`
+        });
+
+        if (res.ok) {
+          li.remove();
+          loadComments(currentUrl);
+        } else {
+          const text = await res.text();
+          alert("삭제 실패: " + text);
         }
+      } catch (err) {
+        alert("요청 중 오류 발생");
       }
-    });
+    }
+  });
+
 
   // 모달 닫기
   closeBtn.addEventListener("click", function () {

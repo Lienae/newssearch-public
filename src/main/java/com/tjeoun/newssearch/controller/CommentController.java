@@ -31,10 +31,12 @@ public class CommentController {
     // 댓글 삭제: POST /api/v1/comment/remove
     @PostMapping("/remove")
     public ResponseEntity<String> removeComment(
-            @RequestParam Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @RequestParam Long commentId
+            // @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String email = userDetails.getUsername();
+        // String email = userDetails.getUsername();
+        // 임시: 로그인 기능 없으므로 이메일 하드코딩 또는 null
+        String email = "test@example.com";
         commentService.deleteComment(commentId, email);
         return ResponseEntity.ok("댓글 삭제 완료 (isBlind = true)");
     }

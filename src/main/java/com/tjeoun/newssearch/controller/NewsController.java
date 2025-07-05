@@ -69,14 +69,6 @@ public class NewsController {
         return "news/news-list";
     }
 
-    @GetMapping("/detail/{id}")
-    public String showNewsDetail(@PathVariable Long id, Model model) {
-        News news = newsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("News not found"));
-        model.addAttribute("news", news);
-        return "news/news-detail"; // 이 파일이 templates/news/news-detail.html
-    }
-
     @GetMapping("/edit")
     public String editForm(@RequestParam Long id,
                            @RequestParam(defaultValue = "0") int page,
