@@ -47,7 +47,7 @@ public class Member {
     @Column(nullable = false)
     private boolean is_blind; // 삭제 처리를 위해 추가하였습니다!
 
-    public static Member createMenber(SignUpDto dto, PasswordEncoder passwordEncoder) {
+    public static Member createMember(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .name(dto.getName())
                 .password(passwordEncoder.encode(dto.getPassword()))

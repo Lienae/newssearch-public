@@ -8,19 +8,9 @@
   <link rel="stylesheet" href="/css/border-write.css" />
 </head>
 <body>
-<div class="navbar">
-  <a href="/main" class="logo">
-    <img src="/img/NewsHub.png" alt="News Hub 로고" />
-  </a>
-  <nav>
-    <a href="/news/list">뉴스</a>
-    <a href="/boarder/list">커뮤니티</a>
-  </nav>
-  <div class="auth">
-    <a href="/user/login">로그인</a>
-    <a href="/user/register">회원가입</a>
-  </div>
-</div>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
 
 <div class="write-container">
   <h2>유저 정보 수정</h2>
@@ -117,6 +107,18 @@
               class="readonly-input"
       />
     </div>
+
+    <div class="form-group">
+      <label for="is_blind">블라인드 여부</label>
+      <input
+              type="checkbox"
+              id="is_blind"
+              name="isBlind"
+              th:checked="${member.is_blind}"
+      />
+      <span>블라인드 처리</span>
+    </div>
+
 
     <div class="form-actions">
       <button
