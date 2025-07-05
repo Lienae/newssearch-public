@@ -81,6 +81,38 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+    // 댓글 삭제 이벤트 (댓글 내 삭제 버튼 클릭 시)
+    commentList.addEventListener("click", async (e) => {
+      if (e.target.classList.contains("delete-comment")) {
+        const li = e.target.closest("li");
+        const commentId = li.dataset.id;
+
+        if (!commentId) return;
+
+        const confirmed = confirm("댓글을 삭제하시겠습니까?");
+        if (!confirmed) return;
+
+        try {
+          const res = await fetch("/api/v1/comment/remove", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `commentId=${commentId}`
+          });
+
+          if (res.ok) {
+            li.remove(); // 삭제 성공 시 UI에서 제거
+          } else {
+            const text = await res.text();
+            alert("삭제 실패: " + text);
+          }
+        } catch (err) {
+          alert("요청 중 오류 발생");
+        }
+      }
+    });
+
   // 모달 닫기
   closeBtn.addEventListener("click", function () {
     modal.style.display = "none";

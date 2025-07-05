@@ -28,7 +28,7 @@ public class NewsCommentService {
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
         // URL 기준으로 뉴스 검색
-        News news = newsRepository.findById(dto.getNewsId())
+        News news = newsRepository.findByUrl(dto.getUrl())
                 .orElseThrow(() -> new RuntimeException("뉴스 없음"));
 
         NewsReply reply = NewsReply.builder()
