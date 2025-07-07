@@ -112,7 +112,7 @@
   border: none;
   padding: 5px 16px;
   font-weight: bold;
-  color: #333;
+  color: white;
   cursor: pointer;
   border-left: 1px solid #ccc;
   height: 40px;
@@ -150,7 +150,10 @@ th:nth-child(1) {
 .board-table tr:hover {
   background-color: #f3f3f3;
 }
-
+.blind-row {
+  background-color: #f5f5f5;
+  color: #999;
+}
 .board-table a {
   text-decoration: none;
   color: #333;
@@ -191,4 +194,34 @@ th:nth-child(1) {
 .pagination button:disabled {
   color: #999;
   cursor: not-allowed;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.btn:hover {
+  background-color: #f0f0f0;
+}
+
+.btn.active {
+  background-color: #1976d2;
+  color: white !important;
+  font-weight: bold;
+}
+
+.btn.disabled {
+  border-color: #eee;
+  color: #999;
+  cursor: not-allowed;
+  pointer-events: none;
 }

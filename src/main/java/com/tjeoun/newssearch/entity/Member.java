@@ -44,6 +44,9 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
+
     public static Member createMember(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .name(dto.getName())

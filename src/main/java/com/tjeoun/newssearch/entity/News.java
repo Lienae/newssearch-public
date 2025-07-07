@@ -47,6 +47,9 @@ public class News {
     @Enumerated(EnumType.STRING)
     private NewsMediaCompany mediaCompany;
 
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
+
     public static NewsDocument toDocument(News news) {
         NewsDocument doc = new NewsDocument();
         doc.setId(news.getId().toString());
