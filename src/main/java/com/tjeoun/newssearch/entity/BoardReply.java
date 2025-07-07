@@ -46,7 +46,6 @@ public class BoardReply {
     private String password;
 
 
-    // 임의로 넣었습니다
     @Column(nullable = false)
     private Boolean isBlind;
 
@@ -58,7 +57,7 @@ public class BoardReply {
                 .board(dto.getBoard())
                 .member(dto.getMember())
                 .content(dto.getContent())
-                .isBlind(false) // 댓글 생성 시 기본은 false
+                .isBlind(false)
                 .build();
     }
 }

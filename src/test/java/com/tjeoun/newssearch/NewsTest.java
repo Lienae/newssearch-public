@@ -13,7 +13,7 @@ import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
-import com.tjeoun.newssearch.repository.NewsSearchRepository;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static java.time.LocalDateTime.*;
+import static java.time.LocalDate.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -34,7 +34,7 @@ public class NewsTest {
     @Autowired
     private NewsReplyRepository newsReplyRepository;
     @Autowired
-    private NewsSearchRepository newsSearchRepository;
+    private NewsDocumentRepository newsDocumentRepository;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -109,7 +109,7 @@ public class NewsTest {
         String name = "테스트";
         UserRole role = UserRole.USER;
         Member savedMember = memberRepository.save(
-                Member.createMenber(SignUpDto.builder()
+                Member.createMember(SignUpDto.builder()
                             .email(email)
                             .password(password)
                             .name(name)
@@ -123,8 +123,7 @@ public class NewsTest {
                         .news(savedNews)
                         .member(savedMember)
                         .password(password)
-                        .build(),
-                passwordEncoder
+                        .build()
         );
         // when
         NewsReply savedNewsReply = newsReplyRepository.save(newsReply);
@@ -155,14 +154,14 @@ public class NewsTest {
         doc.setCategory("POLITICS");
         doc.setMediaCompany("KOREA_NEWS");
 
-        NewsDocument saved = newsSearchRepository.save(doc);
+        NewsDocument saved = newsDocumentRepository.save(doc);
         assertEquals(testId, saved.getId());
 
         // 삭제
-        newsSearchRepository.deleteById(testId);
+        newsDocumentRepository.deleteById(testId);
 
         // 삭제 확인
-        boolean exists = newsSearchRepository.existsById(testId);
+        boolean exists = newsDocumentRepository.existsById(testId);
         assertFalse(exists);
     }
 }

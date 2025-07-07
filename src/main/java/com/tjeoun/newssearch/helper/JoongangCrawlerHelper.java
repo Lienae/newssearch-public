@@ -9,9 +9,27 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.tjeoun.newssearch.service.NewsCrawlerService.downloadImage;
+import static com.tjeoun.newssearch.util.NewsCrawlUtils.*;
 
 public class JoongangCrawlerHelper {
+    public static List<Map<String, String>> getJoongangArticles() {
+        List<Map<String, String>> articles = new ArrayList<>();
+        for (Map.Entry<String, String> entry : JOONGANG_SITE_MAP.entrySet()) {
+            List<String> links = getJoongangArticleLinks(USER_AGENT, entry.getValue());
+            for (String link : links.stream().limit(20).toList()) {
+                Map<String, String> article = parseArticle(USER_AGENT, link, joongangImageBasePath);
+                if (article != null) {
+                    article.put("카테고리", entry.getKey());
+                    articles.add(article);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            }
+        }
+        return articles;
+    }
     public static List<String> getJoongangArticleLinks(String USER_AGENT, String listUrl) {
         List<String> urls = new ArrayList<>();
         try {
@@ -19,7 +37,6 @@ public class JoongangCrawlerHelper {
                     .userAgent(USER_AGENT)
                     .referrer("https://www.google.com")
                     .get();
-
             Elements links = doc.select("ul.story_list > li > div.card_body > h2 > a");
             for (Element link : links) {
                 String href = link.attr("href");
@@ -45,7 +62,7 @@ public class JoongangCrawlerHelper {
             // 제목
             String title = Objects.requireNonNull(doc.selectFirst("h1.headline")).text();
 
-            // ✅ 본문: <p data-divno="...">만 모아서 정리
+            // 본문
             String content = "본문 없음";
             Element contentDiv = doc.selectFirst("div#article_body");
             if (contentDiv != null) {
@@ -57,7 +74,7 @@ public class JoongangCrawlerHelper {
                 content = sb.toString().trim();
             }
 
-            // ✅ 기자명 추출 (meta 태그 기반)
+            // 기자명
             String reporter = "";
             Element authorMeta = doc.selectFirst("meta[property=dable:author]");
             if (authorMeta != null) {
@@ -65,7 +82,7 @@ public class JoongangCrawlerHelper {
                 if (reporter.isBlank()) reporter = "";
             }
 
-            // ✅ 날짜
+            // 날짜
             String pubDate = "";
             Element dateTag = doc.selectFirst("time[itemprop=dateModified]");
             if (dateTag == null) {
@@ -76,14 +93,16 @@ public class JoongangCrawlerHelper {
                 OffsetDateTime odt = OffsetDateTime.parse(dateStr);
                 pubDate = odt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             }
-            // ✅ 대표 이미지 추출 및 저장
+            // 이미지
             Element ogImageTag = doc.selectFirst("meta[property=og:image]");
             String imageUrl = ogImageTag != null ? ogImageTag.attr("content") : "";
-            String savedImagePath = "";
+            String savedImagePath;
             if (!imageUrl.isBlank()) {
                 savedImagePath = downloadImage(imageUrl, imageBasePath);
+            } else {
+                savedImagePath = defaultImageBasePath;
             }
-            // ✅ 결과 정리
+
             Map<String, String> result = new LinkedHashMap<>();
             result.put("언론사", "중앙일보");
             result.put("링크", url);

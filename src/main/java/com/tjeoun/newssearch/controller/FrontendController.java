@@ -63,35 +63,35 @@ public class FrontendController {
     return "error/error";
   }
 
+//
+//  @GetMapping("/member/login")
+//  public String login() {
+//    return "member/login";
+//  }
 
-  @GetMapping("/user/login")
-  public String login() {
-    return "user/login";
-  }
+//  @GetMapping("/member/register")
+//  public String register() {
+//    return "member/register";
+//  }
 
-  @GetMapping("/user/register")
-  public String register() {
-    return "user/register";
-  }
+//  @GetMapping("/member/mypage")
+//  public String mypage() {
+//    return "member/mypage";
+//  }
 
-  @GetMapping("/user/mypage")
-  public String mypage() {
-    return "user/mypage";
-  }
+//  @GetMapping("/member/find-password")
+//  public String findPassword() {
+//    return "member/find-password";
+//  }
+//
+//  @GetMapping("/member/find-password-sent")
+//  public String findPasswordSent() {
+//    return "member/find-password-sent";
+//  }
 
-  @GetMapping("/user/find-password")
-  public String findPassword() {
-    return "user/find-password";
-  }
-
-  @GetMapping("/user/find-password-sent")
-  public String findPasswordSent() {
-    return "user/find-password-sent";
-  }
-
-  @GetMapping("/user/delete-user")
+  @GetMapping("/member/delete-user")
   public String deleteUser() {
-    return "user/delete-user";
+    return "member/delete-user";
   }
 
 
