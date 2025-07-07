@@ -55,11 +55,20 @@ public class AdminNewsController {
                      @RequestParam("filterCategory") String filterCategory,
                      @RequestParam("filterMediaCompany") String filterMediaCompany,
                      @ModelAttribute AdminNewsDto dto,
-                     @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
-    adminNewsService.updateNewsWithFile(id, dto, file);
+                     @RequestParam(value = "file", required = false) MultipartFile file,
+                     Model model) {
+    try {
+      adminNewsService.updateNewsWithFile(id, dto, file);
+    } catch (Exception e) {
+      model.addAttribute("errorMessage", "뉴스 수정 실패: " + e.getMessage());
+
+      return "error/error";
+    }
+
     return "redirect:/admin/news/list?page=" + page + "&size=" + size +
-      "&category=" + filterCategory  + "&mediaCompany=" + filterMediaCompany + "&success=update";
+        "&category=" + filterCategory + "&mediaCompany=" + filterMediaCompany + "&success=update";
   }
+
 
 
   @PostMapping("/delete/{id}")

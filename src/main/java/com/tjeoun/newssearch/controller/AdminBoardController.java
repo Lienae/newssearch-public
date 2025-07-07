@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Slf4j
+
 @Controller
 @RequestMapping("/admin/boards")
 @RequiredArgsConstructor
@@ -67,13 +67,15 @@ public class AdminBoardController {
                      @RequestParam("filterCategory") String currentCategory,
                      @ModelAttribute AdminBoardDto dto,
                      @RequestParam(value = "files", required = false) List<MultipartFile> files,
-                     RedirectAttributes redirectAttributes) {
+                     Model model) {
     try {
       adminBoardService.updateBoardWithFiles(id, dto, files);
     } catch (Exception e) {
-      log.error("게시글 수정 실패", e);
-      redirectAttributes.addFlashAttribute("errorMessage", "게시글 수정 실패: " + e.getMessage());
+      model.addAttribute("errorMessage", "게시글 수정 실패: " + e.getMessage());
+
+      return "error/error";
     }
+
     return "redirect:/admin/boards/list?page=" + page + "&size=" + size + "&category=" + currentCategory + "&success=update";
   }
 

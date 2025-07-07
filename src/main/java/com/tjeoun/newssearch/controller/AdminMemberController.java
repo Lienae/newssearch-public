@@ -43,8 +43,16 @@ public class AdminMemberController {
   public String edit(@PathVariable Long id,
                      @ModelAttribute AdminMemberDto dto,
                      @RequestParam int page,
-                     @RequestParam int size) {
-    adminMemberService.updateMember(id, dto);
+                     @RequestParam int size,
+                     Model model) {
+    try {
+      adminMemberService.updateMember(id, dto);
+    } catch (Exception e) {
+      model.addAttribute("errorMessage", "회원 정보 수정 실패: " + e.getMessage());
+
+      return "error/error";
+    }
+
     return "redirect:/admin/members/list?page=" + page + "&size=" + size + "&success=update";
   }
 
