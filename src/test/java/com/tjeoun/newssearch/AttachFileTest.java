@@ -39,7 +39,7 @@ public class AttachFileTest {
     @DisplayName("파일첨부 메타데이터 입력 테스트")
     public void testAttachFile() {
         // given
-        Member member = Member.createMenber(SignUpDto.builder()
+        Member member = Member.createMember(SignUpDto.builder()
                 .email("test@test.com")
                 .password("test")
                 .name("test")

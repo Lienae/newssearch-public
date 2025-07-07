@@ -47,7 +47,7 @@ public class BoardTest {
                 .name(name)
                 .role(role)
                 .build();
-        Member member = Member.createMenber(dto, passwordEncoder);
+        Member member = Member.createMember(dto, passwordEncoder);
         Member saveMember = memberRepository.save(member);
 
         String title = "testTitle";
@@ -100,7 +100,7 @@ public class BoardTest {
                 .name(name)
                 .role(role)
                 .build();
-        Member member = Member.createMenber(dto, passwordEncoder);
+        Member member = Member.createMember(dto, passwordEncoder);
         Member saveMember = memberRepository.save(member);
 
         String title = "testTitle";
