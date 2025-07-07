@@ -15,17 +15,17 @@
 <div class="board-container">
   <div class="category-section">
     <div class="category-buttons">
-      <a th:href="@{/admin/boarders/list(category='ALL')}"
+      <a th:href="@{/admin/boards/list(category='ALL')}"
          th:classappend="${currentCategory == 'ALL'} ? 'active' : ''">전체</a>
-      <a th:href="@{/admin/boarders/list(category='POLITICS')}"
+      <a th:href="@{/admin/boards/list(category='POLITICS')}"
          th:classappend="${currentCategory == 'POLITICS'} ? 'active' : ''">정치</a>
-      <a th:href="@{/admin/boarders/list(category='ECONOMY')}"
+      <a th:href="@{/admin/boards/list(category='ECONOMY')}"
          th:classappend="${currentCategory == 'ECONOMY'} ? 'active' : ''">경제</a>
-      <a th:href="@{/admin/boarders/list(category='SOCIAL')}"
+      <a th:href="@{/admin/boards/list(category='SOCIAL')}"
          th:classappend="${currentCategory == 'SOCIAL'} ? 'active' : ''">사회</a>
-      <a th:href="@{/admin/boarders/list(category='CULTURE')}"
+      <a th:href="@{/admin/boards/list(category='CULTURE')}"
          th:classappend="${currentCategory == 'CULTURE'} ? 'active' : ''">문화</a>
-      <a th:href="@{/admin/boarders/list(category='SPORTS')}"
+      <a th:href="@{/admin/boards/list(category='SPORTS')}"
          th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
     </div>
   </div>
@@ -56,7 +56,7 @@
       <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</td>
       <td th:text="${board.is_blind ? 'Y' : 'N'}">N</td>
       <td>
-        <a th:href="@{/admin/boarders/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}">
+        <a th:href="@{/admin/boards/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}">
           수정
         </a>
       </td>
@@ -67,7 +67,7 @@
   <div class="pagination">
     <!-- 이전 페이지 버튼 -->
     <a class="btn" th:if="${!boardPage.first}"
-       th:href="@{/admin/boarders/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
+       th:href="@{/admin/boards/list(page=${boardPage.number - 1}, size=${boardPage.size}, category=${currentCategory})}">
       «
     </a>
     <a class="btn disabled" th:if="${boardPage.first}">«</a>
@@ -80,7 +80,7 @@
     ">
     <span th:each="i : ${#numbers.sequence(start, end)}">
       <a class="btn" th:if="${i != boardPage.number}"
-         th:href="@{/admin/boarders/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
+         th:href="@{/admin/boards/list(page=${i}, size=${boardPage.size}, category=${currentCategory})}"
          th:text="${i + 1}"></a>
       <a class="btn active disabled" th:if="${i == boardPage.number}"
          th:text="${i + 1}"></a>
@@ -89,7 +89,7 @@
 
     <!-- 다음 페이지 버튼 -->
     <a class="btn" th:if="${!boardPage.last}"
-       th:href="@{/admin/boarders/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
+       th:href="@{/admin/boards/list(page=${boardPage.number + 1}, size=${boardPage.size}, category=${currentCategory})}">
       »
     </a>
     <a class="btn disabled" th:if="${boardPage.last}">»</a>

@@ -16,7 +16,7 @@
     <h2>게시글 수정</h2>
     <p class="info-text">관리자는 게시글 정보를 수정할 수 있습니다.</p>
 
-    <form th:action="@{'/admin/boarders/edit/' + ${board.id} +
+    <form th:action="@{'/admin/boards/edit/' + ${board.id} +
                   '?page=' + ${page} +
                   '&size=' + ${size} +
                   '&filterCategory=' + ${currentCategory}}"
@@ -92,7 +92,7 @@
         <div class="form-actions">
             <button type="button"
                     class="cancel-btn"
-                    th:attr="data-url=@{/admin/boarders/list(page=${page}, size=${size}, category=${currentCategory})}"
+                    th:attr="data-url=@{/admin/boards/list(page=${page}, size=${size}, category=${currentCategory})}"
                     onclick="location.href = this.dataset.url">
                 취소
             </button>
@@ -101,7 +101,7 @@
         </div>
     </form>
 
-    <form id="deleteForm" th:action="@{'/admin/boarders/delete/' + ${board.id}}" method="post" style="display: none;">
+    <form id="deleteForm" th:action="@{'/admin/boards/delete/' + ${board.id}}" method="post" style="display: none;">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     </form>
 
