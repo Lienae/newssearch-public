@@ -47,8 +47,8 @@ public class News {
     @Enumerated(EnumType.STRING)
     private NewsMediaCompany mediaCompany;
 
-    @Column(nullable = false)
-    private boolean is_blind; // 삭제 처리를 위해 추가하였습니다!
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
 
     public static NewsDocument toDocument(News news) {
         NewsDocument doc = new NewsDocument();

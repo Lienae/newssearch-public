@@ -18,19 +18,8 @@ import java.util.Optional;
 public interface NewsRepository extends JpaRepository<News, Long> {
     boolean existsByUrl(String url);
 
-    @Query("SELECT n FROM News n WHERE n.is_blind = false")
-    Page<News> findByIs_blindFalse(Pageable pageable);
 
-    @Query("SELECT n FROM News n WHERE n.category = :category AND n.is_blind = false")
-    Page<News> findByCategoryAndIs_blindFalse(@Param("category") NewsCategory category, Pageable pageable);
-
-    @Query("SELECT n FROM News n WHERE n.mediaCompany = :mediaCompany AND n.is_blind = false")
-    Page<News> findByMediaCompanyAndIs_blindFalse(@Param("mediaCompany") NewsMediaCompany mediaCompany, Pageable pageable);
-
-    @Query("SELECT n FROM News n WHERE n.category = :category AND n.mediaCompany = :mediaCompany AND n.is_blind = false")
-    Page<News> findByCategoryAndMediaCompanyAndIs_blindFalse(@Param("category") NewsCategory newsCategory, @Param("mediaCompany") NewsMediaCompany mediaCompany, Pageable pageable);
-    void deleteByTitle(String title);
-    Optional<News> findByTitle(String title);
+    Page<News> findByIsBlindFalse(Pageable pageable);
 
     Page<News> findAll(Pageable pageable);
 

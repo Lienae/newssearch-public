@@ -1,6 +1,5 @@
 package com.tjeoun.newssearch.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
@@ -15,7 +14,7 @@ import org.springframework.data.domain.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.List;
 
@@ -46,8 +45,8 @@ class AdminNewsControllerTest {
       .mediaCompany(NewsMediaCompany.YTN)
       .url("http://test.com")
       .imageUrl("http://test.com/image.jpg")
-      .publishDate(LocalDateTime.now())
-      .is_blind(false)
+      .publishDate(LocalDate.now())
+      .isBlind(false)
       .build();
   }
 
@@ -57,7 +56,7 @@ class AdminNewsControllerTest {
     News news = createNews();
     Page<News> page = new PageImpl<>(List.of(news), PageRequest.of(0, 10), 1);
 
-    given(newsRepository.findByIs_blindFalse(any(Pageable.class))).willReturn(page);
+    given(newsRepository.findByIsBlindFalse(any(Pageable.class))).willReturn(page);
 
     mockMvc.perform(get("/admin/news/list")
         .param("page", "0")

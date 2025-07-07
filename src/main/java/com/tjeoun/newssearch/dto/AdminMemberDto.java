@@ -19,7 +19,7 @@ public class AdminMemberDto {
   private UserRole role;
   private LocalDateTime createdDate;
   private LocalDateTime lastModifiedDate;
-  private Boolean is_blind;
+  private Boolean isBlind;
 
   public static AdminMemberDto fromEntity(Member member) {
     return AdminMemberDto.builder()
@@ -29,7 +29,7 @@ public class AdminMemberDto {
       .role(member.getRole())
       .createdDate(member.getCreatedDate())
       .lastModifiedDate(member.getLastModifiedDate())
-      .is_blind(member.is_blind())
+      .isBlind(member.isBlind())
       .build();
   }
 }

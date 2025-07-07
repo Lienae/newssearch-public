@@ -23,7 +23,7 @@ public class AdminBoardDto {
   private Boolean isAdminArticle;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
-  private Boolean is_blind; // boolean 타입은 null 값을 허용하지 않음
+  private Boolean isBlind; // boolean 타입은 null 값을 허용하지 않음
   // private Boolean isAdmin;
 
   public static AdminBoardDto fromEntity(Board board) {
@@ -37,7 +37,7 @@ public class AdminBoardDto {
       .newsTitle(board.getNews() != null ? board.getNews().getTitle() : null) // 현재 데이터에 News가 없는 경우
       .createdDate(board.getCreatedDate())
       .modifiedDate(board.getModifiedDate())
-      .is_blind(board.is_blind())
+      .isBlind(board.isBlind())
       .build();
   }
 

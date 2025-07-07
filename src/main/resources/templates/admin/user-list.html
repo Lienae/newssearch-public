@@ -30,12 +30,12 @@
     </thead>
     <tbody>
     <tr th:each="member : ${members.content}"
-        th:classappend="${member.is_blind} ? 'blind-row' : ''">
+        th:classappend="${member.isBlind} ? 'blind-row' : ''">
       <td th:text="${member.id}">1</td>
       <td th:text="${member.name}">홍길동</td>
       <td th:text="${member.email}">hong@test.com</td>
       <td th:text="${member.role}">ADMIN</td>
-      <td th:text="${member.is_blind ? 'Y' : 'N'}">N</td>
+      <td th:text="${member.isBlind ? 'Y' : 'N'}">N</td>
       <td>
         <a th:href="@{/admin/members/edit(id=${member.id}, page=${page}, size=${size})}">수정</a>
       </td>

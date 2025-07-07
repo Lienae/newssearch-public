@@ -50,8 +50,8 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private NewsCategory newsCategory;
 
-    @Column(nullable = false)
-    private boolean is_blind;
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
 
     @Column(nullable = false)
     private boolean is_admin_article;

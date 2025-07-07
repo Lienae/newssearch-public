@@ -48,13 +48,13 @@
     </thead>
     <tbody>
     <tr th:each="board : ${boardPage.content}"
-        th:classappend="${board.is_blind} ? 'blind-row' : ''">
+        th:classappend="${board.isBlind} ? 'blind-row' : ''">
       <td th:text="${board.id}">1</td>
       <td th:text="${board.title}">첫 게시글 제목</td>
       <td th:text="${#messages.msgOrNull('NewsCategory.' + board.newsCategory) ?: board.newsCategory}"></td>
       <td th:text="${board.authorId}">101</td>
       <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</td>
-      <td th:text="${board.is_blind ? 'Y' : 'N'}">N</td>
+      <td th:text="${board.isBlind ? 'Y' : 'N'}">N</td>
       <td>
         <a th:href="@{/admin/boards/edit(id=${board.id}, page=${page}, size=${size}, category=${currentCategory})}">
           수정

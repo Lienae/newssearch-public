@@ -67,7 +67,7 @@ public class AdminNewsService {
     news.setCategory(dto.getCategory());
     news.setMediaCompany(dto.getMediaCompany());
     news.setUrl(dto.getUrl());
-    news.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
+    news.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
 
     if (news.getImageUrl() != null && file != null && !file.isEmpty()) {
       String oldFileName = extractFileNmaeFromUrl(news.getImageUrl());
@@ -91,7 +91,8 @@ public class AdminNewsService {
   public void softDeleteNews(Long id) {
     News news = newsRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("News not found"));
-    news.set_blind(true);
+    news.setBlind(true);
+    newsRepository.save(news);
   }
 
   public List<AdminNewsDto> getRecentNewsList() {

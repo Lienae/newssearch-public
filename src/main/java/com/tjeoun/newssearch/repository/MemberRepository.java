@@ -13,9 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByName(String name);
-  @Query("SELECT m FROM Member m WHERE m.is_blind = false")
-  Page<Member> findByIs_blindFalse(Pageable pageable);
 
-  Page<Member> findAll(Pageable pageable);
+    Page<Member> findAll(Pageable pageable);
 
 }

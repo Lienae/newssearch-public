@@ -57,7 +57,8 @@ public class AdminBoardService {
   public void softDeleteBoard(Long id) {
     Board board = boardRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
-    board.set_blind(true);
+    board.setBlind(true);
+    boardRepository.save(board);
   }
 
   @Transactional
@@ -68,7 +69,7 @@ public class AdminBoardService {
     // 게시글 제목, 내용 업데이트, 블라인드
     board.setTitle(dto.getTitle());
     board.setContent(dto.getContent());
-    board.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
+    board.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
 
     // 기존 첨부 파일 삭제
     List<AttachFile> existingFiles = attachFileRepository.findByBoard(board);

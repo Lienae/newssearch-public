@@ -44,8 +44,8 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    @Column(nullable = false)
-    private boolean is_blind; // 삭제 처리를 위해 추가하였습니다!
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
 
     public static Member createMember(SignUpDto dto, PasswordEncoder passwordEncoder) {
         return Member.builder()

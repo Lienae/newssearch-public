@@ -3,6 +3,7 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -40,14 +42,20 @@ public class AdminMemberService {
     member.setName(dto.getName());
     member.setPassword(dto.getPassword());
     member.setRole(dto.getRole());
-    member.set_blind(Boolean.TRUE.equals(dto.getIs_blind()));
+    member.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
+    log.info("폼에서 넘어온 isBlind 값: {}", dto.getIsBlind());
+    log.info("DB 기존 isBlind 값: {}", member.isBlind());
+    log.info("적용될 isBlind 값: {}", Boolean.TRUE.equals(dto.getIsBlind()));
+
+    // memberRepository.save(member);
   }
 
   @Transactional
   public void softDeleteMember(Long id) {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
-    member.set_blind(true);
+    member.setBlind(true);
+    // memberRepository.save(member);
   }
 }
 
