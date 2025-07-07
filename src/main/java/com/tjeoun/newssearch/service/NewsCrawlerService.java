@@ -20,6 +20,7 @@ public class NewsCrawlerService {
     private final NewsRepository newsRepository;
     private final NewsDocumentRepository newsDocumentRepository;
 
+    @Transactional
     public void getHaniArticles() {
         List<Map<String, String>> articles = HaniCrawlerHelper.getArticles();
         saveToDatabase(articles, transactionManager, newsRepository, newsDocumentRepository);

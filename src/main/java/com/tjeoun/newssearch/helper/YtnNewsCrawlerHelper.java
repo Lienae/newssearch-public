@@ -147,7 +147,7 @@ public class YtnNewsCrawlerHelper {
                     ? ""
                     : NewsCrawlUtils.downloadImage(imageUrl, ytnImageBasePath);
 
-            return createNewsMap("한겨레", resolveCategory(mcd), title, content,
+            return createNewsMap("YTN", resolveCategory(mcd), title, content,
                     author, formattedDateStr, url, savedImagePath);
 
         } catch (Exception e) {

@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
 
-@Document(indexName = "news_articles_test")
+@Document(indexName = "news_articles")
 @Getter
 @Setter
 public class NewsDocument {
