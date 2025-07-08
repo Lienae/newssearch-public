@@ -1,0 +1,5 @@
+package com.tjeoun.newssearch.enums;
+
+public enum AdminLogEnum {
+    CREATE_ARTICLE, MODIFY_ARTICLE, DELETE_ARTICLE, DELETE_REPLY, MODIFY_NEWS, DELETE_NEWS, SUSPEND_MEMBER, MODIFY_MEMBER
+}
