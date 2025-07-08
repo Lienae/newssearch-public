@@ -16,14 +16,20 @@
 
   <div class="category-section">
     <div class="category-buttons">
-      <a href="#" class="active">전체</a>
-      <a href="#">해결</a>
-      <a href="#">미해결</a>
+      <a th:href="@{/admin/main/job(filter='ALL')}" th:classappend="${filter == 'ALL'} ? 'active'">전체</a>
+      <a th:href="@{/admin/main/job(filter='RESOLVED')}" th:classappend="${filter == 'RESOLVED'} ? 'active'">해결</a>
+      <a th:href="@{/admin/main/job(filter='UNRESOLVED')}" th:classappend="${filter == 'UNRESOLVED'} ? 'active'">미해결</a>
     </div>
   </div>
 
   <div class="board-header">
-    <div class="board-count">전체 <strong>3</strong>건</div>
+    <div class="board-count">
+      <span th:switch="${filter}">
+        <span th:case="'resolved'">해결된 작업 <strong th:text="${totalCount}">0</strong>건</span>
+        <span th:case="'unresolved'">미해결 작업 <strong th:text="${totalCount}">0</strong>건</span>
+        <span th:case="*">전체 <strong th:text="${totalCount}">0</strong>건</span>
+      </span>
+    </div>
   </div>
 
   <table class="board-table">
@@ -37,7 +43,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="job : ${jobList}">
+    <tr th:each="job : ${jobPage}">
       <td th:text="${job.id}">1</td>
       <td th:text="${job.job}">NEWS</td>
       <td th:text="${job.url}">/url</td>
@@ -62,12 +68,34 @@
   </table>
 
   <div class="pagination">
-    <a class="btn" href="?page=0">«</a>
-    <a class="btn active disabled">1</a>
-    <a class="btn" href="?page=1">2</a>
-    <a class="btn" href="?page=2">3</a>
-    <a class="btn" href="?page=3">4</a>
-    <a class="btn" href="?page=1">»</a>
+    <!-- 이전 페이지 버튼 -->
+    <a class="btn" th:if="${!jobPage.first}"
+       th:href="@{/admin/main/job(page=${jobPage.number - 1}, size=${jobPage.size}, filter=${filter})}">
+      «
+    </a>
+    <a class="btn disabled" th:if="${jobPage.first}">«</a>
+
+    <!-- 페이지 번호 -->
+    <span th:with="
+      start=${T(java.lang.Math).max(0, jobPage.number - 2)},
+      end=${T(java.lang.Math).min(jobPage.totalPages - 1, start + 4)},
+      start=${T(java.lang.Math).max(0, end - 4)}
+    ">
+    <span th:each="i : ${#numbers.sequence(start, end)}">
+      <a class="btn" th:if="${i != jobPage.number}"
+         th:href="@{/admin/main/job(page=${i}, size=${jobPage.size},  filter=${filter})}"
+         th:text="${i + 1}"></a>
+      <a class="btn active disabled" th:if="${i == jobPage.number}"
+         th:text="${i + 1}"></a>
+    </span>
+  </span>
+
+    <!-- 다음 페이지 버튼 -->
+    <a class="btn" th:if="${!jobPage.last}"
+       th:href="@{/admin/main/job(page=${jobPage.number + 1}, size=${jobPage.size}, filter=${filter})}">
+      »
+    </a>
+    <a class="btn disabled" th:if="${jobPage.last}">»</a>
   </div>
 
   <div class="board-search">

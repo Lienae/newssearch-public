@@ -5,10 +5,13 @@ import com.tjeoun.newssearch.entity.AdminJob;
 import com.tjeoun.newssearch.repository.AdminJobRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,12 +22,19 @@ public class AdminJobService {
         return adminJobRepository.findByIsResolvedFalseOrderByRecordedTimeDesc();
     }
 
-    public List<AdminJobDto> getAllJobsAsDto() {
-        return adminJobRepository.findAll(Sort.by(Sort.Direction.DESC, "recordedTime"))
-                .stream()
-                .map(AdminJobDto::fromEntity)
-                .toList();
+    public Page<AdminJobDto> getFilteredJobs(String filter, Pageable pageable) {
+        if ("RESOLVED".equalsIgnoreCase(filter)) {
+            return adminJobRepository.findByIsResolved(true, pageable)
+                    .map(AdminJobDto::fromEntity);
+        } else if ("UNRESOLVED".equalsIgnoreCase(filter)) {
+            return adminJobRepository.findByIsResolved(false, pageable)
+                    .map(AdminJobDto::fromEntity);
+        } else {
+            return adminJobRepository.findAll(pageable)
+                    .map(AdminJobDto::fromEntity);
+        }
     }
+
 
     public void updateJobStatus(Long id, Boolean isResolved) {
         AdminJob job = adminJobRepository.findById(id)
@@ -32,5 +42,8 @@ public class AdminJobService {
         job.setIsResolved(isResolved);
         adminJobRepository.save(job);
     }
+
+
+
 
 }

@@ -9,12 +9,13 @@ import com.tjeoun.newssearch.service.AdminBoardService;
 import com.tjeoun.newssearch.service.AdminJobService;
 import com.tjeoun.newssearch.service.AdminNewsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -44,12 +45,25 @@ public class AdminMainController {
   }
 
   @GetMapping("/job")
-  public String job(Model model) {
-    List<AdminJobDto> jobList = adminJobService.getAllJobsAsDto();
-    model.addAttribute("jobList", jobList);
-    model.addAttribute("totalCount", jobList.size());
+  public String job(@RequestParam(defaultValue = "0") int page,
+                    @RequestParam(defaultValue = "10") int size,
+                    @RequestParam(defaultValue = "ALL") String filter,
+                    Model model) {
+
+    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "recordedTime"));
+    Page<AdminJobDto> jobPage = adminJobService.getFilteredJobs(filter, pageable);
+
+    model.addAttribute("jobPage", jobPage);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
+    model.addAttribute("filter", filter);
+    model.addAttribute("totalCount", jobPage.getTotalElements());
+
     return "admin/admin-job";
   }
+
+
+
 
   @PostMapping("/job/update")
   public String updateJobStatus(@ModelAttribute AdminJobUpdateDto dto, RedirectAttributes redirectAttributes) {
