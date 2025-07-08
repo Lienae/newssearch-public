@@ -116,10 +116,11 @@
   cursor: pointer;
   border-left: 1px solid #ccc;
   height: 40px;
+  font-size: 12px ;
 }
 
 .board-search button:hover {
-  background-color: #f0f0f0;
+  background-color: #cce4ff;
 }
 .board-table {
   width: 100%;
@@ -224,4 +225,8 @@ th:nth-child(1) {
   color: #999;
   cursor: not-allowed;
   pointer-events: none;
+}
+.board-search form {
+  display: flex;
+  align-items: center;
 }

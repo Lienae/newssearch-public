@@ -20,11 +20,26 @@ public class AdminMemberService {
 
   private final MemberRepository memberRepository;
 
-  public Page<AdminMemberDto> getMembers(int page, int size) {
+  public Page<AdminMemberDto> getMembers(int page, int size, String searchType, String keyword) {
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
-    return memberRepository.findAll(pageable)
-      .map(AdminMemberDto::fromEntity);
+
+    Page<Member> result;
+
+    if (keyword != null && !keyword.isBlank()) {
+      if ("name".equals(searchType)) {
+        result = memberRepository.findByNameContainingIgnoreCase(keyword, pageable);
+      } else if ("email".equals(searchType)) {
+        result = memberRepository.findByEmailContainingIgnoreCase(keyword, pageable);
+      } else {
+        result = memberRepository.findAll(pageable);
+      }
+    } else {
+      result = memberRepository.findAll(pageable);
+    }
+
+    return result.map(AdminMemberDto::fromEntity);
   }
+
 
 
 

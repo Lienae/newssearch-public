@@ -18,8 +18,12 @@ public class AdminMemberController {
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "0") int page,
                      @RequestParam(defaultValue = "10") int size,
+                     @RequestParam(required = false) String searchType,
+                     @RequestParam(required = false) String keyword,
                      Model model) {
-    Page<AdminMemberDto> members = adminMemberService.getMembers(page, size);
+
+    Page<AdminMemberDto> members = adminMemberService.getMembers(page, size, searchType, keyword);
+
     model.addAttribute("members", members);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
