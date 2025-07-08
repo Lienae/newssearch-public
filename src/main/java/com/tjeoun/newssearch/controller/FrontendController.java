@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FrontendController {
 
-  @GetMapping("/main")
-  public String home() {
-    return "main";
-  }
+//  @GetMapping("/main")
+//  public String home() {
+//    return "main";
+//  }
 
   @GetMapping("/admin/boarder-list")
   public String adminBoarderList() {

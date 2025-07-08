@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>뉴스 전체 보기</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/news-list.css" />
+</head>
+
+<body>
+<div class="navbar">
+    <a href="/main" class="logo">
+        <img src="/img/NewsHub.png" alt="News Hub 로고" />
+    </a>
+    <nav>
+        <a href="/news/list">뉴스</a>
+        <a href="/boarder/list">커뮤니티</a>
+    </nav>
+    <div class="auth">
+        <a href="/user/login">로그인</a>
+        <a href="/user/register">회원가입</a>
+    </div>
+</div>
+
+<div class="main-wrapper">
+    <div class="main-content">
+        <div class="search-bar">
+            <select id="search-type">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+            </select>
+            <input type="text" placeholder="검색어를 입력하세요" />
+            <button>검색</button>
+        </div>
+
+        <div class="category-section">
+            <div class="press-filter-wrap">
+                <select id="press-filter" onchange="location.href=this.value">
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='ALL')}" th:selected="${currentMediaCompany == 'ALL'}">전체</option>
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='YTN')}" th:selected="${currentMediaCompany == 'YTN'}">YTN</option>
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='DONGA')}" th:selected="${currentMediaCompany == 'DONGA'}">동아일보</option>
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='JOONGANG')}" th:selected="${currentMediaCompany == 'JOONGANG'}">중앙일보</option>
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='HANI')}" th:selected="${currentMediaCompany == 'HANI'}">한겨레</option>
+                    <option th:value="@{/news/list(category=${currentCategory}, mediaCompany='KHAN')}" th:selected="${currentMediaCompany == 'KHAN'}">경향신문</option>
+                </select>
+            </div>
+
+            <div class="category-buttons">
+                <a th:href="@{/news/list(category='ALL', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'ALL'} ? 'active' : ''">전체</a>
+                <a th:href="@{/news/list(category='POLITICS', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'POLITICS'} ? 'active' : ''">정치</a>
+                <a th:href="@{/news/list(category='ECONOMY', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'ECONOMY'} ? 'active' : ''">경제</a>
+                <a th:href="@{/news/list(category='SOCIAL', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'SOCIAL'} ? 'active' : ''">사회</a>
+                <a th:href="@{/news/list(category='CULTURE', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'CULTURE'} ? 'active' : ''">문화</a>
+                <a th:href="@{/news/list(category='SPORTS', mediaCompany=${currentMediaCompany})}" th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
+            </div>
+        </div>
+
+        <!-- 뉴스 카드 리스트 -->
+        <div class="news-grid">
+            <div th:each="news : ${newsPage}" class="news-card" th:data-link="${news.url}" th:data-id="${news.id}" >
+                <img src="/img/default.png" alt="기본 이미지 테스트" />
+                <div class="news-card-content">
+                    <h4 th:text="${news.title}">뉴스 제목</h4>
+                    <p th:text="${#strings.abbreviate(news.content, 80)}">내용 요약</p>
+                    <div class="news-meta" th:text="${#temporals.format(news.publishDate, 'yyyy.MM.dd')} + ' | ' + ${news.mediaCompany}">날짜 | 언론사</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이징 처리 -->
+        <div class="pagination" style="text-align: center; margin-top: 30px;">
+            <!-- 이전 버튼 -->
+            <a class="btn"
+               th:if="${!newsPage.first}"
+               th:href="@{/news/list(page=${newsPage.number - 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+               style="margin: 0 5px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #1976d2;">
+                «
+            </a>
+            <a class="btn disabled"
+               th:if="${newsPage.first}"
+               style="margin: 0 5px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; color: #ccc; text-decoration: none;">
+                «
+            </a>
+
+            <!-- 페이지 숫자 -->
+            <span th:with="
+                  start=${T(java.lang.Math).max(0, newsPage.number - 2)},
+                  end=${T(java.lang.Math).min(newsPage.totalPages - 1, start + 4)},
+                  start=${T(java.lang.Math).max(0, end - 4)}
+              ">
+                <span th:each="i : ${#numbers.sequence(start, end)}">
+                  <a class="btn"
+                     th:if="${i != newsPage.number}"
+                     th:href="@{/news/list(page=${i}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+                     th:text="${i + 1}"
+                     style="margin: 0 5px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #1976d2;">
+                  </a>
+                  <a class="btn active disabled"
+                     th:if="${i == newsPage.number}"
+                     th:text="${i + 1}"
+                     style="margin: 0 5px; padding: 6px 12px; border: 1px solid #1976d2; border-radius: 4px; background-color: #1976d2; color: white; text-decoration: none;">
+                  </a>
+                </span>
+              </span>
+
+            <!-- 다음 버튼 -->
+            <a class="btn"
+               th:if="${!newsPage.last}"
+               th:href="@{/news/list(page=${newsPage.number + 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+               style="margin: 0 5px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #1976d2;">
+                »
+            </a>
+            <a class="btn disabled"
+               th:if="${newsPage.last}"
+               style="margin: 0 5px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; color: #ccc; text-decoration: none;">
+                »
+            </a>
+        </div>
+    </div>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="stats-box">
+            <h4>오늘의 뉴스 현황</h4>
+            <canvas id="newsChart" width="250" height="180"></canvas>
+            <a href="#" class="analyze-btn">뉴스 분석하기</a>
+        </div>
+    </div>
+    <!-- 뉴스 상세 모달 팝업 영역 -->
+    <div id="newsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="closeModal" class="close-btn">&times;</span>
+            <iframe id="modalIframe" width="100%" height="600px" style="border: none;"></iframe>
+            <div id="commentSection" class="comment-section">
+                <h3 id="commentCount">총 0개의 의견</h3>
+                <form id="commentForm" class="comment-form">
+                    <input type="text" id="commentInput" placeholder="의견을 작성해주세요." required />
+                    <button type="submit">의견 등록</button>
+                </form>
+            </div>
+            <ul id="commentList"></ul>
+            <div class="modal-actions">
+                <a id="writePostBtn" href="#" class="write-post-btn">관련 글 작성</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/news-list.js"></script>
+</body>
+</html>

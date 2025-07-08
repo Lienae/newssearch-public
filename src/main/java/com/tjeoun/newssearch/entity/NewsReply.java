@@ -42,8 +42,8 @@ public class NewsReply {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @Column(nullable = false)
-    private boolean isBlind = false;
+    @Column(name = "is_blind", nullable = false)
+    private boolean isBlind;
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;

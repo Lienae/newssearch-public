@@ -45,8 +45,8 @@ public class News {
     @Enumerated(EnumType.STRING)
     private NewsMediaCompany mediaCompany;
 
-    @Column(nullable = false)
-    private boolean is_blind;
+    @Column(name = "is_blind", nullable = false)
+    private boolean blind;
 
     public static NewsDocument toDocument(News news) {
         NewsDocument doc = new NewsDocument();

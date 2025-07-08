@@ -23,7 +23,7 @@ public class NewsController {
     private final NewsRepository newsRepository;
 
     @GetMapping("/list")
-    public String list(@RequestParam(defaultValue = "0") int page,
+    public String list(@RequestParam(defaultValue = "0", name = "page") int page,
                        @RequestParam(defaultValue = "10") int size,
                        @RequestParam(defaultValue = "ALL") String category,
                        @RequestParam(defaultValue = "ALL") String mediaCompany,
@@ -37,13 +37,13 @@ public class NewsController {
 
         // 분기 조건 동일하게 유지
         if ("ALL".equals(category) && "ALL".equals(mediaCompany)) {
-            news = newsRepository.findByIs_blindFalse(PageRequest.of(page, size));
+            news = newsRepository.findByBlindFalse(PageRequest.of(page, size));
         } else if (!"ALL".equals(category) && "ALL".equals(mediaCompany)) {
-            news = newsRepository.findByCategoryAndIs_blindFalse(NewsCategory.valueOf(category), PageRequest.of(page, size));
+            news = newsRepository.findByCategoryAndBlindFalse(NewsCategory.valueOf(category), PageRequest.of(page, size));
         } else if ("ALL".equals(category)) {
-            news = newsRepository.findByMediaCompanyAndIs_blindFalse(NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
+            news = newsRepository.findByMediaCompanyAndBlindFalse(NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
         } else {
-            news = newsRepository.findByCategoryAndMediaCompanyAndIs_blindFalse(
+            news = newsRepository.findByCategoryAndMediaCompanyAndBlindFalse(
                     NewsCategory.valueOf(category), NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
         }
 
