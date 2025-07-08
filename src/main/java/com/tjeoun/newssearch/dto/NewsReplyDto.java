@@ -1,5 +1,7 @@
 package com.tjeoun.newssearch.dto;
 
+import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.entity.NewsReply;
 import lombok.*;
 
@@ -15,6 +17,10 @@ public class NewsReplyDto {
     private String content;
     private String writerName;
     private String url;
+    private String password;
+
+    private News news;
+    private Member member;
 
     // NewsReply → DTO 변환용 생성자
     public NewsReplyDto(NewsReply reply) {

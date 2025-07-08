@@ -24,7 +24,7 @@ public class MainPageService {
         Map<NewsCategory, List<NewsDto>> result = new LinkedHashMap<>();
 
         for (NewsCategory category : NewsCategory.values()) {
-            List<NewsDto> top2 = newsRepository.findByCategoryAndBlindFalseOrderByPublishDateDesc(category, PageRequest.of(0, 2))
+            List<NewsDto> top2 = newsRepository.findByCategoryAndIsBlindFalseOrderByPublishDateDesc(category, PageRequest.of(0, 2))
                     .stream()
                     .map(NewsDto::fromEntity)
                     .toList();
@@ -38,7 +38,7 @@ public class MainPageService {
         Map<NewsMediaCompany, List<NewsDto>> result = new LinkedHashMap<>();
 
         for (NewsMediaCompany company : NewsMediaCompany.values()) {
-            List<NewsDto> top2 = newsRepository.findByMediaCompanyAndBlindFalseOrderByPublishDateDesc(company, PageRequest.of(0, 2))
+            List<NewsDto> top2 = newsRepository.findByMediaCompanyAndIsBlindFalseOrderByPublishDateDesc(company, PageRequest.of(0, 2))
                     .stream()
                     .map(NewsDto::fromEntity)
                     .toList();

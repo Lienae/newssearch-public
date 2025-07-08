@@ -36,7 +36,6 @@ public class NewsCommentService {
                 .member(member)
                 .news(news)
                 .content(dto.getContent())
-                .password("1234") // 테스트용 비밀번호
                 .build();
 
         newsReplyRepository.save(reply);
@@ -56,7 +55,7 @@ public class NewsCommentService {
         }
 
         // soft delete 처리 (isBlind 필드 필요)
-        reply.setBlind(true);
+        reply.setIsBlind(true);
     }
 
     @Transactional

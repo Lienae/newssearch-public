@@ -50,6 +50,19 @@ h2 {
   font-weight: bold;
 }
 
+.readonly-text {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background: #f9f9f9;
+  color: #333;
+  box-sizing: border-box;
+}
+
+
 
 .article-title {
   padding: 10px;

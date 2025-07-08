@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Document(indexName = "news_articles")
 @Getter
@@ -29,7 +29,7 @@ public class NewsDocument {
     private String content;
 
     @Field(type = FieldType.Date)
-    private LocalDateTime publishDate;
+    private LocalDate publishDate;
 
     @Field(type = FieldType.Keyword)
     private String author;

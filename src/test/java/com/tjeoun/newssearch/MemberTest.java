@@ -38,7 +38,7 @@ public class MemberTest {
                 .name(name)
                 .role(role)
                 .build();
-        Member member = Member.createMenber(dto, passwordEncoder);
+        Member member = Member.createMember(dto, passwordEncoder);
 
         // when
         Member saveMember = memberRepository.save(member);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIGKinds 마이페이지</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/mypage.css" />
+</head>
+<body>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+<div class="mypage-container">
+  <h2>마이페이지</h2>
+
+  <form class="mypage-form" th:action="@{/member/update}" th:object="${member}" method="post">
+    <label for="email">아이디(E-mail)</label>
+    <input type="email" id="email" th:field="*{email}" th:readonly="true" />
+    <input type="hidden" th:field="*{id}"/>
+    <label for="name">닉네임</label>
+    <input type="text" id="name" th:field="*{name}" />
+
+    <label for="newPassword">새 비밀번호</label>
+    <input
+            type="password"
+            id="newPassword"
+            placeholder="새 비밀번호 입력"
+            th:field="*{password}"
+    />
+
+    <label for="newPasswordConfirm">새 비밀번호 확인</label>
+    <input
+            type="password"
+            id="newPasswordConfirm"
+            placeholder="새 비밀번호 입력"
+    />
+
+    <div class="button-group">
+      <button type="submit" class="btn-submit">회원정보 변경</button>
+      <button type="button" class="btn-cancel" onclick="history.back()">취소</button>
+    </div>
+
+    <!-- 추가된 탈퇴 버튼 -->
+    <div class="withdraw-group">
+      <button type="button" class="btn-withdraw" onclick="location.href='/user/delete-user'">
+        회원 탈퇴
+      </button>
+    </div>
+
+  </form>
+</div>
+</body>
+</html>

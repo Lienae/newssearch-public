@@ -8,45 +8,47 @@
   <link rel="stylesheet" href="/css/boarder-list.css" />
 </head>
 <body>
-<div class="navbar">
-  <a href="/main" class="logo">
-    <img src="/img/NewsHub.png" alt="News Hub 로고"/>
-  </a>
-  <nav>
-    <a href="/news/list">뉴스</a>
-    <a href="/boarder/list">커뮤니티</a>
-  </nav>
-  <div class="auth">
-    <a href="/user/login">로그인</a>
-    <a href="/user/register">회원가입</a>
-  </div>
-</div>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
 
 <div class="board-container">
   <div class="category-section">
     <div class="press-filter-wrap">
-      <select id="press-filter">
-        <option value="all">전체</option>
-        <option value="YTN">YTN</option>
-        <option value="동아일보">동아일보</option>
-        <option value="조선일보">조선일보</option>
-        <option value="중앙일보">중앙일보</option>
-        <option value="한겨레">한겨레</option>
+      <select id="press-filter" onchange="location.href=this.value">
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='ALL')}"
+                th:selected="${currentMediaCompany == 'ALL'}">전체</option>
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='YTN')}"
+                th:selected="${currentMediaCompany == 'YTN'}">YTN</option>
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='DONGA')}"
+                th:selected="${currentMediaCompany == 'DONGA'}">동아일보</option>
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='JOONGANG')}"
+                th:selected="${currentMediaCompany == 'JOONGANG'}">중앙일보</option>
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='HANI')}"
+                th:selected="${currentMediaCompany == 'HANI'}">한겨레</option>
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='KHAN')}"
+                th:selected="${currentMediaCompany == 'KHAN'}">경향신문</option>
       </select>
     </div>
 
     <div class="category-buttons">
-      <a href="#" class="active">전체</a>
-      <a href="#">정치</a>
-      <a href="#">경제</a>
-      <a href="#">사회</a>
-      <a href="#">문화</a>
-      <a href="#">스포츠</a>
+      <a th:href="@{/admin/news/list(category='ALL', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'ALL'} ? 'active' : ''">전체</a>
+      <a th:href="@{/admin/news/list(category='POLITICS', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'POLITICS'} ? 'active' : ''">정치</a>
+      <a th:href="@{/admin/news/list(category='ECONOMY', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'ECONOMY'} ? 'active' : ''">경제</a>
+      <a th:href="@{/admin/news/list(category='SOCIAL', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'SOCIAL'} ? 'active' : ''">사회</a>
+      <a th:href="@{/admin/news/list(category='CULTURE', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'CULTURE'} ? 'active' : ''">문화</a>
+      <a th:href="@{/admin/news/list(category='SPORTS', mediaCompany=${currentMediaCompany})}"
+         th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
     </div>
   </div>
 
   <div class="board-header">
-    <div class="board-count">전체 <strong>159</strong>건</div>
+    <div class="board-count">전체 <strong th:text="${totalCount}">0</strong>건</div>
   </div>
 
   <table class="board-table">
@@ -58,66 +60,71 @@
       <th>언론사</th>
       <th>작성자</th>
       <th>발행일</th>
+      <th>Blind 여부</th>
       <th>관리</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>1</td>
-      <td>첫 뉴스 제목</td>
-      <td>POLITICS</td>
-      <td>YTN</td>
-      <td>홍길동</td>
-      <td>2025-07-01</td>
+    <tr th:each="news : ${newsPage.content}"
+        th:classappend="${news.isBlind} ? 'blind-row' : ''">
+      <td th:text="${news.id}">1</td>
+      <td th:text="${news.title}">첫 뉴스 제목</td>
+      <td th:text="${#messages.msgOrNull('NewsCategory.' + news.category) ?: news.category}"></td>
+      <td th:text="${#messages.msgOrNull('NewsMediaCompany.' + news.mediaCompany) ?: news.mediaCompany}"></td>
+      <td th:text="${news.author}">홍길동</td>
+      <td th:text="${#temporals.format(news.publishDate, 'yyyy-MM-dd')}">2025-07-01</td>
+      <td th:text="${news.isBlind} ? 'Y' : 'N'">N</td>
       <td>
-        <button onclick="location.href='/admin/news-edit'">수정</button>
-      </td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>두 번째 뉴스 제목</td>
-      <td>ECONOMY</td>
-      <td>JOONGANG</td>
-      <td>김철수</td>
-      <td>2025-07-02</td>
-      <td>
-        <button onclick="location.href='/admin/news-edit'">수정</button>
-      </td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td class="news-title-cell">
-        첫 뉴스 제목이 아주 길어서 테이블 너비를 넘어가면 이렇게
-        처리됩니다
-      </td>
-      <td>ECONOMY</td>
-      <td>JOONGANG</td>
-      <td>김철수</td>
-      <td>2025-07-02</td>
-      <td>
-        <button onclick="location.href='/admin/news-edit'">수정</button>
+        <a th:href="@{/admin/news/edit(id=${news.id}, page=${page}, size=${size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">
+          수정
+        </a>
       </td>
     </tr>
     </tbody>
   </table>
 
   <div class="pagination">
-    <button disabled>«</button>
-    <button class="active">1</button>
-    <button>2</button>
-    <button>3</button>
-    <button>»</button>
+    <a class="btn" th:if="${!newsPage.first}"
+       th:href="@{/admin/news/list(page=${newsPage.number - 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">«</a>
+    <a class="btn disabled" th:if="${newsPage.first}">«</a>
+
+    <span th:with="
+      start=${T(java.lang.Math).max(0, newsPage.number - 2)},
+      end=${T(java.lang.Math).min(newsPage.totalPages - 1, start + 4)},
+      start=${T(java.lang.Math).max(0, end - 4)}
+    ">
+      <span th:each="i : ${#numbers.sequence(start, end)}">
+        <a class="btn" th:if="${i != newsPage.number}"
+           th:href="@{/admin/news/list(page=${i}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+           th:text="${i + 1}"></a>
+        <a class="btn active disabled" th:if="${i == newsPage.number}"
+           th:text="${i + 1}"></a>
+      </span>
+    </span>
+
+    <a class="btn" th:if="${!newsPage.last}"
+       th:href="@{/admin/news/list(page=${newsPage.number + 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">»</a>
+    <a class="btn disabled" th:if="${newsPage.last}">»</a>
   </div>
+
   <div class="board-search">
     <select id="search-type">
       <option value="title">제목</option>
-      <option value="author">작성자</option>
+      <option value="content">내용</option>
     </select>
     <input type="text" placeholder="검색어를 입력해주세요." />
     <button>검색</button>
   </div>
 </div>
 
-<script src="/js/boarder-list.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const success = params.get('success');
+  if (success === 'delete') {
+    alert("삭제가 완료되었습니다.");
+  } else if (success === 'update') {
+    alert("수정이 완료되었습니다.");
+  }
+</script>
 </body>
 </html>
