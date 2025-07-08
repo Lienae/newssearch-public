@@ -220,3 +220,99 @@ iframe {
     color: #777;
     display: block;
 }
+/* Floating Button */
+.floating-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.floating-btn:hover {
+    background-color: #135ba1;
+}
+
+/* 모달 전체 배경 */
+.modal {
+    display: none; /* 기본은 숨김 */
+    position: fixed;
+    z-index: 2000; /* 모든 요소 위에 보이게 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* 모달 내부 콘텐츠 */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 닫기 버튼 */
+.modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal .close:hover {
+    color: #000;
+}
+
+/* 작업 목록 스타일 */
+.job-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.job-list li {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.job-list a {
+    text-decoration: none;
+    color: #1976d2;
+    font-weight: bold;
+}
+
+.job-list a:hover {
+    text-decoration: underline;
+}
+
+.job-list .meta {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-top: 2px;
+}
+
+/* fadeIn animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

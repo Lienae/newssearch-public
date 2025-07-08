@@ -230,3 +230,8 @@ th:nth-child(1) {
   display: flex;
   align-items: center;
 }
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

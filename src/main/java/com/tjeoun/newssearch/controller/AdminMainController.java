@@ -36,5 +36,10 @@ public class AdminMainController {
 
     return "admin/main";
   }
+
+  @GetMapping("/job")
+  public String job(Model model) {
+    return "admin/admin-job";
+  }
 }
 

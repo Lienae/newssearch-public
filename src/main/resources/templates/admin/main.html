@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,8 +21,6 @@
           <h3 class="category-title" th:text="${news.category.name()}">카테고리</h3>
           <div class="news-list">
             <div class="news-card">
-<!--              <img th:src="${news.imageUrl != null ? news.imageUrl : '/images/default.png'}"-->
-<!--                   th:alt="${news.category.name()}" />-->
               <img src="/img/default.png" alt="테스트 이미지" />
               <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
               <div class="news-meta" th:text="${news.mediaCompany.name()}">언론사</div>
@@ -43,9 +41,9 @@
             <span th:text="${board.title}">게시글 제목</span>
           </a>
           <span class="meta">
-          작성자: <span th:text="${board.authorName}">작성자명</span> |
-          <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성일</span>
-        </span>
+            작성자: <span th:text="${board.authorName}">작성자명</span> |
+            <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성일</span>
+          </span>
         </li>
       </ul>
     </div>
@@ -66,6 +64,22 @@
     <iframe src="about:blank"></iframe>
   </div>
 </div>
+
+<!-- Floating Button for Modal -->
+<button id="openAdminJobsModal" class="floating-btn">🛠</button>
+
+<!-- Modal 구조 -->
+<div id="adminJobsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>처리해야 할 작업 목록</h2>
+    <ul class="job-list">
+
+    </ul>
+  </div>
+</div>
+
+
 <script src="/js/main.js"></script>
 </body>
 </html>

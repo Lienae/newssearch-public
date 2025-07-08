@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - 작업 목록</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/boarder-list.css" />
+</head>
+<body>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+<div class="board-container">
+
+  <div class="category-section">
+    <div class="category-buttons">
+      <a href="#" class="active">전체</a>
+      <a href="#">해결</a>
+      <a href="#">미해결</a>
+    </div>
+  </div>
+
+  <div class="board-header">
+    <div class="board-count">전체 <strong>3</strong>건</div>
+  </div>
+
+  <table class="board-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>작업 유형</th>
+      <th>관련 URL</th>
+      <th>기록 시각</th>
+      <th>처리 완료</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>1</td>
+      <td>NEWS</td>
+      <td>/news/delete/123</td>
+      <td>2025-07-08 14:32</td>
+      <td>
+        <label class="checkbox-label">
+          <input type="checkbox" class="resolve-checkbox" data-id="1" />
+          <span>해결됨</span>
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>REPORT</td>
+      <td>/report/456</td>
+      <td>2025-07-07 09:18</td>
+      <td>
+        <label class="checkbox-label">
+          <input type="checkbox" class="resolve-checkbox" data-id="2" checked />
+          <span>해결됨</span>
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>NEWS</td>
+      <td>/news/789</td>
+      <td>2025-07-06 22:05</td>
+      <td>
+        <label class="checkbox-label">
+          <input type="checkbox" class="resolve-checkbox" data-id="3" />
+          <span>해결됨</span>
+        </label>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <a class="btn" href="?page=0">«</a>
+    <a class="btn active disabled">1</a>
+    <a class="btn" href="?page=1">2</a>
+    <a class="btn" href="?page=2">3</a>
+    <a class="btn" href="?page=3">4</a>
+    <a class="btn" href="?page=1">»</a>
+  </div>
+
+  <div class="board-search">
+    <form action="/admin/jobs/list" method="get">
+      <select name="searchType" id="search-type">
+        <option value="url">URL</option>
+        <option value="job">작업 유형</option>
+      </select>
+      <input type="text" name="keyword" placeholder="검색어를 입력해주세요." />
+      <button type="submit">검색</button>
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>
