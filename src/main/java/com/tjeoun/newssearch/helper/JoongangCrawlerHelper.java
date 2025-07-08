@@ -104,7 +104,7 @@ public class JoongangCrawlerHelper {
             }
 
             Map<String, String> result = new LinkedHashMap<>();
-            result.put("언론사", "중앙");
+            result.put("언론사", "중앙일보");
             result.put("링크", url);
             result.put("제목", title);
             result.put("기자명", reporter);
