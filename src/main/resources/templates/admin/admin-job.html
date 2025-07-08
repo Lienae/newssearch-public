@@ -33,44 +33,29 @@
       <th>작업 유형</th>
       <th>관련 URL</th>
       <th>기록 시각</th>
-      <th>처리 완료</th>
+      <th>처리 여부</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>1</td>
-      <td>NEWS</td>
-      <td>/news/delete/123</td>
-      <td>2025-07-08 14:32</td>
+    <tr th:each="job : ${jobList}">
+      <td th:text="${job.id}">1</td>
+      <td th:text="${job.job}">NEWS</td>
+      <td th:text="${job.url}">/url</td>
+      <td th:text="${#temporals.format(job.recordedTime, 'yyyy-MM-dd HH:mm')}">날짜</td>
       <td>
-        <label class="checkbox-label">
-          <input type="checkbox" class="resolve-checkbox" data-id="1" />
-          <span>해결됨</span>
-        </label>
-      </td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>REPORT</td>
-      <td>/report/456</td>
-      <td>2025-07-07 09:18</td>
-      <td>
-        <label class="checkbox-label">
-          <input type="checkbox" class="resolve-checkbox" data-id="2" checked />
-          <span>해결됨</span>
-        </label>
-      </td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>NEWS</td>
-      <td>/news/789</td>
-      <td>2025-07-06 22:05</td>
-      <td>
-        <label class="checkbox-label">
-          <input type="checkbox" class="resolve-checkbox" data-id="3" />
-          <span>해결됨</span>
-        </label>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <form th:action="@{/admin/main/job/update}" method="post">
+            <input type="hidden" name="id" th:value="${job.id}" />
+            <input type="hidden" name="isResolved" th:value="${!job.isResolved}" />
+            <button type="submit"
+                    th:text="${job.isResolved ? '미처리로 변경' : '작업 완료'}"
+                    th:class="${job.isResolved ? 'cancel-btn' : 'resolve-btn'}">
+            </button>
+          </form>
+
+          <span th:if="${job.isResolved}" style="color: green; font-weight: bold;">완료됨</span>
+          <span th:if="${!job.isResolved}" style="color: orange; font-weight: bold;">대기 중</span>
+        </div>
       </td>
     </tr>
     </tbody>
