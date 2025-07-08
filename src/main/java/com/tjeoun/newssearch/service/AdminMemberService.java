@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -40,9 +40,6 @@ public class AdminMemberService {
     return result.map(AdminMemberDto::fromEntity);
   }
 
-
-
-
   public AdminMemberDto getMemberDto(Long id) {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -58,11 +55,6 @@ public class AdminMemberService {
     member.setPassword(dto.getPassword());
     member.setRole(dto.getRole());
     member.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
-    log.info("폼에서 넘어온 isBlind 값: {}", dto.getIsBlind());
-    log.info("DB 기존 isBlind 값: {}", member.isBlind());
-    log.info("적용될 isBlind 값: {}", Boolean.TRUE.equals(dto.getIsBlind()));
-
-    // memberRepository.save(member);
   }
 
   @Transactional
@@ -70,7 +62,6 @@ public class AdminMemberService {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
     member.setBlind(true);
-    // memberRepository.save(member);
   }
 }
 
