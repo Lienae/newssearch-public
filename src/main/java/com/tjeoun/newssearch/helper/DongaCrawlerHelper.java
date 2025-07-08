@@ -73,7 +73,7 @@ public class DongaCrawlerHelper {
                     ? ""
                     :downloadImage(imageUrl, publishedDate); // 저장된 경로
 
-            return NewsCrawlUtils.createNewsMap("동아일보", category, entry.getTitle(),
+            return NewsCrawlUtils.createNewsMap("동아", category, entry.getTitle(),
                     content, reporter, publishedDate, link, savedImagePath);
         } catch (Exception e) {
             System.err.println("기사 파싱 실패: " + entry.getLink() + " → " + e.getMessage());
