@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,13 +20,25 @@ public class AdminMemberService {
 
   private final MemberRepository memberRepository;
 
-  public Page<AdminMemberDto> getMembers(int page, int size) {
+  public Page<AdminMemberDto> getMembers(int page, int size, String searchType, String keyword) {
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
-    return memberRepository.findAll(pageable)
-      .map(AdminMemberDto::fromEntity);
+
+    Page<Member> result;
+
+    if (keyword != null && !keyword.isBlank()) {
+      if ("name".equals(searchType)) {
+        result = memberRepository.findByNameContainingIgnoreCase(keyword, pageable);
+      } else if ("email".equals(searchType)) {
+        result = memberRepository.findByEmailContainingIgnoreCase(keyword, pageable);
+      } else {
+        result = memberRepository.findAll(pageable);
+      }
+    } else {
+      result = memberRepository.findAll(pageable);
+    }
+
+    return result.map(AdminMemberDto::fromEntity);
   }
-
-
 
   public AdminMemberDto getMemberDto(Long id) {
     Member member = memberRepository.findById(id)
@@ -43,11 +55,6 @@ public class AdminMemberService {
     member.setPassword(dto.getPassword());
     member.setRole(dto.getRole());
     member.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
-    log.info("폼에서 넘어온 isBlind 값: {}", dto.getIsBlind());
-    log.info("DB 기존 isBlind 값: {}", member.isBlind());
-    log.info("적용될 isBlind 값: {}", Boolean.TRUE.equals(dto.getIsBlind()));
-
-    // memberRepository.save(member);
   }
 
   @Transactional
@@ -55,7 +62,6 @@ public class AdminMemberService {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
     member.setBlind(true);
-    // memberRepository.save(member);
   }
 }
 
