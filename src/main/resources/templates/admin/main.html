@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,15 +14,13 @@
 
 <div class="dashboard-container">
   <div class="box">
-    <h3>최근 등록 기사 (카테고리/언론사)</h3>
+    <h3>최근 등록 기사</h3>
     <div class="scroll-wrapper">
       <div class="category-row">
         <div class="category-block" th:each="news : ${recentNews}">
           <h3 class="category-title" th:text="${news.category.name()}">카테고리</h3>
           <div class="news-list">
             <div class="news-card">
-<!--              <img th:src="${news.imageUrl != null ? news.imageUrl : '/images/default.png'}"-->
-<!--                   th:alt="${news.category.name()}" />-->
               <img src="/img/default.png" alt="테스트 이미지" />
               <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
               <div class="news-meta" th:text="${news.mediaCompany.name()}">언론사</div>
@@ -33,7 +31,7 @@
     </div>
   </div>
 
-  <div class="box">
+  <div class="box board-box">
     <h3>게시판 최근글</h3>
     <div class="scroll-box">
       <ul class="board-list">
@@ -43,9 +41,9 @@
             <span th:text="${board.title}">게시글 제목</span>
           </a>
           <span class="meta">
-          작성자: <span th:text="${board.authorName}">작성자명</span> |
-          <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성일</span>
-        </span>
+            작성자: <span th:text="${board.authorName}">작성자명</span> |
+            <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성일</span>
+          </span>
         </li>
       </ul>
     </div>
@@ -66,6 +64,22 @@
     <iframe src="about:blank"></iframe>
   </div>
 </div>
-<script src="/js/main.js"></script>
+
+<!-- Floating Button for Modal -->
+<button id="openAdminJobsModal" class="floating-btn">🛠</button>
+
+<!-- Modal 구조 -->
+<div id="adminJobsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>처리해야 할 작업 목록</h2>
+    <ul class="job-list">
+
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/admin-main.js"></script>
 </body>
 </html>

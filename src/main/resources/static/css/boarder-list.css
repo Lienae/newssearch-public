@@ -128,6 +128,7 @@
   background: white;
   font-size: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
 }
 
 .board-table thead {
@@ -230,3 +231,101 @@ th:nth-child(1) {
   display: flex;
   align-items: center;
 }
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* admin-job.html */
+.resolve-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+tr.highlighted {
+  background-color: #fff9c4; /* 연노랑 */
+  animation: fadeHighlight 1.2s ease-in-out;
+}
+
+@keyframes fadeHighlight {
+  from { background-color: #ffeb3b; }
+  to { background-color: #fff9c4; }
+}
+
+.job-search-bar {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.job-search-bar form {
+  display: flex;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.job-search-bar input[type="date"] {
+  flex: 1;
+  border: none;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  background-color: transparent;
+  color: #333;
+}
+
+.job-search-bar button {
+  background-color: #1976d2;
+  border: none;
+  padding: 0 20px;
+  font-size: 14px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.job-search-bar button:hover {
+  background-color: #155fa0;
+}
+
+/* 공통 ellipsis 스타일 */
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+/* 너비 별도로 지정 */
+.ellipsis-sm {
+  max-width: 100px;
+}
+
+.ellipsis-md {
+  max-width: 200px;
+}
+
+.ellipsis-lg {
+  max-width: 300px;
+}
+

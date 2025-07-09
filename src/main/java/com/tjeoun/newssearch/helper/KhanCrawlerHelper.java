@@ -51,7 +51,7 @@ public class KhanCrawlerHelper {
                         ? ""
                         : NewsCrawlUtils.downloadImage(imageUrl, NewsCrawlUtils.khanImageBasePath);
 
-                Map<String, String> articleData = createNewsMap("한겨레", category, title, content,
+                Map<String, String> articleData = createNewsMap("KHAN", category, title, content,
                         author, dateStr, link, savedImagePath);
 
                 result.add(articleData);
