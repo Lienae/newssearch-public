@@ -2,10 +2,12 @@ package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.dto.AdminMemberDto;
 import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class AdminMemberService {
 
   private final MemberRepository memberRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public Page<AdminMemberDto> getMembers(int page, int size, String searchType, String keyword) {
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
@@ -52,9 +55,18 @@ public class AdminMemberService {
     Member member = memberRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Member not found"));
     member.setName(dto.getName());
-    member.setPassword(dto.getPassword());
+
+    if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+      member.setPassword(passwordEncoder.encode(dto.getPassword()));
+    }
+
     member.setRole(dto.getRole());
-    member.setBlind(Boolean.TRUE.equals(dto.getIsBlind()));
+
+    if (dto.getRole() == UserRole.SUSPENDED) {
+      member.setBlind(true);
+    } else {
+      member.setBlind(false);
+    }
   }
 
   @Transactional
