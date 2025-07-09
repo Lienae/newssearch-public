@@ -55,4 +55,18 @@ public class CommentController {
         List<NewsReplyDto> replies = commentService.findCommentsByNewsUrl(url);
         return ResponseEntity.ok(replies);
     }
+
+    // 댓글 신고
+    @PostMapping("/report")
+    public ResponseEntity<String> reportComment(
+            @RequestParam Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        // 현재는 실제 DB 처리 없이 알림용으로만 구현
+        System.out.println("신고 접수됨 - 댓글 ID: " + commentId + ", 신고자: " + email);
+
+        return ResponseEntity.ok("신고 접수 완료");
+    }
+
 }

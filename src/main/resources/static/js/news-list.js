@@ -84,6 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
           } else if (isAdmin) {
             buttonsHtml = `<button class="delete-comment">삭제</button>`;
+          } else if (!isAuthor) {
+            buttonsHtml = `<button class="report-comment">신고</button>`;
           }
 
           li.innerHTML = `
@@ -195,6 +197,38 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
   });
+
+    // 댓글 신고 버튼 처리
+    commentList.addEventListener("click", async (e) => {
+      if (e.target.classList.contains("report-comment")) {
+        const li = e.target.closest("li");
+        const commentId = li.dataset.id;
+        if (!commentId) return;
+
+        const confirmed = confirm("이 댓글을 신고하시겠습니까?");
+        if (!confirmed) return;
+
+        try {
+          const res = await fetch("/api/v1/comment/report", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `commentId=${commentId}`
+          });
+
+          if (res.ok) {
+            alert("신고가 접수되었습니다.");
+          } else {
+            const msg = await res.text();
+            alert("신고 실패: " + msg);
+          }
+        } catch (err) {
+          alert("요청 중 오류가 발생했습니다.");
+        }
+      }
+    });
+
 
   // 모달 닫기
   closeBtn.addEventListener("click", () => {
