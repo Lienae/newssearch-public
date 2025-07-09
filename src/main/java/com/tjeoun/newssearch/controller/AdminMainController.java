@@ -27,21 +27,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminMainController {
 
+
   private final AdminBoardService adminBoardService;
   private final AdminNewsService adminNewsService;
   private final AdminJobService adminJobService;
 
-  @GetMapping
-  public String dashboard(Model model) {
-    // 게시판 최근글 5개
-    List<AdminBoardDto> recentBoardList = adminBoardService.getRecentBoardList();
 
-    // 최근 등록 뉴스 기사 5개 (카테고리/언론사별) 필터링해야 될 듯?
-    List<AdminNewsDto> recentNewsList = adminNewsService.getRecentNewsList();
+    @GetMapping
+    public String dashboard(Model model) {
+        // 게시판 최근글 5개
+        List<AdminBoardDto> recentBoardList = adminBoardService.getRecentBoardList();
+
+        // 최근 등록 뉴스 기사 5개 (카테고리/언론사별) 필터링해야 될 듯?
+        List<AdminNewsDto> recentNewsList = adminNewsService.getRecentNewsList();
 
 
-    model.addAttribute("recentBoardList", recentBoardList);
-    model.addAttribute("recentNews", recentNewsList);
+        model.addAttribute("recentBoardList", recentBoardList);
+        model.addAttribute("recentNews", recentNewsList);
+
 
     return "admin/main";
   }
