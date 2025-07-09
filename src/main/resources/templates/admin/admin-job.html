@@ -39,8 +39,8 @@
       <th>작업 유형</th>
       <th>관련 URL</th>
       <th>기록 시각</th>
-      <th>처리 여부</th>
       <th>상태</th>
+      <th>상태 변경</th>
     </tr>
     </thead>
     <tbody>
@@ -49,7 +49,8 @@
         해당 날짜에 작업이 없습니다.
       </td>
     </tr>
-    <tr th:each="job : ${jobPage}">
+    <tr th:each="job : ${jobPage.content}"
+        th:classappend="${job.id == highlightJobId} ? 'highlighted'">
       <td th:text="${job.id}">1</td>
       <td th:text="${job.job}">NEWS</td>
       <td th:text="${job.url}">/url</td>

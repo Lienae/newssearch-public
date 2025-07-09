@@ -51,6 +51,7 @@ public class AdminMainController {
                     @RequestParam(defaultValue = "10") int size,
                     @RequestParam(defaultValue = "ALL") String filter,
                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate searchDate,
+                    @RequestParam(required = false) Long jobId,
                     Model model) {
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "recordedTime"));
@@ -61,6 +62,7 @@ public class AdminMainController {
     model.addAttribute("size", size);
     model.addAttribute("filter", filter);
     model.addAttribute("totalCount", jobPage.getTotalElements());
+    model.addAttribute("highlightJobId", jobId);
 
     return "admin/admin-job";
   }
