@@ -266,6 +266,12 @@ iframe {
     animation: fadeIn 0.3s ease-in-out;
 }
 
+/* fadeIn animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* 닫기 버튼 */
 .modal .close {
     color: #aaa;
@@ -311,8 +317,15 @@ iframe {
     margin-top: 2px;
 }
 
-/* fadeIn animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+.floating-btn.has-jobs {
+    background-color: #ff5252;
+    animation: pulse 1.2s infinite;
 }
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+

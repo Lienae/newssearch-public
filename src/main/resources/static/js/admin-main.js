@@ -1,24 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 필터 탭 클릭 시 active 클래스 처리
-    document.querySelectorAll(".filter-tabs li").forEach((tab) => {
-        tab.addEventListener("click", () => {
-            document
-                .querySelectorAll(".filter-tabs li")
-                .forEach((el) => el.classList.remove("active"));
-            tab.classList.add("active");
-        });
-    });
-
-    // 카테고리 버튼 클릭 시 active 클래스 처리
-    document.querySelectorAll(".category-buttons a").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            document
-                .querySelectorAll(".category-buttons a")
-                .forEach((el) => el.classList.remove("active"));
-            btn.classList.add("active");
-        });
-    });
 
     // 모달 열기 및 Ajax로 작업 목록 불러오기
     const openBtn = document.getElementById("openAdminJobsModal");
@@ -43,6 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // 관리자가 작업 목록 확인 완료 -> 작업 수 업데이트
+                lastJobCount = data.length;
+
                 data.forEach((job) => {
                     const li = document.createElement("li");
                     li.innerHTML = `
@@ -53,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     `;
                     jobList.appendChild(li);
                 });
+                // 확인 했으니 강조도 제거
+                openBtn.classList.remove("has-jobs");
             })
             .catch((err) => {
                 console.error("작업 목록 로드 실패:", err);
@@ -83,4 +68,36 @@ document.addEventListener("DOMContentLoaded", () => {
         const min = `${date.getMinutes()}`.padStart(2, "0");
         return `${y}-${m}-${d} ${h}:${min}`;
     }
+
+    let lastJobCount = 0;
+
+    // 작업이 새로 생기면 float 버튼에 디자인 추가
+    function checkPendingJobs() {
+        fetch("/api/v1/admin-jobs")
+            .then(res => {
+                if (res.status === 204) return [];
+                return res.json();
+            })
+            .then(data => {
+                const currentCount = data.length;
+
+                if (currentCount > lastJobCount) {
+                    openBtn.classList.add("has-jobs");
+                } else {
+                    openBtn.classList.remove("has-jobs");
+                }
+
+                lastJobCount = currentCount;
+
+            })
+            .catch(err => console.error("작업 상태 확인 실패:", err));
+    }
+
+    // 페이지 진입 후 1회 초기화
+    checkPendingJobs();
+
+    // 이후 주기적으로 비교
+    setInterval(checkPendingJobs, 30000);
+
+
 });
