@@ -33,11 +33,11 @@ public class BoardModifyService {
   private final MemberRepository memberRepository;
 
   private String uploadDir;
-
   @Value("${upload.dir}")
   public void setUploadDir(String uploadDir) {
     this.uploadDir = uploadDir;
   }
+
 
   public BoardDto getEditableBoard(Long boardId, Principal principal) {
     Board board = boardRepository.findById(boardId)

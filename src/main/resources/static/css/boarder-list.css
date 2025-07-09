@@ -199,12 +199,12 @@ th:nth-child(1) {
   cursor: not-allowed;
 }
 
-<<<<<<< HEAD:src/main/resources/static/css/board-list.css
+
 .pagination button:hover {
    background-color: #eee;
  }
 
-#toggleFilterBtn {
+#toggleFilterBtnEN {
   background-color: #1976d2;
   color: white;
   border: none;
@@ -215,9 +215,9 @@ th:nth-child(1) {
   transition: background-color 0.3s ease;
 }
 
-#toggleFilterBtn:hover {
+#toggleFilterBtnEN:hover {
   background-color: #125ea9;  /* 원래 색보다 조금 더 진한 파란색 */
-=======
+
 .btn {
   display: inline-block;
   padding: 6px 12px;
@@ -250,5 +250,5 @@ th:nth-child(1) {
 .board-search form {
   display: flex;
   align-items: center;
->>>>>>> origin/master:src/main/resources/static/css/boarder-list.css
+
 }

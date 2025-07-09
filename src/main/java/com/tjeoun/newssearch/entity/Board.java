@@ -49,13 +49,15 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private NewsCategory newsCategory;
 
-<<<<<<< HEAD
-    @Column(nullable = false)
-    private Boolean isBlind;
-=======
+
     @Column(name = "is_blind", nullable = false)
     private boolean isBlind;
->>>>>>> origin/master
+
+    public void setIsBlind(boolean isBlind) {
+        this.isBlind = isBlind;
+    }
+
+
 
     @Column(nullable = false)
     private boolean isAdminArticle;

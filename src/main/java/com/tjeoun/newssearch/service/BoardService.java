@@ -34,7 +34,6 @@ import java.util.*;
 public class BoardService {
 
   private String uploadDir;
-
   @Value("${upload.dir}")
   public void setUploadDir(String uploadDir) {
     this.uploadDir = uploadDir;
