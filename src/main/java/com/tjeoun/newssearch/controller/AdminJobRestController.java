@@ -17,7 +17,7 @@ public class AdminJobRestController {
     private final AdminJobService adminJobService;
 
     @GetMapping("/admin-jobs")
-    public List<AdminJob> getRecentJobs() {
+    public List<AdminJob> getRecentJobs() { // 단순 조회용
         return adminJobService.getJobs();
     }
 }

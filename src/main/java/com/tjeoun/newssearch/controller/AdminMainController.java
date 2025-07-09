@@ -13,11 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -48,10 +50,11 @@ public class AdminMainController {
   public String job(@RequestParam(defaultValue = "0") int page,
                     @RequestParam(defaultValue = "10") int size,
                     @RequestParam(defaultValue = "ALL") String filter,
+                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate searchDate,
                     Model model) {
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "recordedTime"));
-    Page<AdminJobDto> jobPage = adminJobService.getFilteredJobs(filter, pageable);
+    Page<AdminJobDto> jobPage = adminJobService.getFilteredJobs(filter, searchDate, pageable);
 
     model.addAttribute("jobPage", jobPage);
     model.addAttribute("page", page);
