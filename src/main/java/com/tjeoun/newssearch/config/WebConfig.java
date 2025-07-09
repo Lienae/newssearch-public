@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.tjeoun.newssearch.interceptor.AdminLogInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,17 +19,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${attachFileLocation}")
     private String UPLOAD_DIR;
 
-    private String uploadDir;
-    @Value("${upload.dir}")
-    public void setUploadDir(String uploadDir) {
-      this.uploadDir = uploadDir;
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/upload/**")
                 .addResourceLocations("file:///" + UPLOAD_DIR + "/")
-                .addResourceLocations("file:///C:/workspace/newssearch/images/upload/");
+        ;
     }
 
     @Override
