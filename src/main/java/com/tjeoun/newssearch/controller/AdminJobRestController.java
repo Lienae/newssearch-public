@@ -3,6 +3,7 @@ package com.tjeoun.newssearch.controller;
 import com.tjeoun.newssearch.entity.AdminJob;
 import com.tjeoun.newssearch.service.AdminJobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,13 @@ public class AdminJobRestController {
     private final AdminJobService adminJobService;
 
     @GetMapping("/admin-jobs")
-    public List<AdminJob> getRecentJobs() { // 단순 조회용
-        return adminJobService.getJobs();
+    public ResponseEntity<List<AdminJob>> getJobs() {
+        List<AdminJob> jobs = adminJobService.getJobs();
+
+        if(jobs.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        }
+
+        return ResponseEntity.ok(jobs); // 200 OK
     }
 }

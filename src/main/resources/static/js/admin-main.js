@@ -29,11 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
     openBtn.onclick = function () {
         modal.style.display = "block";
         fetch("/api/v1/admin-jobs")
-            .then((res) => res.json())
+            .then((res) => {
+                    if (res.status === 204){
+                        return null;
+                    }
+                    return res.json();
+                })
             .then((data) => {
                 jobList.innerHTML = ""; // 기존 리스트 초기화
 
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     jobList.innerHTML = "<li>처리해야 할 작업이 없습니다.</li>";
                     return;
                 }
