@@ -28,6 +28,8 @@ public class AdminMemberController {
     model.addAttribute("page", page);
     model.addAttribute("size", size);
     model.addAttribute("totalCount", members.getTotalElements());
+    model.addAttribute("searchType", searchType);
+    model.addAttribute("keyword", keyword);
     return "admin/user-list";
   }
 

@@ -46,7 +46,7 @@
   <div class="pagination">
     <!-- 이전 -->
     <a class="btn" th:if="${!members.first}"
-       th:href="@{/admin/members/list(page=${members.number - 1}, size=${members.size})}">«</a>
+       th:href="@{/admin/members/list(page=${members.number - 1}, size=${members.size}, searchType=${searchType}, keyword=${keyword})}">«</a>
     <a class="btn disabled" th:if="${members.first}">«</a>
 
     <!-- 페이지 번호 -->
@@ -57,7 +57,7 @@
     ">
     <span th:each="i : ${#numbers.sequence(start, end)}">
       <a class="btn" th:if="${i != members.number}"
-         th:href="@{/admin/members/list(page=${i}, size=${members.size})}"
+         th:href="@{/admin/members/list(page=${i}, size=${members.size}, searchType=${searchType}, keyword=${keyword})}"
          th:text="${i + 1}"></a>
       <a class="btn active disabled" th:if="${i == members.number}"
          th:text="${i + 1}"></a>
@@ -66,7 +66,7 @@
 
     <!-- 다음 -->
     <a class="btn" th:if="${!members.last}"
-       th:href="@{/admin/members/list(page=${members.number + 1}, size=${members.size})}">»</a>
+       th:href="@{/admin/members/list(page=${members.number + 1}, size=${members.size}, searchType=${searchType}, keyword=${keyword})}">»</a>
     <a class="btn disabled" th:if="${members.last}">»</a>
   </div>
 
