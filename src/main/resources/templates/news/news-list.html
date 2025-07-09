@@ -6,22 +6,15 @@
     <title>뉴스 전체 보기</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/news-list.css" />
+    <script th:inline="javascript">
+        const currentUserEmail = [[${#authentication.name}]];
+        const currentUserRoles = [[${#authentication.authorities}]];
+    </script>
 </head>
 
-<body>
-<div class="navbar">
-    <a href="/main" class="logo">
-        <img src="/img/NewsHub.png" alt="News Hub 로고" />
-    </a>
-    <nav>
-        <a href="/news/list">뉴스</a>
-        <a href="/boarder/list">커뮤니티</a>
-    </nav>
-    <div class="auth">
-        <a href="/user/login">로그인</a>
-        <a href="/user/register">회원가입</a>
-    </div>
-</div>
+<header>
+    <div th:replace="~{fragments/header :: header}"></div>
+</header>
 
 <div class="main-wrapper">
     <div class="main-content">

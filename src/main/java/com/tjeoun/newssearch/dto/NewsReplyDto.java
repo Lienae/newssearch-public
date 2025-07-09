@@ -17,10 +17,10 @@ public class NewsReplyDto {
     private String content;
     private String writerName;
     private String url;
-    private String password;
+    private String writerEmail;
 
-    private News news;
-    private Member member;
+    // private News news;
+    // private Member member;
 
     // NewsReply → DTO 변환용 생성자
     public NewsReplyDto(NewsReply reply) {
@@ -28,6 +28,7 @@ public class NewsReplyDto {
         this.newsId = reply.getNews().getId();
         this.content = reply.getContent();
         this.writerName = reply.getMember().getName(); // Member 엔티티에 name 필드 있어야 함
+        this.writerEmail = reply.getMember().getEmail();
         this.url = reply.getNews().getUrl();
     }
 }

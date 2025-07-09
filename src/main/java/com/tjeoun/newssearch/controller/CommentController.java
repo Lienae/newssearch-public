@@ -20,34 +20,31 @@ public class CommentController {
     // 댓글 작성: POST /api/v1/comment/create
     @PostMapping("/create")
     public ResponseEntity<NewsReplyDto> createComment(
-            @RequestBody NewsReplyDto dto
-            // @AuthenticationPrincipal UserDetails userDetails
+            @RequestBody NewsReplyDto dto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        // 로그인 기능 미완성으로 테스트용 이메일
-        String email = "test@example.com";
+        String email = userDetails.getUsername();
         return ResponseEntity.ok(commentService.addComment(dto, email));
     }
 
     // 댓글 삭제: POST /api/v1/comment/remove
     @PostMapping("/remove")
     public ResponseEntity<String> removeComment(
-            @RequestParam Long commentId
-            // @AuthenticationPrincipal UserDetails userDetails
+            @RequestParam Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        // String email = userDetails.getUsername();
-        // 임시: 로그인 기능 없으므로 이메일 하드코딩 또는 null
-        String email = "test@example.com";
+        String email = userDetails.getUsername();
         commentService.deleteComment(commentId, email);
         return ResponseEntity.ok("댓글 삭제 완료 (isBlind = true)");
     }
 
+    // 댓글 수정
     @PostMapping("/update")
     public ResponseEntity<String> updateComment(
-            @RequestBody NewsReplyDto dto
-            // @AuthenticationPrincipal UserDetails userDetails
+            @RequestBody NewsReplyDto dto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        // 임시: 로그인 없이 처리 (로그인 완성되면 권한 체크 추가)
-        String email = "test@example.com";
+        String email = userDetails.getUsername();
         commentService.updateComment(dto.getId(), dto.getContent(), email);
         return ResponseEntity.ok("댓글 수정 완료");
     }

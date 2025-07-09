@@ -13,24 +13,6 @@
   <div th:replace="~{fragments/header :: header}"></div>
 </header>
 
-<div class="navbar">
-    <a href="/main" class="logo">
-        <img src="/img/NewsHub.png" alt="News Hub 로고" />
-    </a>
-    <nav>
-        <a href="/news/list">뉴스</a>
-        <a href="/boarder/list">커뮤니티</a>
-        <a href="/admin/user-list" class="admin-link">사용자 관리</a>
-        <a href="/admin/boarder-list" class="admin-link">커뮤니티 관리</a>
-        <a href="/admin/news-list" class="admin-link">뉴스 관리</a>
-    </nav>
-    <div class="auth">
-        <a href="/user/login">로그인</a>
-        <a href="/user/register">회원가입</a>
-        <a href="/user/mypage">마이페이지</a>
-    </div>
-</div>
-
 <div class="sidebar">
     <div class="box">
         <strong>실시간 인기 검색어</strong><br />
@@ -94,7 +76,8 @@
             <h3 class="category-title" th:text="${entry.key.name()}">카테고리명</h3>
 
             <div class="news-list">
-                <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}">
+                <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}"
+                     th:data-category="${news.category}" th:data-media="${news.mediaCompany}" th:data-url="${news.url}">
                     <img src="/img/default.png" alt="테스트 이미지" />
                     <h4 th:text="${#strings.abbreviate(news.title, 10)}">뉴스 제목</h4>
                     <div class="news-meta">
@@ -129,4 +112,21 @@
 
 <script src="/js/main.js"></script>
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".news-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const category = card.dataset.category;
+          const media = card.dataset.media;
+          const url = encodeURIComponent(card.dataset.url);
+
+          if (category && media && url) {
+            window.location.href = `/news/list?category=${category}&mediaCompany=${media}&url=${url}`;
+          }
+        });
+      });
+    });
+</script>
+
 </html>

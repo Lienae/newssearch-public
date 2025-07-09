@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/main")
+@RequestMapping("/")
 public class MainPageController {
 
     private final MainPageService mainPageService;

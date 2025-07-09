@@ -36,6 +36,7 @@ public class NewsCommentService {
                 .member(member)
                 .news(news)
                 .content(dto.getContent())
+                .isBlind(false)
                 .build();
 
         newsReplyRepository.save(reply);
@@ -60,13 +61,15 @@ public class NewsCommentService {
 
     @Transactional
     public void updateComment(Long commentId, String newContent, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
         NewsReply reply = newsReplyRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
         // 작성자 체크 (로그인 후 활성화)
-        // if (!reply.getWriterEmail().equals(email)) {
-        //     throw new AccessDeniedException("권한이 없습니다.");
-        // }
+        if (!reply.getMember().getId().equals(member.getId())) {
+            throw new RuntimeException("본인 댓글만 수정할 수 있습니다");
+        }
 
         reply.setContent(newContent);
         reply.setModifiedDate(LocalDateTime.now());
