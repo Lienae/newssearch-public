@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".filter-tabs li").forEach((tab) => {
     tab.addEventListener("click", () => {
       document
-        .querySelectorAll(".filter-tabs li")
-        .forEach((el) => el.classList.remove("active"));
+          .querySelectorAll(".filter-tabs li")
+          .forEach((el) => el.classList.remove("active"));
       tab.classList.add("active");
     });
   });
@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       document
-        .querySelectorAll(".category-buttons a")
-        .forEach((el) => el.classList.remove("active"));
+          .querySelectorAll(".category-buttons a")
+          .forEach((el) => el.classList.remove("active"));
       btn.classList.add("active");
     });
   });
