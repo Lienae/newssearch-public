@@ -29,8 +29,13 @@ body {
 }
 
 .error-message {
-  font-size: 18px;
-  margin-bottom: 20px;
+  color: red;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border: 1px solid red;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #ffe6e6;
 }
 
 .error-actions a {

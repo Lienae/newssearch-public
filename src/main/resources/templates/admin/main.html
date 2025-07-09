@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NewsHub 관리자 대시보드</title>
+  <link rel="stylesheet" href="/css/admin-main.css" />
+</head>
+<body>
+
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+<div class="dashboard-container">
+  <div class="box">
+    <h3>최근 등록 기사 (카테고리/언론사)</h3>
+    <div class="scroll-wrapper">
+      <div class="category-row">
+        <div class="category-block" th:each="news : ${recentNews}">
+          <h3 class="category-title" th:text="${news.category.name()}">카테고리</h3>
+          <div class="news-list">
+            <div class="news-card">
+<!--              <img th:src="${news.imageUrl != null ? news.imageUrl : '/images/default.png'}"-->
+<!--                   th:alt="${news.category.name()}" />-->
+              <img src="/img/default.png" alt="테스트 이미지" />
+              <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
+              <div class="news-meta" th:text="${news.mediaCompany.name()}">언론사</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>게시판 최근글</h3>
+    <div class="scroll-box">
+      <ul class="board-list">
+        <li th:each="board : ${recentBoardList}">
+          <a th:href="@{'/admin/boards/edit?id=' + ${board.id}}">
+            [<span th:text="${board.newsCategory != null ? board.newsCategory.name() : 'N/A'}">카테고리</span>]
+            <span th:text="${board.title}">게시글 제목</span>
+          </a>
+          <span class="meta">
+          작성자: <span th:text="${board.authorName}">작성자명</span> |
+          <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성일</span>
+        </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>카테고리별 / 언론사별 파이그래프</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+
+  <div class="box">
+    <h3>많이 검색된 키워드 (버블차트)</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+
+  <div class="box full-width">
+    <h3>키워드 연관 네트워크</h3>
+    <iframe src="about:blank"></iframe>
+  </div>
+</div>
+<script src="/js/main.js"></script>
+</body>
+</html>

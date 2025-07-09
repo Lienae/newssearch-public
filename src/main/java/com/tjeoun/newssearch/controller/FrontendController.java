@@ -14,9 +14,20 @@ public class FrontendController {
     return "main";
   }
 
+<<<<<<< HEAD
   @GetMapping("/admin/board-list")
   public String adminboardList() {
     return "admin/board-list";
+=======
+//  @GetMapping("/admin/main")
+//  public String adminMain() {
+//    return "admin/main";
+//  }
+
+  @GetMapping("/admin/boarder-list")
+  public String adminBoarderList() {
+    return "admin/boarder-list";
+>>>>>>> origin/master
   }
 
   @GetMapping("/admin/board-edit")

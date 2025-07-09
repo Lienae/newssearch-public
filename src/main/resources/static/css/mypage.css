@@ -76,3 +76,23 @@ button {
 .btn-cancel:hover {
   background-color: #bbb;
 }
+
+.withdraw-group {
+  display: flex;
+  margin-top: 20px;
+}
+
+.btn-withdraw {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background-color: #dc3545; /* Bootstrap danger color */
+  color: white;
+}
+
+.btn-withdraw:hover {
+  background-color: #c82333;
+}

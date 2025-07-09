@@ -10,8 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+
+import java.util.List;
+
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
+<<<<<<< HEAD
   @Query("SELECT b FROM Board b WHERE b.isBlind = false ORDER BY b.createdDate DESC")
   List<Board> findByIsBlindFalseOrderByCreatedDateDesc();
 
@@ -36,4 +40,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
 
+=======
+
+  Page<Board> findAll(Pageable pageable);
+  Page<Board> findByNewsCategory(NewsCategory category, Pageable pageable);
+
+
+  List<Board> findTop5ByOrderByCreatedDateDesc();
+>>>>>>> origin/master
 }
