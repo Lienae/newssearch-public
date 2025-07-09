@@ -34,9 +34,6 @@ public class Board {
     @JoinColumn(name = "member_id", nullable = false)
     private Member author;
 
-    @Column(nullable = false)
-    private String password;
-
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdDate;
@@ -70,7 +67,6 @@ public class Board {
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .author(dto.getAuthor())
-                .password(dto.getPassword() != null ? dto.getPassword() : "mockpw")
                 .newsCategory(dto.getNewsCategory())
                 .isAdminArticle(Boolean.TRUE.equals(dto.getIsAdminArticle()))
                 .isBlind(false)

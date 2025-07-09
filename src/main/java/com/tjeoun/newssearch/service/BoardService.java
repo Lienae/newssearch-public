@@ -4,11 +4,15 @@ import com.tjeoun.newssearch.dto.AttachFileDto;
 import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.entity.AttachFile;
 import com.tjeoun.newssearch.entity.Board;
+import com.tjeoun.newssearch.entity.BoardReply;
+import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.NewsCategory;
+import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.AttachFileRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,19 +25,24 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
-  private  static final String UPLOAD_DIR = "C:/workspace/newssearch/images/upload";
+  private String uploadDir;
+
+  @Value("${upload.dir}")
+  public void setUploadDir(String uploadDir) {
+    this.uploadDir = uploadDir;
+  }
 
   private final BoardRepository boardRepository;
   private final AttachFileRepository attachFileRepository;
+  private final BoardReplyService boardReplyService;
 
   private void saveAttachFiles(List<MultipartFile> files, Board board) {
     if (files == null || files.isEmpty()) return;
@@ -47,7 +56,7 @@ public class BoardService {
       String serverFilename = uuid + "_" + originalFilename;
 
       try {
-        Path uploadPath = Paths.get(UPLOAD_DIR, serverFilename);
+        Path uploadPath = Paths.get(uploadDir, serverFilename);
         file.transferTo(uploadPath.toFile());
 
         AttachFile attachFile = AttachFile.builder()
@@ -70,17 +79,52 @@ public class BoardService {
 
 
   @Transactional
-  public void saveBoard(BoardDto boardDto) {
-    Board board = Board.createBoard(boardDto);
-    List<MultipartFile> files = boardDto.getFiles();
+  public void saveBoard(BoardDto boardDto, Member loginUser) {
+    // 작성자 설정
+    boardDto.setAuthor(loginUser);
 
-    // Board 저장 (id 생성됨)
+    // 관리자 여부 설정
+    boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
+    boardDto.setIsAdminArticle(isAdmin);
+
+
+    
+    // 카테고리가 null이면 기본값 설정
+    if (boardDto.getNewsCategory() == null) {
+      boardDto.setNewsCategory(NewsCategory.MISC);  // 기본 카테고리
+    }
+
+    // BoardDto → Board entity 생성
+    Board board = Board.createBoard(boardDto);
+
+    // DB에 Board 저장 (id 생성)
     boardRepository.save(board);
 
-    // 첨부파일 저장 처리
+    // 첨부파일 처리
+    List<MultipartFile> files = boardDto.getFiles();
     saveAttachFiles(files, board);
-
   }
+
+
+  public Map<String, Object> getBoardDetail(Long id, Member loginUser) {
+    Map<String, Object> result = new HashMap<>();
+
+    Board board = boardRepository.findById(id)
+      .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+
+    List<BoardReply> replies = boardReplyService.findRepliesByBoardId(id);
+    List<AttachFile> attachFiles = attachFileRepository.findByBoardId(id);
+
+
+    result.put("board", board);
+    result.put("replies", replies);
+    result.put("editingReplies", List.of());  // 템플릿에서 쓰던 거 유지
+    result.put("attachFiles", attachFiles);
+    result.put("loginUser", loginUser);
+
+    return result;
+  }
+
 
   public List<AttachFile> getAttachFilesByBoardId(Long boardId) {
     return attachFileRepository.findByBoardId(boardId);
@@ -101,8 +145,8 @@ public class BoardService {
   public List<Board> getAllBoards() {
     return boardRepository.findByIsBlindFalseOrderByCreatedDateDesc();
   }
-    // 게시글 보기
-    public Optional<Board> getBoardById(Long id) {
+   // 게시글 보기
+  public Optional<Board> getBoardById(Long id) {
       return boardRepository.findById(id);
     }
 
@@ -124,10 +168,13 @@ public class BoardService {
     }
   }
 
-  // 게시글 개수
-  // BoardService.java
-  public long countVisibleBoards() {
-    return boardRepository.countVisibleBoards();
+  // 게시글 개수 ( 사용자 )
+  public long countByIsBlind(Boolean isBlind) {
+    return boardRepository.countByIsBlind(isBlind);
+  }
+  // 게시글 개수 ( 관리자 )
+  public long countAllBoards() {
+    return boardRepository.count();
   }
 
   // 관리자 글 조회
@@ -141,6 +188,18 @@ public class BoardService {
     NewsCategory newsCategory = NewsCategory.valueOf(category.toUpperCase());
     return boardRepository.findAdminBoardsByCategory(newsCategory, pageable);
   }
+  public Member getDefaultMember() {
+    Member defaultMember = new Member();
+    defaultMember.setId(0L);
+    defaultMember.setName("비회원");
+    defaultMember.setEmail("guest@exam.com");
+    defaultMember.setPassword("1234");
+    defaultMember.setRole(UserRole.GUEST); // GUEST 새로 생성
+    defaultMember.setCreatedDate(LocalDateTime.now());
+    return defaultMember;
+  }
+
+
 
 
 

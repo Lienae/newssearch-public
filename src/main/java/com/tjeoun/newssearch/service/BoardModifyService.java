@@ -8,15 +8,19 @@ import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.repository.AttachFileRepository;
 import com.tjeoun.newssearch.repository.BoardReplyRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
+import com.tjeoun.newssearch.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,28 +30,48 @@ public class BoardModifyService {
   private final BoardRepository boardRepository;
   private final AttachFileRepository attachFileRepository;
   private final BoardReplyRepository boardReplyRepository;
+  private final MemberRepository memberRepository;
 
-  private final String uploadDir = "C:/workspace/newssearch/images/upload";
+  private String uploadDir;
 
-  @Transactional
-  public void updateBoard(BoardDto boardDto) {
-    Board board = boardRepository.findById(boardDto.getId())
-      .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + boardDto.getId()));
-
-    board.setTitle(boardDto.getTitle());
-    board.setContent(boardDto.getContent());
-    board.setNewsCategory(boardDto.getNewsCategory());
-
-    boardRepository.save(board);
+  @Value("${upload.dir}")
+  public void setUploadDir(String uploadDir) {
+    this.uploadDir = uploadDir;
   }
+
+  public BoardDto getEditableBoard(Long boardId, Principal principal) {
+    Board board = boardRepository.findById(boardId)
+      .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + boardId));
+
+    Member loginUser = getMemberFromPrincipal(principal);
+
+    if (!board.getAuthor().getId().equals(loginUser.getId())) {
+      throw new IllegalArgumentException("수정 권한이 없습니다.");
+    }
+
+    return BoardDto.builder()
+      .id(board.getId())
+      .title(board.getTitle())
+      .content(board.getContent())
+      .author(board.getAuthor())
+      .newsCategory(board.getNewsCategory())
+      .build();
+  }
+
+  public List<AttachFile> listAttachmentsByBoardId(Long boardId) {
+    return attachFileRepository.findByBoardId(boardId);
+  }
+
   @Transactional
-  public void updateBoardAndFiles(Long id,
-                                  BoardDto boardDto,
-                                  MultipartFile[] files,
-                                  List<Long> deleteFileIds,
-                                  Member loginUser) {
+  public void editBoardWithAttachments(Long id,
+                                       BoardDto boardDto,
+                                       MultipartFile[] files,
+                                       List<Long> deleteFileIds,
+                                       Principal principal) {
     Board board = boardRepository.findById(id)
       .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + id));
+
+    Member loginUser = getMemberFromPrincipal(principal);
 
     if (!board.getAuthor().getId().equals(loginUser.getId())) {
       throw new IllegalArgumentException("수정 권한이 없습니다.");
@@ -59,27 +83,23 @@ public class BoardModifyService {
 
     boardRepository.save(board);
 
-    // 삭제 요청된 첨부파일 처리
+    // 첨부파일 삭제 처리
     if (deleteFileIds != null && !deleteFileIds.isEmpty()) {
       for (Long fileId : deleteFileIds) {
         attachFileRepository.findById(fileId).ifPresent(file -> {
-
-          // 파일이 해당 게시글에 속한 것인지 확인
           if (!file.getBoard().getId().equals(id)) {
             throw new SecurityException("파일이 해당 게시글에 속하지 않습니다.");
           }
-
-          // 실제 파일 삭제
-          java.io.File realFile = new java.io.File(uploadDir, file.getServerFilename());
+          File realFile = new java.io.File(uploadDir, file.getServerFilename());
           if (realFile.exists()) {
             realFile.delete();
           }
-
           attachFileRepository.delete(file);
         });
       }
     }
 
+    // 첨부파일 추가 처리
     if (files != null) {
       for (MultipartFile file : files) {
         if (file.isEmpty()) continue;
@@ -106,15 +126,27 @@ public class BoardModifyService {
   }
 
   @Transactional
-  public void blindBoard(Long boardId) {
+  public void blindBoard(Long boardId, Principal principal) {
     Board board = boardRepository.findById(boardId)
       .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-    board.setIsBlind(true); // 게시글 숨김
+
+    Member loginUser = getMemberFromPrincipal(principal);
+
+    if (!board.getAuthor().getId().equals(loginUser.getId())) {
+      throw new IllegalArgumentException("삭제 권한이 없습니다.");
+    }
+
+    board.setIsBlind(true);
 
     List<BoardReply> replies = boardReplyRepository.findByBoardId(boardId);
     for (BoardReply reply : replies) {
-      reply.setIsBlind(true); // 댓글 숨김
+      reply.setIsBlind(true);
     }
   }
 
+  private Member getMemberFromPrincipal(Principal principal) {
+    String email = principal.getName();
+    return memberRepository.findByEmail(email)
+      .orElseThrow(() -> new IllegalArgumentException("로그인 사용자를 찾을 수 없습니다."));
+  }
 }

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <title th:text="${board.title}">게시글 제목</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/board-detail.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+
+<div class="board-container">
+  <h2 class="post-title" th:text="${board.title}">게시글 제목 예시</h2>
+
+  <div class="post-info">
+    <span>카테고리: <span th:text="${board.newsCategory}">POLITICS</span></span>
+    <span>작성자 ID: <span th:text="${board.author.id}">101</span></span>
+    <span>등록 일자: <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</span></span>
+    <span>최근 수정일: <span th:text="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd')}">2025-07-02</span></span>
+  </div>
+
+  <hr />
+
+  <!-- 게시글 내용 -->
+  <div class="post-content">
+
+    <div class="post-content">
+      <!-- attachFiles가 비어 있지 않을 경우에만 출력 -->
+      <div th:if="${attachFiles != null and !#lists.isEmpty(attachFiles)}">
+        <div th:each="file : ${attachFiles}">
+          <img th:src="@{'/images/upload/' + ${file.serverFilename}}"
+               alt="첨부 이미지"
+               style="max-width: 100%; height: auto;"
+               onerror="this.onerror=null; this.src='https://placehold.co/500x350';" />
+        </div>
+      </div>
+    </div>
+
+    <p class="post-body" th:text="${board.content}">
+      게시글의 본문 내용이 이곳에 표시됩니다. 사용자가 작성한 내용이 줄바꿈과 함께 자연스럽게 출력됩니다.
+    </p>
+
+
+    <div class="post-actions">
+      <!-- loginUser와 board.author.id가 같으면 버튼 보이게 -->
+      <th:block th:if="${loginUser != null and loginUser.id == board.author.id}">
+        <a th:href="@{/board/edit/{id}(id=${board.id})}" class="btn btn-edit">수정</a>
+
+        <form th:action="@{/board/edit/delete/{id}(id=${board.id})}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-delete" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        </form>
+      </th:block>
+    </div>
+
+
+
+  </div>
+
+  <hr />
+
+  <div class="comment-section">
+    <h3>총 <span id="replyCount" th:text="${#lists.size(replies)}">0</span>개의 의견</h3>
+    <form class="comment-form" id="commentForm" autocomplete="off">
+      <textarea placeholder="댓글을 작성해주세요." id="commentContent" name="commentContent" rows="3" required></textarea>
+      <button type="submit">댓글 등록</button>
+    </form>
+  </div>
+  <div class="comment-list" id="replyList">
+    <div th:each="reply : ${replies}" class="comment-item" data-reply-id="${reply.id}">
+
+      <p>
+        <strong th:text="${reply.member.name}">작성자</strong> |
+        <span th:text="${#temporals.format(reply.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+      </p>
+      <!-- 댓글 내용 (수정 전 상태) -->
+      <p class="comment-content" th:text="${reply.content}">댓글 내용</p>
+      <div th:if="${loginUser != null and loginUser.id == reply.member.id}" class="comment-actions">
+
+        <!-- 수정/삭제 버튼 (본인만) -->
+        <div th:if="${loginUser != null and loginUser.id == reply.member.id}" class="comment-actions">
+
+            <button type="button" class="edit-btn">수정</button>
+
+
+          <form th:action="@{'/board/reply/' + ${reply.id} + '/delete'}"
+                onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline">
+            <button type="button" class="delete-btn">삭제</button>
+          </form>
+        </div>
+      </div>
+
+
+      <!-- 수정 중일 때 보이는 폼 -->
+      <div class="comment-section" th:if="${#lists.contains(editingReplies, reply.id)}">
+        <form class="comment-form" th:action="@{'/board/reply/' + ${reply.id} + '/edit'}" method="post">
+          <textarea name="content" rows="3" required th:text="${reply.content}"></textarea>
+          <input type="hidden" name="boardId" th:value="${board.id}" />
+          <button type="submit">수정 완료</button>
+        </form>
+
+      </div>
+
+      <hr />
+
+
+    </div>
+
+  </div>
+
+
+
+  <div class="post-buttons">
+    <a href="/board/list" class="btn">목록으로</a>
+  </div>
+
+
+</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const boardId = [[${board.id}]];
+  const loginUserId = Number(/*[[${loginUser != null ? loginUser.id : 'null'}]]*/) || -1;
+  const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+  /*]]>*/
+
+  function formatDate(isoDateStr) {
+    const date = new Date(isoDateStr);
+    return date.toLocaleString();
+  }
+
+  function loadReplies() {
+    fetch('/board/' + boardId + '/replies')
+      .then(res => res.json())
+      .then(data => {
+        const replyList = document.getElementById('replyList');
+        replyList.innerHTML = '';
+
+        document.getElementById('replyCount').textContent = data.replies.length;
+
+        data.replies.forEach(reply => {
+          const isAuthor = loginUserId === Number(reply.memberId);
+          const div = document.createElement('div');
+          div.className = 'comment-item';
+          div.setAttribute('data-reply-id', reply.id);
+
+          let buttonsHtml = '';
+          if (isAuthor) {
+            buttonsHtml = `
+              <button class="edit-btn reply-edit-btn" type="button">수정</button>
+              <button class="delete-btn reply-delete-btn" type="button" data-reply-id="${reply.id}">삭제</button>
+            `;
+          }
+
+          const formattedContent = reply.content.replace(/\n/g, '<br>');
+
+          div.innerHTML = `
+            <div class="comment-header">
+              <p><strong>${reply.memberName}</strong>
+              <span class="date">| ${formatDate(reply.createdDate)}</span></p>
+            </div>
+            <p class="comment-content">${formattedContent}</p>
+            <div class="comment-actions">${buttonsHtml}</div>
+
+           `;
+
+          replyList.appendChild(div);
+        });
+      })
+      .catch(error => {
+        console.error('댓글 목록 불러오기 실패:', error);
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadReplies();
+
+    // 댓글 등록 (기존 코드 유지)
+    document.getElementById('commentForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const content = document.getElementById('commentContent').value.trim();
+      if (!content) {
+        alert('댓글 내용을 입력해주세요.');
+        return;
+      }
+      fetch('/board/' + boardId + '/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          [csrfHeader]: csrfToken
+        },
+        body: new URLSearchParams({ commentContent: content })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        document.getElementById('commentContent').value = '';
+        loadReplies();
+      })
+      .catch(error => {
+        alert('댓글 등록 실패: ' + error.message);
+      });
+    });
+
+    // 이벤트 위임 - 댓글 리스트에 한 번만 이벤트 등록
+    const replyList = document.getElementById('replyList');
+    replyList.addEventListener('click', (event) => {
+      const target = event.target;
+
+      // 수정 버튼 클릭 시
+      if (target.classList.contains('edit-btn')) {
+        const commentItem = target.closest('.comment-item');
+        const replyId = commentItem.getAttribute('data-reply-id');
+        const commentContent = commentItem.querySelector('.comment-content');
+        const commentActions = commentItem.querySelector('.comment-actions');
+
+        // 중복 생성 방지
+        if (commentItem.querySelector('.edit-form')) return;
+
+        const currentContent = commentContent.innerHTML.replace(/<br\s*\/?>/gi, '\n').trim();
+
+        // 댓글 내용과 버튼 숨김
+        if (commentContent) commentContent.style.display = 'none';
+        if (commentActions) commentActions.style.display = 'none';
+
+        // 수정 폼 생성
+        const editForm = document.createElement('div');
+        editForm.className = 'edit-form';
+        editForm.innerHTML = `
+          <textarea class="edit-content" rows="3" style="width: 100%; margin-top: 8px;">${currentContent}</textarea>
+          <div class="edit-buttons" style="margin-top: 6px;">
+            <button class="edit-submit comment-btn" type="button">수정 완료</button>
+            <button class="edit-cancel cancel-btn" type="button">취소</button>
+          </div>
+        `;
+
+        commentItem.appendChild(editForm);
+
+        // 수정 완료
+        editForm.querySelector('.edit-submit').addEventListener('click', () => {
+          const newContent = editForm.querySelector('.edit-content').value.trim();
+          if (!newContent) {
+            alert('댓글 내용을 입력해주세요.');
+            return;
+          }
+
+          fetch('/board/reply/' + replyId, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+              [csrfHeader]: csrfToken
+            },
+            body: new URLSearchParams({ content: newContent })
+          })
+            .then(res => {
+              if (!res.ok) throw new Error('수정 실패');
+              return res.json();
+            })
+            .then(data => {
+              alert(data.message);
+              commentContent.innerHTML = newContent.replace(/\n/g, '<br>');
+              commentContent.style.display = 'block';
+              commentActions.style.display = 'flex';
+              editForm.remove();
+            })
+            .catch(err => alert('댓글 수정 실패: ' + err.message));
+        });
+
+        // 취소
+        editForm.querySelector('.edit-cancel').addEventListener('click', () => {
+          commentContent.style.display = 'block';
+          commentActions.style.display = 'flex';
+          editForm.remove();
+        });
+      }
+
+
+      // 삭제 버튼 클릭 시
+      if (target.classList.contains('delete-btn')) {
+        const replyId = target.getAttribute('data-reply-id');
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+
+        fetch('/board/reply/' + replyId, {
+          method: 'DELETE',
+          headers: {
+            [csrfHeader]: csrfToken
+          }
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('삭제 실패');
+          return res.json();
+        })
+        .then(data => {
+          alert(data.message);
+          loadReplies();
+        })
+        .catch(err => alert('삭제 실패: ' + err.message));
+      }
+    });
+  });
+</script>
+
+
+</body>
+</html>

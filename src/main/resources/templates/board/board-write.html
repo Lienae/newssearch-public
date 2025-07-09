@@ -3,24 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" content="${_csrf.token}" />
+  <meta name="_csrf_header" content="${_csrf.headerName}" />
   <title>게시글 작성</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/border-write.css" />
+  <link rel="stylesheet" href="/css/board-write.css" />
 </head>
 <body>
-<div class="navbar">
-  <a href="/main" class="logo">
-    <img src="/img/NewsHub.png" alt="News Hub 로고" />
-  </a>
-  <nav>
-    <a href="/news/list">뉴스</a>
-    <a href="/boarder/list">커뮤니티</a>
-  </nav>
-  <div class="auth">
-    <a href="/user/login">로그인</a>
-    <a href="/user/register">회원가입</a>
-  </div>
-</div>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
 
 <div class="write-container">
   <h2>글쓰기</h2>
@@ -28,7 +21,7 @@
     이 게시판은 기사와 관련된 의견 및 게시글을 작성하는 곳입니다.
   </p>
 
-  <form th:action="@{/boarder}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
+  <form th:action="@{/board}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
     <div class="form-group">
       <label for="newsCategory">뉴스 카테고리</label>
       <input

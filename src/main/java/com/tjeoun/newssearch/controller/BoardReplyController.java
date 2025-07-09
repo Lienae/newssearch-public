@@ -1,120 +1,100 @@
 package com.tjeoun.newssearch.controller;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
-import com.tjeoun.newssearch.dto.BoardReplyDto;
-import com.tjeoun.newssearch.entity.Board;
+
 import com.tjeoun.newssearch.entity.BoardReply;
 import com.tjeoun.newssearch.entity.Member;
-import com.tjeoun.newssearch.repository.BoardReplyRepository;
-import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.service.BoardReplyService;
-import com.tjeoun.newssearch.service.BoardService;
-import jakarta.servlet.http.HttpSession;
+import com.tjeoun.newssearch.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
-@Controller
+import static java.util.stream.Collectors.toList;
+
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/boarder")
+@RequestMapping("/board")
 public class BoardReplyController {
   private final BoardReplyService boardReplyService;
-  private final BoardService boardService;
-  private final MemberRepository memberRepository;
-  private final BoardReplyRepository boardReplyRepository;
+  private final MemberService memberService;
 
+  // 댓글 등록
   @PostMapping("/{boardId}/reply")
-  public String saveReply(@PathVariable Long boardId,
-                          @RequestParam("commentContent") String content,
-                          HttpSession session) {
-    Member loginMember = (Member) session.getAttribute("loginUser");
-    if (loginMember == null) {
-      // 로그인 안 되어있으면 id=1 회원을 임의로 가져오기 (익명 사용자)
-      loginMember = memberRepository.findById(1L)
-        .orElseThrow(() -> new IllegalStateException("기본 사용자(익명 사용자)를 찾을 수 없습니다."));
-    }
-    Board board = boardService.findById(boardId);  // 게시글 찾아오기
+  public ResponseEntity<?> saveReply(@PathVariable Long boardId,
+                                     @RequestParam("commentContent") String content,
+                                     Principal principal) {
+    Member loginUser = memberService.getLoginMember(principal);
+    boardReplyService.saveReply(boardId, content, loginUser);
 
-    BoardReplyDto dto = BoardReplyDto.builder()
-      .content(content)
-      .board(board)
-      .member(loginMember)
-      .build();
+    long replyCount = boardReplyService.getReplyCountByBoardId(boardId);
 
-    boardReplyService.saveReply(dto);
 
-    return "redirect:/boarder/detail/" + boardId;
+    return ResponseEntity.ok().body(Map.of(
+      "message", "댓글 등록 성공",
+      "replyCount", replyCount));
   }
 
 
+
+  // 댓글 수정 폼 열기
   @PostMapping("/reply/editing/{replyId}")
   public String editingReply(@PathVariable Long replyId,
                              @RequestParam Long boardId,
-                             HttpSession session,
+                             Principal principal,
                              Model model) {
-
-    // 댓글 목록
-    List<BoardReply> replies = boardReplyService.findRepliesByBoardId(boardId);
-    Member loginUser = (Member) session.getAttribute("loginUser");
-
-    // 수정 중인 댓글 ID를 리스트로 넘김
-    model.addAttribute("editingReplies", List.of(replyId));
-    // 게시글 정보도 필요
-    Board board = boardService.findById(boardId);
-    model.addAttribute("board", board);
-    // 댓글 목록 전달
-    model.addAttribute("replies", replies);
-    // 의견 개수
-    model.addAttribute("replyCount", replies.size());
-
-    model.addAttribute("loginUser", loginUser);
-
-    // ✅ 댓글 개수 → 수정
-    long visibleReplyCount = boardReplyService.countVisibleReplies(boardId);
-    model.addAttribute("replyCount", visibleReplyCount);
-
-    return "boarder/boarder-detail"; // 현재 게시글 상세 페이지 뷰
+    Member loginUser = memberService.getLoginMember(principal);
+    boardReplyService.prepareEditReplyPage(replyId, boardId, loginUser, model);
+    return "board/board-detail";
   }
 
-  @PostMapping("/reply/{replyId}/edit")
-  public String updateReply(@PathVariable Long replyId,
-                            @RequestParam String content,
-                            @RequestParam Long boardId,
-                            HttpSession session) {
 
-    Member loginUser = (Member) session.getAttribute("loginUser");
-
-    // 로그인 정보 없으면 mock 데이터 강제 세팅 (테스트용)
-    if (loginUser == null) {
-      loginUser = new Member();
-      loginUser.setId(1L);       // 임의 아이디
-      loginUser.setName("테스트유저");  // 임의 이름
-      // 필요한 다른 필드도 세팅 가능
-    }
+  // 댓글 수정 처리
+  @PutMapping("/reply/{replyId}")
+  public ResponseEntity<?> updateReply(@PathVariable Long replyId,
+                                       @RequestParam String content,
+                                       Principal principal) {
+    Member loginUser = memberService.getLoginMember(principal);
     boardReplyService.updateReply(replyId, content, loginUser);
 
-    return "redirect:/boarder/detail/" + boardId;  // 수정 후 상세 페이지로 이동
+    return ResponseEntity.ok(Map.of("message", "댓글 수정 성공"));
   }
 
-  @PostMapping("/reply/{replyId}/delete")
-  public String deleteReply(@PathVariable Long replyId, HttpSession session) {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      loginUser = new Member();
-      loginUser.setId(1L);       // 임의 아이디
-      loginUser.setName("테스트유저");  // 임의 이름
-      // 필요한 다른 필드도 세팅 가능
-    }
-    boardReplyService.blindReply(replyId, loginUser);
-    Long boardId = boardReplyService.findById(replyId).getBoard().getId();
-    return "redirect:/boarder/detail/" + boardId;
+  // 댓글 삭제 처리
+  @DeleteMapping("/reply/{replyId}")
+  public ResponseEntity<?> deleteReply(@PathVariable Long replyId, Principal principal) {
+    Member loginUser = memberService.getLoginMember(principal);
+    Long boardId = boardReplyService.deleteReply(replyId, loginUser);
+
+    long replyCount = boardReplyService.getReplyCountByBoardId(boardId);
+
+    return ResponseEntity.ok(Map.of("message", "댓글 삭제 성공",
+      "replyCount", replyCount));
   }
+
+  @GetMapping("/{boardId}/replies")
+  public ResponseEntity<?> getReplies(@PathVariable Long boardId) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    List<BoardReply> replies = boardReplyService.findRepliesByBoardId(boardId);
+
+    List<Map<String, String>> replyList = replies.stream().map(reply -> Map.of(
+      "id", String.valueOf(reply.getId()),
+      "author", reply.getMember().getName(),
+      "content", reply.getContent(),
+      "createdDate", reply.getCreatedDate().format(formatter),
+      "memberId", String.valueOf(reply.getMember().getId()),
+      "memberName", reply.getMember().getName()
+    )).toList();
+
+    return ResponseEntity.ok(Map.of("replies", replyList));
+  }
+
 
 
 

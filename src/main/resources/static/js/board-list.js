@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggleFilterBtn");
   if (!toggleBtn) return;
 
-  const baseUrl = "/boarder/list"; // localhost 생략 가능
+  const baseUrl = "/board/list"; // localhost 생략 가능
 
   // 현재 URL 파라미터 읽기
   const currentUrl = new URL(window.location.href);

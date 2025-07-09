@@ -27,6 +27,7 @@ public class SpringSecurityConfig {
             "/member/register",
             "/css/**",
             "/js/**",
+            "/images/**",
             "/member/findpassword",
             "/member/resetpassword"
     };
@@ -39,6 +40,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(whitelist).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**", "/board/**").authenticated()
+                        .requestMatchers("/images/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

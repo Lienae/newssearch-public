@@ -13,13 +13,8 @@ public interface BoardReplyRepository extends JpaRepository<BoardReply, Long> {
   @Query("SELECT r FROM BoardReply r WHERE r.board.id = :boardId AND r.isBlind = false ORDER BY r.createdDate DESC")
   List<BoardReply> findVisibleRepliesByBoardId(@Param("boardId") Long boardId);
 
-  @Query("SELECT COUNT(r) FROM BoardReply r WHERE r.board.id = :boardId AND r.isBlind = false")
-  long countVisibleReplies(@Param("boardId") Long boardId);
-
-  // 게시글 ID로 댓글 수를 세는 쿼리
-  long countByBoardId(Long boardId);
-
   List<BoardReply> findByBoardId(Long boardId);
+
 
 
 }

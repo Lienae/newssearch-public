@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
       modalIframe.src = link;
       modal.style.display = "flex";
 
-      // Spring Boot에서 boarder-write URL 절대경로 권장
-      writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(link)}`;
+      // Spring Boot에서 board-write URL 절대경로 권장
+      writePostBtn.href = `/board/write?newsUrl=${encodeURIComponent(link)}`;
     });
   });
 

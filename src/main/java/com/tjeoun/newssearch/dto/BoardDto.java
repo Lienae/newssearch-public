@@ -19,7 +19,6 @@ public class BoardDto {
     private String title;
     private String content;
     private Member author;
-    private String password;
     private NewsCategory newsCategory;
     private Boolean isAdminArticle;
 
@@ -32,8 +31,7 @@ public class BoardDto {
           .title(this.title)
           .content(this.content)
           .author(this.author)
-          .password(this.password)
-          .newsCategory(this.newsCategory != null ? this.newsCategory : NewsCategory.CULTURE)  // 기본값 처리
+          .newsCategory(this.newsCategory != null ? this.newsCategory : NewsCategory.MISC)  // 기본값 처리
           .isAdminArticle(this.isAdminArticle != null ? this.isAdminArticle : false) // 기본값 false 처리
           .build();
     }

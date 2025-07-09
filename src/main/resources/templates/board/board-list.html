@@ -5,32 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>게시글 리스트</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/boarder-list.css" />
+  <link rel="stylesheet" href="/css/board-list.css" />
+  <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
-<div class="navbar">
-  <a href="/main" class="logo">
-    <img src="/img/NewsHub.png" alt="News Hub 로고" />
-  </a>
-  <nav>
-    <a href="/news/list">뉴스</a>
-    <a href="/boarder/list">커뮤니티</a>
-  </nav>
-  <div class="auth">
-    <a href="/user/login">로그인</a>
-    <a href="/user/register">회원가입</a>
-  </div>
-</div>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
 
 <div class="board-container">
   <div class="category-section">
     <div class="category-buttons">
-      <a th:href="@{/boarder/list(category='ALL', filter=${filter})}" th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
-      <a th:href="@{/boarder/list(category='POLITICS', filter=${filter})}" th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
-      <a th:href="@{/boarder/list(category='ECONOMY', filter=${filter})}" th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
-      <a th:href="@{/boarder/list(category='SOCIAL', filter=${filter})}" th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
-      <a th:href="@{/boarder/list(category='CULTURE', filter=${filter})}" th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
-      <a th:href="@{/boarder/list(category='SPORTS', filter=${filter})}" th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
+      <a th:href="@{/board/list(category='ALL', filter=${filter})}" th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
+      <a th:href="@{/board/list(category='POLITICS', filter=${filter})}" th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
+      <a th:href="@{/board/list(category='ECONOMY', filter=${filter})}" th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
+      <a th:href="@{/board/list(category='SOCIAL', filter=${filter})}" th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
+      <a th:href="@{/board/list(category='CULTURE', filter=${filter})}" th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
+      <a th:href="@{/board/list(category='SPORTS', filter=${filter})}" th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
+      <a th:href="@{/board/list(category='MISC', filter=${filter})}" th:classappend="${category == 'MISC'} ? 'active'">기타</a>
     </div>
 
 
@@ -40,7 +32,7 @@
   <div class="board-header">
     <div class="board-count">전체  <strong><span th:text="${totalVisibleBoards}">0</span></strong>건</div>
     <div th:if="${loginUser != null and loginUser.role.name() == 'ADMIN'}" class="editor-filter">
-      <form method="get" action="/boarder/list">
+      <form method="get" action="/board/list">
         <input type="hidden" name="filter" value="admin">
         <button id="toggleFilterBtn" type="button">Editor's Note</button>
 
@@ -61,7 +53,7 @@
       <tr th:each="board, stat : ${boardPage.content}">
         <td th:text="${boardPage.totalElements - (boardPage.number * boardPage.size + stat.index)}"></td>
         <td>
-          <a th:href="@{'/boarder/detail/' + ${board.id}}" th:text="${board.title}"></a>
+          <a th:href="@{'/board/detail/' + ${board.id}}" th:text="${board.title}"></a>
         </td>
         <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
       </tr>
@@ -72,23 +64,28 @@
   <div class="pagination">
     <!-- 이전 페이지 버튼 -->
     <button th:if="${boardPage.hasPrevious()}"
-            th:attr="data-url=@{/boarder/list(page=${boardPage.number - 1}, size=${pageSize}, category=${category})}"
+            th:attr="data-url=@{/board/list(page=${boardPage.number - 1}, size=${pageSize}, category=${category})}"
             onclick="location.href=this.getAttribute('data-url')">
       «
     </button>
     <button th:unless="${boardPage.hasPrevious()}" disabled>«</button>
 
     <!-- 페이지 번호 버튼 -->
-    <button th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}"
-            th:text="${i + 1}"
-            th:classappend="${i == boardPage.number} ? 'active'"
-            th:attr="data-url=@{/boarder/list(page=${i}, size=${pageSize}, category=${category})}"
-            onclick="location.href=this.getAttribute('data-url')">
-    </button>
+    <!-- 페이지 번호 버튼 -->
+    <th:block>
+      <button th:each="i : ${#numbers.sequence(0, boardPage.totalPages > 0 ? boardPage.totalPages - 1 : 0)}"
+              th:text="${i + 1}"
+              th:classappend="${i == boardPage.number} ? 'active'"
+              th:attr="data-url=@{/board/list(page=${i}, size=${pageSize}, category=${category})}"
+              onclick="location.href=this.getAttribute('data-url')">
+      </button>
+    </th:block>
+
+
 
     <!-- 다음 페이지 버튼 -->
     <button th:if="${boardPage.hasNext()}"
-            th:attr="data-url=@{/boarder/list(page=${boardPage.number + 1}, size=${pageSize}, category=${category})}"
+            th:attr="data-url=@{/board/list(page=${boardPage.number + 1}, size=${pageSize}, category=${category})}"
             onclick="location.href=this.getAttribute('data-url')">
       »
     </button>
@@ -107,6 +104,6 @@
   </div>
 </div>
 
-<script src="/js/boarder-list.js"></script>
+<script src="/js/board-list.js"></script>
 </body>
 </html>

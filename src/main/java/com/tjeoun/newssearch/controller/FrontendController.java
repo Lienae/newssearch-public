@@ -14,14 +14,14 @@ public class FrontendController {
     return "main";
   }
 
-  @GetMapping("/admin/boarder-list")
-  public String adminBoarderList() {
-    return "admin/boarder-list";
+  @GetMapping("/admin/board-list")
+  public String adminboardList() {
+    return "admin/board-list";
   }
 
-  @GetMapping("/admin/boarder-edit")
-  public String adminBoarderEdit() {
-    return "admin/boarder-edit";
+  @GetMapping("/admin/board-edit")
+  public String adminboardEdit() {
+    return "admin/board-edit";
   }
 
   @GetMapping("/admin/news-list")
@@ -48,9 +48,9 @@ public class FrontendController {
 
 
 
-  @GetMapping("/boarder/detail")
-  public String boarderDetail() {
-    return "boarder/boarder-detail";
+  @GetMapping("/board/detail")
+  public String boardDetail() {
+    return "board/board-detail";
   }
 
   @GetMapping("/news/list")

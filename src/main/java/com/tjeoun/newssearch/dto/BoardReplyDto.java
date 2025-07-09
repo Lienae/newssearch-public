@@ -14,5 +14,4 @@ public class BoardReplyDto {
     public String content;
     public Board board;
     public Member member;
-    public String password;
 }

@@ -41,10 +41,6 @@ public class BoardReply {
     @Column(nullable = false)
     private String content;
 
-    // DB에서 직접 삭제하고 싶었는데 실행할 때마다 새로 생성되어서 null 허용했습니다
-    @Column(nullable = true)
-    private String password;
-
 
     @Column(nullable = false)
     private Boolean isBlind;

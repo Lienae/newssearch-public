@@ -22,8 +22,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   Page<Board> findByIsBlindFalseOrderByCreatedDateDesc(Pageable pageable);
 
   // 개수 카운트 메서드 (명시적 쿼리)
-  @Query("SELECT COUNT(b) FROM Board b WHERE b.isBlind = false")
-  long countVisibleBoards();
+  long countByIsBlind(Boolean isBlind);
+
 
   @Query("SELECT b FROM Board b WHERE b.isAdminArticle = true AND b.isBlind = false ORDER BY b.createdDate DESC")
   Page<Board> findAdminBoards(Pageable pageable);
