@@ -47,7 +47,7 @@ public class MockBoardFactory {
                         .content("test")
                         .title("test")
                         .newsCategory(NewsCategory.SOCIAL)
-                        .is_admin_article(true)
+                        .isAdminArticle(true)
                         .build()
         );
     }
