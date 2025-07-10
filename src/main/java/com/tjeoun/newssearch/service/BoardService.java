@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.service;
 
+import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.entity.AttachFile;
 import com.tjeoun.newssearch.entity.Board;
@@ -8,6 +9,7 @@ import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.AttachFileRepository;
+import com.tjeoun.newssearch.repository.BoardDocumentRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final BoardReplyService boardReplyService;
+    private final BoardDocumentRepository boardDocumentRepository;
 
     private void saveAttachFiles(List<MultipartFile> files, Board board) {
         if (files == null || files.isEmpty()) return;
@@ -88,8 +91,6 @@ public class BoardService {
         boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
         boardDto.setIsAdminArticle(isAdmin);
 
-
-
         // 카테고리가 null이면 기본값 설정
         if (boardDto.getNewsCategory() == null) {
             boardDto.setNewsCategory(NewsCategory.MISC);  // 기본 카테고리
@@ -100,11 +101,21 @@ public class BoardService {
 
         // DB에 Board 저장 (id 생성)
         boardRepository.save(board);
+        log.info("DB에 저장 완료: {}", board.getTitle());
+
+        // Elasticsearch에 저장하기 전에 createdDate 포맷팅
+        BoardDocument boardDocument = Board.toDocument(board);
+
+        log.info("엘라스틱에 저장 직전: {}", board.getTitle());
+        log.info("엘라스틱에 저장될 createdDate: {}", boardDocument.getCreatedDate()); // 로그 추가
+        boardDocumentRepository.save(boardDocument);  // Elasticsearch에 BoardDocument 저장
+        log.info("엘라스틱에 저장 완료");
 
         // 첨부파일 처리
         List<MultipartFile> files = boardDto.getFiles();
         saveAttachFiles(files, board);
     }
+
 
 
     public Map<String, Object> getBoardDetail(Long id, Member loginUser) {
@@ -199,6 +210,57 @@ public class BoardService {
         defaultMember.setCreatedDate(LocalDateTime.now());
         return defaultMember;
     }
+
+    // 검색 기능
+    public Page<Board> getFilteredBoards(String categoryStr, String filter, String searchType, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        NewsCategory category = null;
+
+        if (!"ALL".equalsIgnoreCase(categoryStr)) {
+            try {
+                category = NewsCategory.valueOf(categoryStr.toUpperCase());
+            } catch (Exception ignored) {}
+        }
+
+        boolean isAdmin = "admin".equalsIgnoreCase(filter);
+
+        // 키워드 검색
+        if (keyword != null && !keyword.isBlank()) {
+            if ("title".equals(searchType)) {
+                if (isAdmin) {
+                    return (category != null) ?
+                      boardRepository.findByTitleContainingAndNewsCategory(keyword, category, pageable) :
+                      boardRepository.findByTitleContaining(keyword, pageable);
+                } else {
+                    return (category != null) ?
+                      boardRepository.findByTitleContainingAndNewsCategoryAndIsBlindFalse(keyword, category, pageable) :
+                      boardRepository.findByTitleContainingAndIsBlindFalse(keyword, pageable);
+                }
+            } else if ("content".equals(searchType)) {
+                if (isAdmin) {
+                    return (category != null) ?
+                      boardRepository.findByContentContainingAndNewsCategory(keyword, category, pageable) :
+                      boardRepository.findByContentContaining(keyword, pageable);
+                } else {
+                    return (category != null) ?
+                      boardRepository.findByContentContainingAndNewsCategoryAndIsBlindFalse(keyword, category, pageable) :
+                      boardRepository.findByContentContainingAndIsBlindFalse(keyword, pageable);
+                }
+            }
+        }
+
+        // 키워드 없을 경우 (기존 목록)
+        if (isAdmin) {
+            return (category != null) ?
+              boardRepository.findByNewsCategory(category, pageable) :
+              boardRepository.findAll(pageable);
+        } else {
+            return (category != null) ?
+              boardRepository.findByNewsCategoryAndIsBlindFalse(category, pageable) :
+              boardRepository.findByIsBlindFalseOrderByCreatedDateDesc(pageable);
+        }
+    }
+
 
 
 

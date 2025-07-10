@@ -56,6 +56,8 @@ public class BoardController {
                             @RequestParam(defaultValue = "15") int size,
                             @RequestParam(defaultValue = "ALL") String category,
                             @RequestParam(required = false) String filter,
+                            @RequestParam(required = false) String searchType,
+                            @RequestParam(required = false) String keyword,
                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
     Member loginUser = (principalDetails != null) ? principalDetails.getMember() : boardService.getDefaultMember();
@@ -66,7 +68,7 @@ public class BoardController {
 
     model.addAttribute("totalVisibleBoards", totalVisibleBoards);
 
-    Page<Board> boardPage;
+    Page<Board> boardPage = boardService.getFilteredBoards(category, filter, searchType, keyword, page, size);
 
     // 관리자 필터 + 카테고리 분기
     if ("admin".equalsIgnoreCase(filter)) {
@@ -88,6 +90,8 @@ public class BoardController {
     model.addAttribute("pageSize", size);
     model.addAttribute("category", category.toUpperCase());
     model.addAttribute("filter", filter);
+    model.addAttribute("searchType", searchType);
+    model.addAttribute("keyword", keyword);
     model.addAttribute("loginUser", loginUser);
     return "board/board-list";
   }

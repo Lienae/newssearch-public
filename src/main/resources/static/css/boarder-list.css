@@ -252,3 +252,7 @@ th:nth-child(1) {
   align-items: center;
 
 }
+.blind-title {
+  color: #cc0404;
+  font-weight: bold;
+}
