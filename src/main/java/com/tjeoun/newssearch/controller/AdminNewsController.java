@@ -21,13 +21,15 @@ public class AdminNewsController {
                        @RequestParam(defaultValue = "10") int size,
                        @RequestParam(defaultValue = "ALL") String category,
                        @RequestParam(defaultValue = "ALL") String mediaCompany,
+                       @RequestParam(required = false) String query,
                        Model model) {
-        Page<AdminNewsDto> newsPage = adminNewsService.getNewsPage(page, size, category, mediaCompany);
+        Page<AdminNewsDto> newsPage = adminNewsService.getNewsPage(page, size, category, mediaCompany, query);
         model.addAttribute("newsPage", newsPage);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("currentCategory", category);
         model.addAttribute("currentMediaCompany", mediaCompany);
+        model.addAttribute("query", query);
         model.addAttribute("totalCount", newsPage.getTotalElements());
         return "admin/news-list";
     }

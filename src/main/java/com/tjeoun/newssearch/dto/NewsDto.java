@@ -42,6 +42,7 @@ public class NewsDto {
 
     public static NewsDto fromDocument(NewsDocument doc) {
         return NewsDto.builder()
+            .id(Long.parseLong(doc.getId()))
             .url(doc.getUrl())
             .title(doc.getTitle())
             .imageUrl(doc.getImageUrl())

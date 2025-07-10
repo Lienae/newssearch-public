@@ -147,7 +147,7 @@
   -webkit-box-orient: vertical;
 }
 
-/* ✅ 하이라이트 스타일 */
+/* 하이라이트 스타일 */
 .news-card h4 .highlight,
 .news-card p .highlight {
   color: #1976d2;
@@ -157,7 +157,7 @@
   border-radius: 2px;
 }
 
-/* ✅ 하이라이트 외 태그 영향 제거 */
+/* 하이라이트 외 태그 영향 제거 */
 .news-card p *:not(.highlight) {
   all: unset;
 }

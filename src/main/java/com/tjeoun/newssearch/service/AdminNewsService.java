@@ -1,6 +1,7 @@
 package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.dto.AdminBoardDto;
+import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -27,30 +28,52 @@ public class AdminNewsService {
 
   private final NewsRepository newsRepository;
   private final AttachFileService attachFileService;
+  private final NewsSearchService newsSearchService;
 
-  public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany) {
+  public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany, String query) {
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishDate"));
     Page<News> news;
 
     boolean isAllCategory = "ALL".equals(category);
     boolean isAllMedia = "ALL".equals(mediaCompany);
 
-    if (isAllCategory && isAllMedia) {
-      news = newsRepository.findAll(pageable);
-    } else if (!isAllCategory && isAllMedia) {
-      NewsCategory newsCategory = NewsCategory.valueOf(category);
-      news = newsRepository.findByCategory(newsCategory, pageable);
-    } else if (isAllCategory) {
-      NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
-      news = newsRepository.findByMediaCompany(newsMedia, pageable);
+    // 검색어가 있을 때, 검색 조건 추가
+    if (query != null && !query.isEmpty()) {
+      // 기존의 뉴스 검색 서비스 활용
+      Page<NewsDto> newsDtoPage = newsSearchService.search(query, category, mediaCompany, page, size);
+
+      // newsDtoPage에 대한 id 출력 (디버깅)
+      newsDtoPage.getContent().forEach(newsDto -> {
+        System.out.println("newsID : " + newsDto.getId());
+      });
+
+      return newsDtoPage.map(AdminNewsDto::fromNewsDto);
     } else {
-      NewsCategory newsCategory = NewsCategory.valueOf(category);
-      NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
-      news = newsRepository.findByCategoryAndMediaCompany(newsCategory, newsMedia, pageable);
+      // 검색어가 없을 경우 기존 로직 그대로 처리
+      if (isAllCategory && isAllMedia) {
+        news = newsRepository.findAll(pageable);
+      } else if (!isAllCategory && isAllMedia) {
+        NewsCategory newsCategory = NewsCategory.valueOf(category);
+        news = newsRepository.findByCategory(newsCategory, pageable);
+      } else if (isAllCategory) {
+        NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
+        news = newsRepository.findByMediaCompany(newsMedia, pageable);
+      } else {
+        NewsCategory newsCategory = NewsCategory.valueOf(category);
+        NewsMediaCompany newsMedia = NewsMediaCompany.valueOf(mediaCompany);
+        news = newsRepository.findByCategoryAndMediaCompany(newsCategory, newsMedia, pageable);
+      }
     }
+
+    // List<News>에 대해 ID 출력 (디버깅)
+    news.getContent().forEach(newsItem -> {
+      System.out.println("news ID : " + newsItem.getId());
+    });
 
     return news.map(AdminNewsDto::fromEntity);
   }
+
+
 
   public AdminNewsDto getNewsDto(Long id) {
     News news = newsRepository.findById(id)

@@ -4,6 +4,15 @@
   padding: 0 20px;
 }
 
+/* 게시판에서 하이라이트된 텍스트 스타일 */
+.board-container .highlight {
+  color: #1976d2;
+  font-weight: bold;
+  background-color: #e3f2fd;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
 .category-section {
   max-width: 1000px;
   margin: 0 0 30px;

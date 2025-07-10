@@ -38,4 +38,20 @@ public class AdminNewsDto {
       .isBlind(news.isBlind())
       .build();
   }
+
+  public static AdminNewsDto fromNewsDto(NewsDto newsDto) {
+    return AdminNewsDto.builder()
+        .id(newsDto.getId())
+        .url(newsDto.getUrl())
+        .title(newsDto.getTitle())
+        .imageUrl(newsDto.getImageUrl())
+        .content(newsDto.getContent())
+        .publishDate(newsDto.getPublishDate())
+        .author(newsDto.getAuthor())
+        .category(newsDto.getCategory())
+        .mediaCompany(newsDto.getMediaCompany())
+        .isBlind(newsDto.getIs_blind())
+        .build();
+  }
+
 }
