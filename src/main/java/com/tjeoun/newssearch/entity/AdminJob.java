@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.entity;
 
+import com.tjeoun.newssearch.dto.AdminJobDto;
 import com.tjeoun.newssearch.enums.AdminJobsEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,16 @@ public class AdminJob {
     @Enumerated(EnumType.STRING)
     private AdminJobsEnum job;
 
-    private String url;
+    private Long targetId;
     private LocalDateTime recordedTime;
     private Boolean isResolved;
+
+    public static AdminJob fromDto(AdminJobDto dto) {
+        return AdminJob.builder()
+                .job(dto.getJob())
+                .targetId(dto.getTargetId())
+                .recordedTime(LocalDateTime.now())
+                .isResolved(false)
+                .build();
+    }
 }

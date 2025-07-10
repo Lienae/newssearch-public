@@ -1,9 +1,16 @@
 package com.tjeoun.newssearch.util;
 
 import com.tjeoun.newssearch.document.NewsDocument;
+import com.tjeoun.newssearch.dto.AdminJobDto;
+import com.tjeoun.newssearch.entity.AdminJob;
 import com.tjeoun.newssearch.entity.News;
+import com.tjeoun.newssearch.enums.AdminJobsEnum;
+import com.tjeoun.newssearch.repository.AdminJobRepository;
 import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
+import com.tjeoun.newssearch.service.AdminJobService;
+import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -114,19 +121,26 @@ public class NewsCrawlUtils {
     }
 
     public static void saveToDatabase(List<Map<String, String>> articles,
-                               PlatformTransactionManager transactionManager,
-                               NewsRepository newsRepository,
-                               NewsDocumentRepository newsDocumentRepository) {
+                                      PlatformTransactionManager transactionManager,
+                                      NewsRepository newsRepository,
+                                      NewsDocumentRepository newsDocumentRepository,
+                                      AdminJobRepository adminJobRepository) {
         for (Map<String, String> article : articles) {
             if(!newsRepository.existsByUrl(article.get("링크")))
-                saveSingleArticleWithCompensation(article, transactionManager, newsRepository, newsDocumentRepository);
+                saveSingleArticleWithCompensation(
+                        article,
+                        transactionManager,
+                        newsRepository,
+                        newsDocumentRepository,
+                        adminJobRepository);
         }
     }
 
     private static void saveSingleArticleWithCompensation(Map<String, String> article,
                                                    PlatformTransactionManager transactionManager,
                                                    NewsRepository newsRepository,
-                                                   NewsDocumentRepository newsDocumentRepository) {
+                                                   NewsDocumentRepository newsDocumentRepository,
+                                                   AdminJobRepository adminJobRepository) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName("saveSingleArticleTx");
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -142,6 +156,16 @@ public class NewsCrawlUtils {
             newsDocumentRepository.save(document);
 
             transactionManager.commit(status);
+            if(StringUtils.isBlank(news.getAuthor())) {
+                adminJobRepository.save(
+                        AdminJob.fromDto(
+                                AdminJobDto.builder()
+                                .job(AdminJobsEnum.NEWS)
+                                .targetId(news.getId())
+                                .build()
+                        )
+                );
+            }
         } catch (Exception e) {
             transactionManager.rollback(status);
             System.err.println("저장 실패, 롤백 수행: " + article.get("title") + " / " + e.getMessage());

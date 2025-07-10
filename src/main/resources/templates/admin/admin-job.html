@@ -36,8 +36,8 @@
     <thead>
     <tr>
       <th style="width: 5%">ID</th>
-      <th style="width: 5%">작업 유형</th>
-      <th style="width: 60%">관련 URL</th>
+      <th style="width: 10%">작업 유형</th>
+      <th style="width: 55%">관련 URL</th>
       <th style="width: 10%">기록 시각</th>
       <th style="width: 5%">상태</th>
       <th style="width: 15%">상태 변경</th>
@@ -52,8 +52,8 @@
     <tr th:each="job : ${jobPage.content}"
         th:classappend="${job.id == highlightJobId} ? 'highlighted'">
       <td th:text="${job.id}">1</td>
-      <td th:text="${job.job}">NEWS</td>
-      <td th:text="${job.url}">/url</td>
+      <td th:text="${job.jobString}">NEWS</td>
+      <td><a th:href="${job.url}" th:text="${job.url}">/url</a></td>
       <td th:text="${#temporals.format(job.recordedTime, 'yyyy-MM-dd HH:mm')}">날짜</td>
       <td>
         <span th:if="${job.isResolved}" style="color: green; font-weight: bold;">완료됨</span>

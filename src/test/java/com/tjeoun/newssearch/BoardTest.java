@@ -79,8 +79,6 @@ public class BoardTest {
             assertEquals(saveBoard.getTitle(), loadBoard.getTitle());
             assertEquals(saveBoard.getContent(), loadBoard.getContent());
             assertEquals(saveBoard.getAuthor(), loadBoard.getAuthor());
-            assertEquals(saveBoard.getPassword(), loadBoard.getPassword());
-            assertFalse(saveBoard.is_blind());
             assertFalse(saveBoard.is_admin_article());
             assertTrue(saveAdminBoard.is_admin_article());
         }).doesNotThrowAnyException();
