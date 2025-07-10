@@ -7,7 +7,7 @@
   
 # 사용할 프로그램
 Spring boot v3.5.3 w/ Spring Security, JPA, Thymeleaf  
-Elasticsearch v8.17.6 - 뉴스 기사 검색용  
+Elasticsearch, Kibana v8.13.4 - 뉴스 기사 검색용 및 시각화  
 MariaDB v10.11.11 - 관리자 계정용  
 
 # 접속 주소
