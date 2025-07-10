@@ -51,7 +51,6 @@ public class AttachFileTest {
                 .title("test")
                 .content("test")
                 .author(member)
-                .password("test")
                 .newsCategory(NewsCategory.CULTURE)
                 .build());
         boardRepository.save(board);

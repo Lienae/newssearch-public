@@ -7,11 +7,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -26,6 +23,7 @@ public class Board {
 
     @Column(nullable = false)
     private String title;
+
 
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
