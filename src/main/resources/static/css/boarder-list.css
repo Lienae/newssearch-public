@@ -217,8 +217,8 @@ th:nth-child(1) {
 }
 
 #toggleFilterBtnEN:hover {
-  background-color: #125ea9;  /* 원래 색보다 조금 더 진한 파란색 */
-
+  background-color: #125ea9; /* 원래 색보다 조금 더 진한 파란색 */
+}
 .btn {
   display: inline-block;
   padding: 6px 12px;
