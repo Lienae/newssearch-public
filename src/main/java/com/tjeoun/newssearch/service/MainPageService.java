@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 // MainNewsDto 같은 DTO가 있다면 쓰고, 없다면 News 엔티티 그대로 반환해도 OK
 @Service
@@ -27,7 +28,7 @@ public class MainPageService {
             List<NewsDto> top2 = newsRepository.findByCategoryAndIsBlindFalseOrderByPublishDateDesc(category, PageRequest.of(0, 2))
                     .stream()
                     .map(NewsDto::fromEntity)
-                    .toList();
+                    .collect(Collectors.toList());
             result.put(category, top2);
         }
 

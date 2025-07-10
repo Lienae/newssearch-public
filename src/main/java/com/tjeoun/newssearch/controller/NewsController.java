@@ -29,7 +29,7 @@ public class NewsController {
                        @RequestParam(defaultValue = "ALL") String category,
                        @RequestParam(defaultValue = "ALL") String mediaCompany,
                        @RequestParam(required = false) String url,
-                           Model model) {
+                       Model model) {
 
         Page<NewsDto> newsPage = newsService.getNewsList(page, size, category, mediaCompany);
 
@@ -45,24 +45,5 @@ public class NewsController {
         }
 
         return "news/news-list";
-    }
-
-    @GetMapping("/edit")
-    public String editForm(@RequestParam Long id,
-                           @RequestParam(defaultValue = "0") int page,
-                           @RequestParam(defaultValue = "10") int size,
-                           @RequestParam(defaultValue = "ALL") String category,
-                           @RequestParam(defaultValue = "ALL") String mediaCompany,
-                           Model model) {
-
-        NewsDto dto = newsService.getNewsById(id);
-
-        model.addAttribute("news", dto);
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("currentCategory", category);
-        model.addAttribute("currentMediaCompany", mediaCompany);
-
-        return "admin/news-edit";
     }
 }

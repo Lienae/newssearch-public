@@ -73,7 +73,7 @@
     <div class="category-row">
         <!-- Map<NewsCategory, List<News>> newsByCategory 기준 반복 -->
         <div class="category-block" th:each="entry : ${newsByCategory}">
-            <h3 class="category-title" th:text="${entry.key.name()}">카테고리명</h3>
+            <h3 class="category-title" th:text="${entry.key.displayName}">카테고리명</h3>
 
             <div class="news-list">
                 <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}"
@@ -94,7 +94,7 @@
     <div class="news-section">
         <div class="category-row">
             <div class="category-block" th:each="entry : ${newsByCompany}">
-                <h3 class="category-title" th:text="${entry.key.name()}">언론사</h3>
+                <h3 class="category-title" th:text="${entry.key.displayName}">언론사</h3>
                 <div class="news-list">
                     <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}">
                         <img src="/img/default.png" alt="테스트 이미지" />
