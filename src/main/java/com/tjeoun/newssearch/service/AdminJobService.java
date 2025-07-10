@@ -63,6 +63,8 @@ public class AdminJobService {
     }
 
 
-
+    public void save(AdminJob adminJob) {
+        adminJobRepository.save(adminJob);
+    }
 
 }
