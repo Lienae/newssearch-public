@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,16 +14,16 @@ import java.util.Map;
 public class ReportController {
     private final ReportService reportService;
     @PostMapping("/board/{boardId}")
-    public ResponseEntity<?> reportBoard(@PathVariable Long boardId, @RequestBody Map<String, Long> memberId) {
-        reportService.save(boardId, memberId.get("memberId"), ReportEnum.BOARD);
+    public ResponseEntity<?> reportBoard(@PathVariable Long boardId, Principal principal) {
+        reportService.save(boardId, principal.getName(), ReportEnum.BOARD);
         System.out.println("게시글 신고됨: " + boardId);
         return ResponseEntity.ok().body("게시글이 신고되었습니다.");
 
     }
 
     @PostMapping("/reply/{replyId}")
-    public ResponseEntity<?> reportReply(@PathVariable Long replyId, @RequestBody Map<String, Long> memberId) {
-        reportService.save(replyId, memberId.get("memberId"), ReportEnum.BOARD_REPLY);
+    public ResponseEntity<?> reportReply(@PathVariable Long replyId, Principal principal) {
+        reportService.save(replyId, principal.getName(), ReportEnum.BOARD_REPLY);
         System.out.println("댓글 신고됨: " + replyId);
         return ResponseEntity.ok().body("댓글이 신고되었습니다.");
     }

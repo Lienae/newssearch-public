@@ -24,38 +24,21 @@ public class ReportService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void save(Long targetId, Long userId, ReportEnum reportEnum) throws DataIntegrityViolationException {
-        Member member = memberRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("user not found"));
+    public void save(Long targetId, String email, ReportEnum reportEnum) throws DataIntegrityViolationException {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("user not found"));
         if(!reportRepository.existsByReportTypeAndTargetIdAndMember(reportEnum, targetId, member)) {
-            AdminJob adminJob = null;
-            Report report = null;
+            AdminJob adminJob =  AdminJob.fromDto(AdminJobDto.builder()
+                    .targetId(targetId)
+                    .build());
+            Report report = Report.fromDto(ReportDto.builder()
+                    .member(member)
+                    .reportType(reportEnum)
+                    .targetId(targetId)
+                    .build());
             switch (reportEnum) {
-                case NEWS_REPLY -> {
-                    System.out.println("news job call");
-                    throw new RuntimeException("Not implemented yet");
-                }
-                case BOARD -> {
-                    adminJob = AdminJob.fromDto(AdminJobDto.builder()
-                            .job(AdminJobsEnum.BOARD_REPORT)
-                            .targetId(targetId)
-                            .build());
-                    report = Report.fromDto(ReportDto.builder()
-                            .member(memberRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("user not found")))
-                            .reportType(reportEnum)
-                            .targetId(targetId)
-                            .build());
-                }
-                case BOARD_REPLY -> {
-                    adminJob = AdminJob.fromDto(AdminJobDto.builder()
-                            .job(AdminJobsEnum.BOARD_REPLY_REPORT)
-                            .targetId(targetId)
-                            .build());
-                    report = Report.fromDto(ReportDto.builder()
-                            .member(memberRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("user not found")))
-                            .reportType(reportEnum)
-                            .targetId(targetId)
-                            .build());
-                }
+                case NEWS_REPLY -> adminJob.setJob(AdminJobsEnum.NEWS_REPLY_REPORT);
+                case BOARD -> adminJob.setJob(AdminJobsEnum.BOARD_REPORT);
+                case BOARD_REPLY -> adminJob.setJob(AdminJobsEnum.BOARD_REPLY_REPORT);
             }
             adminJobRepository.save(adminJob);
             reportRepository.save(report);
