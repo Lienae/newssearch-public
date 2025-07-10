@@ -40,12 +40,8 @@
     <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
     <h2>빅카인즈 오늘의 이슈</h2>
     <div class="search-box">
-        <select id="search-type">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-        </select>
-        <input type="text" placeholder="기본 검색어를 입력해주세요" />
-        <button>검색</button>
+        <input type="text" name="query" placeholder="기본 검색어를 입력해주세요" />
+        <button onclick="search()">검색</button>
     </div>
 </div>
 
@@ -127,6 +123,13 @@
         });
       });
     });
+    function search() {
+        const query = document.querySelector("input[name='query']").value;
+        const category = "ALL"; // 기본값
+        const mediaCompany = "ALL"; // 기본값
+        const url = `/news/list?query=${encodeURIComponent(query)}&category=${category}&mediaCompany=${mediaCompany}`;
+        window.location.href = url;
+    }
 </script>
 
 </html>

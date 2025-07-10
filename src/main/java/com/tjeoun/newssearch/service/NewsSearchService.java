@@ -1,0 +1,122 @@
+package com.tjeoun.newssearch.service;
+
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import com.tjeoun.newssearch.document.NewsDocument;
+import com.tjeoun.newssearch.dto.NewsDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.HighlightQuery;
+import org.springframework.data.elasticsearch.core.query.highlight.Highlight;
+import org.springframework.data.elasticsearch.core.query.highlight.HighlightField;
+import org.springframework.data.elasticsearch.core.query.highlight.HighlightParameters;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class NewsSearchService {
+
+    private final ElasticsearchOperations elasticsearchOperations;
+
+    public Page<NewsDto> search(String keyword, String category, String mediaCompany, int page, int size) {
+
+        // 1. 검색 조건 쿼리 구성
+        Query keywordQuery = buildKeywordQuery(keyword);
+        List<Query> filters = buildFilters(category, mediaCompany);
+
+        BoolQuery.Builder boolBuilder = new BoolQuery.Builder();
+        if (keywordQuery != null) boolBuilder.must(keywordQuery);
+        if (!filters.isEmpty()) boolBuilder.filter(filters);
+
+        Query finalQuery = boolBuilder.build()._toQuery();
+
+        // 2. Highlight 구성
+        HighlightQuery highlightQuery = buildHighlightQuery();
+
+        // 3. NativeQuery 구성
+        PageRequest pageRequest = PageRequest.of(page, size);
+        NativeQuery nativeQuery = NativeQuery.builder()
+            .withQuery(finalQuery)
+            .withHighlightQuery(highlightQuery)
+            .withPageable(pageRequest)
+            .build();
+
+        // 4. 검색 실행 및 결과 매핑
+        SearchHits<NewsDocument> searchHits = elasticsearchOperations.search(nativeQuery, NewsDocument.class);
+
+        List<NewsDto> result = searchHits.getSearchHits().stream()
+            .map(hit -> {
+                NewsDto dto = NewsDto.fromDocument(hit.getContent());
+
+                List<String> titleHighlights = hit.getHighlightField("title");
+                if (titleHighlights != null && !titleHighlights.isEmpty()) {
+                    dto.setTitle(titleHighlights.get(0));
+                }
+
+                List<String> contentHighlights = hit.getHighlightField("content");
+                if (contentHighlights != null && !contentHighlights.isEmpty()) {
+                    dto.setContent(contentHighlights.get(0));
+                }
+
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+
+        return new PageImpl<>(result, pageRequest, searchHits.getTotalHits());
+    }
+
+    private Query buildKeywordQuery(String keyword) {
+        if (keyword == null || keyword.isEmpty()) return null;
+
+        return MultiMatchQuery.of(m -> m
+            .query(keyword)
+            .fields("title^3", "content^1")
+            .fuzziness("AUTO")
+        )._toQuery();
+    }
+
+    private List<Query> buildFilters(String category, String mediaCompany) {
+        List<Query> filters = new ArrayList<>();
+        if (!"ALL".equalsIgnoreCase(category)) {
+            filters.add(TermQuery.of(t -> t
+                .field("category")
+                .value(category)
+            )._toQuery());
+        }
+
+        if (!"ALL".equalsIgnoreCase(mediaCompany)) {
+            filters.add(TermQuery.of(t -> t
+                .field("mediaCompany")
+                .value(mediaCompany)
+            )._toQuery());
+        }
+
+        return filters;
+    }
+
+    private HighlightQuery buildHighlightQuery() {
+        HighlightParameters highlightParams = HighlightParameters.builder()
+            .withPreTags("<b>")
+            .withPostTags("</b>")
+            .build();
+
+        Highlight highlight = new Highlight(
+            highlightParams,
+            List.of(
+                new HighlightField("title"),
+                new HighlightField("content")
+            )
+        );
+
+        return new HighlightQuery(highlight, NewsDocument.class);
+    }
+}

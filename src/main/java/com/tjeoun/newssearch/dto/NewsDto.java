@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.dto;
 
+import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
@@ -37,5 +38,18 @@ public class NewsDto {
                 .mediaCompany(news.getMediaCompany())
                 .is_blind(news.isBlind())
                 .build();
+    }
+
+    public static NewsDto fromDocument(NewsDocument doc) {
+        return NewsDto.builder()
+            .url(doc.getUrl())
+            .title(doc.getTitle())
+            .imageUrl(doc.getImageUrl())
+            .content(doc.getContent())
+            .publishDate(doc.getPublishDate())
+            .author(doc.getAuthor())
+            .mediaCompany(NewsMediaCompany.valueOf(doc.getMediaCompany())) // 대소문자 구분.. 대문자로 변환해야하나?
+            .category(NewsCategory.valueOf(doc.getCategory()))
+            .build();
     }
 }
