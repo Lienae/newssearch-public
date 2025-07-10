@@ -185,6 +185,8 @@ th:nth-child(1) {
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .pagination button.active {
@@ -197,6 +199,25 @@ th:nth-child(1) {
   color: #999;
   cursor: not-allowed;
 }
+
+
+.pagination button:hover {
+   background-color: #eee;
+ }
+
+#toggleFilterBtnEN {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;      /* 적당한 크기 */
+  font-size: 14px;        /* 너무 크지 않게 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#toggleFilterBtnEN:hover {
+  background-color: #125ea9;  /* 원래 색보다 조금 더 진한 파란색 */
 
 .btn {
   display: inline-block;
@@ -230,6 +251,7 @@ th:nth-child(1) {
 .board-search form {
   display: flex;
   align-items: center;
+
 }
 .checkbox-label {
   display: flex;

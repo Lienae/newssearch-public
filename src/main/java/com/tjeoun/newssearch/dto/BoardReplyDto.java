@@ -10,10 +10,8 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BoardReplyDto {
-    private Long id;
-    private String content;
-    private Board board;
-    private Member member;
-    private String password;
-    private Boolean isBlind;
+    public Long id;
+    public String content;
+    public Board board;
+    public Member member;
 }

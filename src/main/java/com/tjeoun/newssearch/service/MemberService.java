@@ -90,4 +90,10 @@ public class MemberService {
             memberRepository.save(member);
         } else throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
     }
+    //
+    public Member getLoginMember(java.security.Principal principal) {
+        String email = principal.getName();
+        return memberRepository.findByEmail(email)
+          .orElseThrow(() -> new UsernameNotFoundException("로그인 사용자를 찾을 수 없습니다."));
+    }
 }

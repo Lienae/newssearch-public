@@ -27,19 +27,23 @@ public class SpringSecurityConfig {
             "/member/register",
             "/css/**",
             "/js/**",
+            "/images/**",
             "/member/findpassword",
             "/member/resetpassword"
     };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf-> csrf
+
                 .ignoringRequestMatchers("/api/Ytn/test", "/api/khan/collect", "/api/donga/collect", "/api/v1/comment/**")
-                .csrfTokenRepository(new CookieCsrfTokenRepository()))
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(whitelist).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**", "/board/**").authenticated()
+                        .requestMatchers("/images/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

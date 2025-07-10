@@ -24,9 +24,13 @@ public class AttachFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name="board_id")
     private Board board;
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 
     @CreatedDate
     @Column(nullable = false)

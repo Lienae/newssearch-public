@@ -20,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       modalIframe.src = link;
       modal.style.display = "flex";
-      writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(link)}`;
-      loadComments(baseUrl);
+
+      writePostBtn.href = `/board/write?newsUrl=${encodeURIComponent(link)}`;
+
     });
   });
 

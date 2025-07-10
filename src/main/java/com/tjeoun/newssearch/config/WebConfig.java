@@ -1,10 +1,13 @@
 package com.tjeoun.newssearch.config;
 
-import com.tjeoun.newssearch.interceptor.AdminLogInterceptor;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import com.tjeoun.newssearch.interceptor.AdminLogInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/upload/**")
-                .addResourceLocations("file:///" + UPLOAD_DIR + "/");
+                .addResourceLocations("file:///" + UPLOAD_DIR + "/")
+        ;
     }
 
     @Override
@@ -27,4 +31,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(adminLogInterceptor)
                 .addPathPatterns("/**");
     }
+
 }
+//
+//  @Override
+//  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//    registry.addResourceHandler("/images/upload/**")
+//      .addResourceLocations("file:///C:/workspace/newssearch/images/upload/");
+//  }
