@@ -15,7 +15,7 @@ public class AdminJobDto {
 
     private Long id;
     private AdminJobsEnum job;
-    private String url;
+    private Long targetId;
     private LocalDateTime recordedTime;
     private Boolean isResolved;
 
@@ -23,7 +23,7 @@ public class AdminJobDto {
         return AdminJobDto.builder()
                 .id(job.getId())
                 .job(job.getJob())
-                .url(job.getUrl())
+                .targetId(job.getTargetId())
                 .recordedTime(job.getRecordedTime())
                 .isResolved(job.getIsResolved())
                 .build();
