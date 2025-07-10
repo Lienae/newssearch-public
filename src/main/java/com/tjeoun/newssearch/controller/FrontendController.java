@@ -1,6 +1,9 @@
 package com.tjeoun.newssearch.controller;
 
+import com.tjeoun.newssearch.dto.BoardDto;
+import com.tjeoun.newssearch.enums.NewsCategory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -11,6 +14,7 @@ public class FrontendController {
 //    return "main";
 //  }
 
+
 //  @GetMapping("/admin/main")
 //  public String adminMain() {
 //    return "admin/main";
@@ -19,11 +23,12 @@ public class FrontendController {
   @GetMapping("/admin/boarder-list")
   public String adminBoarderList() {
     return "admin/boarder-list";
+
   }
 
-  @GetMapping("/admin/boarder-edit")
-  public String adminBoarderEdit() {
-    return "admin/boarder-edit";
+  @GetMapping("/admin/board-edit")
+  public String adminboardEdit() {
+    return "admin/board-edit";
   }
 
   @GetMapping("/admin/news-list")
@@ -46,19 +51,13 @@ public class FrontendController {
     return "admin/user-edit";
   }
 
-  @GetMapping("/boarder/list")
-  public String boarderListPage() {
-    return "boarder/boarder-list";
-  }
 
-  @GetMapping("/boarder/write")
-  public String boarderWrite() {
-    return "boarder/boarder-write";
-  }
 
-  @GetMapping("/boarder/detail")
-  public String boarderDetail() {
-    return "boarder/boarder-detail";
+
+
+  @GetMapping("/board/detail")
+  public String boardDetail() {
+    return "board/board-detail";
   }
 
 //  @GetMapping("/news/list")

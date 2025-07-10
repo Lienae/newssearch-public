@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +23,7 @@ public class Board {
 
     @Column(nullable = false)
     private String title;
+
 
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
@@ -47,20 +47,34 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private NewsCategory newsCategory;
 
+
     @Column(name = "is_blind", nullable = false)
     private boolean isBlind;
 
-    @Column(nullable = false)
-    private boolean is_admin_article;
+    public void setIsBlind(boolean isBlind) {
+        this.isBlind = isBlind;
+    }
 
-    public static Board createBoard(BoardDto dto, PasswordEncoder passwordEncoder) {
+
+
+    @Column(nullable = false)
+    private boolean isAdminArticle;
+
+
+
+    public static Board createBoard(BoardDto dto) {
+
+
+        System.out.println("DEBUG: author = " + dto.getAuthor());
+        System.out.println("DEBUG: author pw = " + dto.getAuthor().getPassword());
         return Board.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .author(dto.getAuthor())
                 .newsCategory(dto.getNewsCategory())
-                .is_admin_article(Boolean.TRUE.equals(dto.getIsAdminArticle()))
+                .isAdminArticle(Boolean.TRUE.equals(dto.getIsAdminArticle()))
+                .isBlind(false)
                 .build();
     }
 }

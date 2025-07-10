@@ -18,14 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 뉴스 카드 클릭 이벤트
   document.querySelectorAll(".news-card").forEach((card) => {
     card.addEventListener("click", () => {
-      const link = card.dataset.link;
-      const baseUrl = link.split("?")[0];
+      const fullUrl = card.dataset.link;
+      const baseUrl = fullUrl.split("?")[0];
       currentUrl = baseUrl;
 
-      modalIframe.src = link;
+      modalIframe.src = fullUrl;
       modal.style.display = "flex";
-      writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(link)}`;
+
+      writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(baseUrl)}`;
       loadComments(baseUrl);
+
     });
   });
 

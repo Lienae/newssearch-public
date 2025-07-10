@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" content="${_csrf.token}" />
+    <meta name="_csrf_header" content="${_csrf.headerName}" />
+    <title>게시글 수정</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/border-write.css" />
+</head>
+<body>
+<header>
+    <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+
+<div class="write-container">
+    <h2>게시글 수정</h2>
+    <p class="info-text">
+        기존 게시글을 수정하고 저장할 수 있습니다.
+    </p>
+
+    <!-- 기존 게시글 ID 기반 수정 요청 -->
+    <form th:action="@{'/board/edit/' + ${boardDto.id}}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
+        <div class="form-group">
+            <label for="newsCategory">뉴스 카테고리</label>
+            <input
+                    type="text"
+                    id="newsCategory"
+                    th:field="*{newsCategory}"
+                    readonly
+                    class="readonly-input"
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input
+                    type="text"
+                    id="title"
+                    th:field="*{title}"
+                    placeholder="제목을 입력하세요."
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea
+                    id="content"
+                    th:field="*{content}"
+                    rows="10"
+                    placeholder="내용을 입력하세요."
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>기존 첨부파일</label>
+            <ul style="list-style: none; padding-left: 0;">
+                <li th:each="file : ${attachFiles}">
+                    <label>
+                        <input type="checkbox" name="deleteFileIds" th:value="${file.id}" />
+                        <span th:text="${file.originalFilename}" style="font-size:14px; font-weight: normal;"></span>
+
+                    </label>
+                </li>
+            </ul>
+            <small style="color: #666;">삭제할 첨부파일을 선택해주세요.</small>
+        </div>
+
+
+        <!-- 새 첨부파일 업로드 -->
+        <div class="form-group">
+            <label for="files">파일 첨부 (선택)</label>
+            <input
+                    type="file"
+                    id="files"
+                    name="files"
+                    accept="image/*"
+                    multiple
+            />
+
+        </div>
+
+        <!-- 버튼 -->
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+            <button type="submit" class="submit-btn">수정</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
