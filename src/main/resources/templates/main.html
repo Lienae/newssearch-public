@@ -2,59 +2,58 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
 >
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>빅카인즈 메인</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/main.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>빅카인즈 메인</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
 <header>
   <div th:replace="~{fragments/header :: header}"></div>
 </header>
+
 <div class="sidebar">
-  <div class="box">
-    <strong>실시간 인기 검색어</strong><br />
-    · 시사저널<br />
-    · 오마이뉴스<br />
-    · 연합뉴스...
-  </div>
-  <div class="box">
-    <strong>언론사별 바로가기</strong><br />
-    · 동아일보<br />
-    · YTN<br />
-    · 한겨레<br />
-    · 경향신문<br />
-    · 중앙일보<br />
-  </div>
-  <div class="box">
-    <strong>최근 수집된 기사</strong><br />
-    · 정치: 제목1<br />
-    · 경제: 제목2<br />
-    · 사회: 제목3
-  </div>
+    <div class="box">
+        <strong>실시간 인기 검색어</strong><br />
+        · 시사저널<br />
+        · 오마이뉴스<br />
+        · 연합뉴스...
+    </div>
+    <div class="box">
+        <strong>언론사별 바로가기</strong><br />
+        · 동아일보<br />
+        · YTN<br />
+        · 한겨레<br />
+        · 경향신문<br />
+        · 중앙일보<br />
+    </div>
+    <div class="box">
+        <strong>최근 수집된 기사</strong><br />
+        · 정치: 제목1<br />
+        · 경제: 제목2<br />
+        · 사회: 제목3
+    </div>
 </div>
 
 <div class="banner">
-  <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
-  <h2>빅카인즈 오늘의 이슈</h2>
-  <div class="search-box">
-    <label for="search-type"></label><select id="search-type">
-      <option value="title">제목</option>
-      <option value="content">내용</option>
-    </select>
-    <label>
-      <input type="text" placeholder="기본 검색어를 입력해주세요" />
-    </label>
-    <button>검색</button>
-  </div>
+    <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
+    <h2>빅카인즈 오늘의 이슈</h2>
+    <div class="search-box">
+        <select id="search-type">
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+        </select>
+        <input type="text" placeholder="기본 검색어를 입력해주세요" />
+        <button>검색</button>
+    </div>
 </div>
 
 <div class="filter-tabs">
-  <ul>
-    <li class="active">이슈별</li>
-    <li>언론사별</li>
-  </ul>
+    <ul>
+        <li class="active">이슈별</li>
+        <li>언론사별</li>
+    </ul>
 </div>
 
 <div class="category-section">
@@ -71,121 +70,63 @@
 </div>
 
 <div class="news-section">
-  <div class="category-row">
+    <div class="category-row">
+        <!-- Map<NewsCategory, List<News>> newsByCategory 기준 반복 -->
+        <div class="category-block" th:each="entry : ${newsByCategory}">
+            <h3 class="category-title" th:text="${entry.key.displayName}">카테고리명</h3>
 
-    <div class="category-block">
-      <h3 class="category-title">정치</h3>
-      <div class="news-list">
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="정치 이미지" />
-          <h4>정치 이슈 1</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명 요약 설명 요약 설명 요약 설명 요약 설명 요약 설명</span>
-            <span class="extra-info">경향신문</span>
-          </div>
+            <div class="news-list">
+                <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}"
+                     th:data-category="${news.category}" th:data-media="${news.mediaCompany}" th:data-url="${news.url}">
+                    <img src="/img/default.png" alt="테스트 이미지" />
+                    <h4 th:text="${#strings.abbreviate(news.title, 10)}">뉴스 제목</h4>
+                    <div class="news-meta">
+                        <span class="summary-text" th:text="${#strings.abbreviate(news.content, 40)}">요약</span>
+                        <span class="extra-info" th:text="${news.mediaCompany.name()}">언론사</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="정치 이미지" />
-          <h4>정치 이슈 2</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">YTN</span>
-          </div>
-        </div>
-      </div>
     </div>
+</div>
 
-    <div class="category-block">
-      <h3 class="category-title">경제</h3>
-      <div class="news-list">
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="경제 이미지" />
-          <h4>경제 이슈 1</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">경향신문</span>
-          </div>
+<div id="company-tab" class="tab-content" style="display: none;">
+    <div class="news-section">
+        <div class="category-row">
+            <div class="category-block" th:each="entry : ${newsByCompany}">
+                <h3 class="category-title" th:text="${entry.key.displayName}">언론사</h3>
+                <div class="news-list">
+                    <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}">
+                        <img src="/img/default.png" alt="테스트 이미지" />
+                        <h4 th:text="${#strings.abbreviate(news.title, 10)}">뉴스 제목</h4>
+                        <div class="news-meta">
+                            <span class="summary-text" th:text="${#strings.abbreviate(news.content, 40)}">요약</span>
+                            <span class="extra-info" th:text="${news.category.name()}">카테고리</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="경제 이미지" />
-          <h4>경제 이슈 2</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">YTN</span>
-          </div>
-        </div>
-      </div>
     </div>
-
-    <div class="category-block">
-      <h3 class="category-title">사회</h3>
-      <div class="news-list">
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="사회 이미지" />
-          <h4>사회 이슈 1</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">경향신문</span>
-          </div>
-        </div>
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="사회 이미지" />
-          <h4>사회 이슈 2</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">YTN</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="category-block">
-      <h3 class="category-title">문화</h3>
-      <div class="news-list">
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="문화 이미지" />
-          <h4>문화 이슈 1</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">경향신문</span>
-          </div>
-        </div>
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="문화 이미지" />
-          <h4>문화 이슈 2</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">YTN</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="category-block">
-      <h3 class="category-title">스포츠</h3>
-      <div class="news-list">
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="스포츠 이미지" />
-          <h4>스포츠 이슈 1</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">경향신문</span>
-          </div>
-        </div>
-        <div class="news-card">
-          <img src="https://placehold.co/200x100" alt="스포츠 이미지" />
-          <h4>스포츠 이슈 2</h4>
-          <div class="news-meta">
-            <span class="summary-text">요약 설명</span>
-            <span class="extra-info">YTN</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script src="/js/main.js"></script>
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".news-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const category = card.dataset.category;
+          const media = card.dataset.media;
+          const url = encodeURIComponent(card.dataset.url);
+
+          if (category && media && url) {
+            window.location.href = `/news/list?category=${category}&mediaCompany=${media}&url=${url}`;
+          }
+        });
+      });
+    });
+</script>
+
 </html>

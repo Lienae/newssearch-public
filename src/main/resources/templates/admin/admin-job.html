@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - 작업 목록</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/boarder-list.css" />
+</head>
+<body>
+<header>
+  <div th:replace="~{fragments/header :: header}"></div>
+</header>
+
+<div class="board-container">
+
+  <div class="category-section">
+    <div class="category-buttons">
+      <a th:href="@{/admin/main/job(filter='ALL')}" th:classappend="${filter == 'ALL'} ? 'active'">전체</a>
+      <a th:href="@{/admin/main/job(filter='RESOLVED')}" th:classappend="${filter == 'RESOLVED'} ? 'active'">해결</a>
+      <a th:href="@{/admin/main/job(filter='UNRESOLVED')}" th:classappend="${filter == 'UNRESOLVED'} ? 'active'">미해결</a>
+    </div>
+  </div>
+
+  <div class="board-header">
+    <div class="board-count">
+      <span th:switch="${filter}">
+        <span th:case="'resolved'">해결된 작업 <strong th:text="${totalCount}">0</strong>건</span>
+        <span th:case="'unresolved'">미해결 작업 <strong th:text="${totalCount}">0</strong>건</span>
+        <span th:case="*">전체 <strong th:text="${totalCount}">0</strong>건</span>
+      </span>
+    </div>
+  </div>
+
+  <table class="board-table">
+    <thead>
+    <tr>
+      <th style="width: 5%">ID</th>
+      <th style="width: 10%">작업 유형</th>
+      <th style="width: 55%">관련 URL</th>
+      <th style="width: 10%">기록 시각</th>
+      <th style="width: 5%">상태</th>
+      <th style="width: 15%">상태 변경</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${jobPage.content.isEmpty()}">
+      <td colspan="5" style="text-align: center; color: gray; font-style: italic;">
+        해당 날짜에 작업이 없습니다.
+      </td>
+    </tr>
+    <tr th:each="job : ${jobPage.content}"
+        th:classappend="${job.id == highlightJobId} ? 'highlighted'">
+      <td th:text="${job.id}">1</td>
+      <td th:text="${job.jobString}">NEWS</td>
+      <td><a th:href="${job.url}" th:text="${job.url}">/url</a></td>
+      <td th:text="${#temporals.format(job.recordedTime, 'yyyy-MM-dd HH:mm')}">날짜</td>
+      <td>
+        <span th:if="${job.isResolved}" style="color: green; font-weight: bold;">완료됨</span>
+        <span th:if="${!job.isResolved}" style="color: orange; font-weight: bold;">대기 중</span>
+      </td>
+      <td>
+        <div>
+          <form th:action="@{/admin/main/job/update}" method="post">
+            <input type="hidden" name="id" th:value="${job.id}" />
+            <input type="hidden" name="isResolved" th:value="${!job.isResolved}" />
+            <button type="submit"
+                    th:text="${job.isResolved ? '미처리로 변경' : '작업 완료'}"
+                    th:class="${job.isResolved ? 'cancel-btn' : 'resolve-btn'}">
+            </button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <!-- 이전 페이지 버튼 -->
+    <a class="btn" th:if="${!jobPage.first}"
+       th:href="@{/admin/main/job(page=${jobPage.number - 1}, size=${jobPage.size}, filter=${filter}, searchDate=${searchDate})}">
+      «
+    </a>
+    <a class="btn disabled" th:if="${jobPage.first}">«</a>
+
+    <!-- 페이지 번호 -->
+    <span th:with="
+    start=${T(java.lang.Math).max(0, jobPage.number - 2)},
+    end=${T(java.lang.Math).min(jobPage.totalPages - 1, start + 4)},
+    start=${T(java.lang.Math).max(0, end - 4)}
+  ">
+    <span th:each="i : ${#numbers.sequence(start, end)}">
+      <a class="btn" th:if="${i != jobPage.number}"
+         th:href="@{/admin/main/job(page=${i}, size=${jobPage.size}, filter=${filter}, searchDate=${searchDate})}"
+         th:text="${i + 1}"></a>
+      <a class="btn active disabled" th:if="${i == jobPage.number}"
+         th:text="${i + 1}"></a>
+    </span>
+  </span>
+
+    <!-- 다음 페이지 버튼 -->
+    <a class="btn" th:if="${!jobPage.last}"
+       th:href="@{/admin/main/job(page=${jobPage.number + 1}, size=${jobPage.size}, filter=${filter}, searchDate=${searchDate})}">
+      »
+    </a>
+    <a class="btn disabled" th:if="${jobPage.last}">»</a>
+  </div>
+
+  <div class="job-search-bar">
+    <form action="/admin/main/job" method="get">
+      <input type="date" id="searchDate" name="searchDate" th:value="${searchDate}" />
+      <input type="hidden" name="filter" th:value="${filter}" />
+      <button type="submit">검색</button>
+    </form>
+  </div>
+
+
+</div>
+</body>
+</html>

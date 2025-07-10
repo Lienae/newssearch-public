@@ -97,7 +97,7 @@ public class News {
                     case "사회" -> NewsCategory.SOCIAL;
                     case "문화" -> NewsCategory.CULTURE;
                     case "스포츠" -> NewsCategory.SPORTS;
-                    default -> NewsCategory.MISC;
+                    default -> throw new IllegalArgumentException("지원하지 않는 카테고리입니다: " + article.get("카테고리"));
                 })
                 .mediaCompany(switch(article.get("언론사")) {
                     case "한겨레" -> NewsMediaCompany.HANI;

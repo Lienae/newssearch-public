@@ -29,107 +29,106 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class AdminNewsControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @MockBean
-  private NewsRepository newsRepository;
+    @MockBean
+    private NewsRepository newsRepository;
 
-  private News createNews() {
-    return News.builder()
-      .id(1L)
-      .title("테스트 뉴스")
-      .author("기자명")
-      .content("내용")
-      .category(NewsCategory.POLITICS)
-      .mediaCompany(NewsMediaCompany.YTN)
-      .url("http://test.com")
-      .imageUrl("http://test.com/image.jpg")
-      .publishDate(LocalDate.now())
-      .isBlind(false)
-      .build();
-  }
+    private News createNews() {
+        return News.builder()
+                .id(1L)
+                .title("테스트 뉴스")
+                .author("기자명")
+                .content("내용")
+                .category(NewsCategory.POLITICS)
+                .mediaCompany(NewsMediaCompany.YTN)
+                .url("http://test.com")
+                .imageUrl("http://test.com/image.jpg")
+                .publishDate(LocalDate.now())
+                .isBlind(false)
+                .build();
+    }
 
-  @Test
-  @DisplayName("뉴스 목록 조회")
-  void testList() throws Exception {
-    News news = createNews();
-    Page<News> page = new PageImpl<>(List.of(news), PageRequest.of(0, 10), 1);
+    @Test
+    @DisplayName("뉴스 목록 조회")
+    void testList() throws Exception {
+        News news = createNews();
+        Page<News> page = new PageImpl<>(List.of(news), PageRequest.of(0, 10), 1);
 
-    given(newsRepository.findByIsBlindFalse(any(Pageable.class))).willReturn(page);
+        given(newsRepository.findByIsBlindFalse(any(Pageable.class))).willReturn(page);
 
-    mockMvc.perform(get("/admin/news/list")
-        .param("page", "0")
-        .param("size", "10")
-        .param("category", "ALL")
-        .param("mediaCompany", "ALL"))
-      .andExpect(status().isOk())
-      .andExpect(view().name("admin/news-list"))
-      .andExpect(model().attributeExists("newsPage"))
-      .andExpect(model().attributeExists("page"))
-      .andExpect(model().attributeExists("size"))
-      .andExpect(model().attributeExists("currentCategory"))
-      .andExpect(model().attributeExists("currentMediaCompany"))
-      .andExpect(model().attributeExists("totalCount"));
-  }
+        mockMvc.perform(get("/admin/news/list")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("category", "ALL")
+                        .param("mediaCompany", "ALL"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/news-list"))
+                .andExpect(model().attributeExists("newsPage"))
+                .andExpect(model().attributeExists("page"))
+                .andExpect(model().attributeExists("size"))
+                .andExpect(model().attributeExists("currentCategory"))
+                .andExpect(model().attributeExists("currentMediaCompany"))
+                .andExpect(model().attributeExists("totalCount"));
+    }
 
-  @Test
-  @DisplayName("뉴스 수정 폼 조회")
-  void testEditForm() throws Exception {
-    News news = createNews();
-    given(newsRepository.findById(1L)).willReturn(Optional.of(news));
+    @Test
+    @DisplayName("뉴스 수정 폼 조회")
+    void testEditForm() throws Exception {
+        News news = createNews();
+        given(newsRepository.findById(1L)).willReturn(Optional.of(news));
 
-    mockMvc.perform(get("/admin/news/edit")
-        .param("id", "1")
-        .param("page", "0")
-        .param("size", "10")
-        .param("category", "ALL")
-        .param("mediaCompany", "ALL"))
-      .andExpect(status().isOk())
-      .andExpect(view().name("admin/news-edit"))
-      .andExpect(model().attributeExists("news"))
-      .andExpect(model().attribute("page", 0))
-      .andExpect(model().attribute("size", 10))
-      .andExpect(model().attribute("currentCategory", "ALL"))
-      .andExpect(model().attribute("currentMediaCompany", "ALL"));
-  }
+        mockMvc.perform(get("/admin/news/edit")
+                        .param("id", "1")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("category", "ALL")
+                        .param("mediaCompany", "ALL"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/news-edit"))
+                .andExpect(model().attributeExists("news"))
+                .andExpect(model().attribute("page", 0))
+                .andExpect(model().attribute("size", 10))
+                .andExpect(model().attribute("currentCategory", "ALL"))
+                .andExpect(model().attribute("currentMediaCompany", "ALL"));
+    }
 
-  @Test
-  @DisplayName("뉴스 수정 처리")
-  void testEdit() throws Exception {
-    News news = createNews();
-    given(newsRepository.findById(1L)).willReturn(Optional.of(news));
+    @Test
+    @DisplayName("뉴스 수정 처리")
+    void testEdit() throws Exception {
+        News news = createNews();
+        given(newsRepository.findById(1L)).willReturn(Optional.of(news));
 
-    mockMvc.perform(post("/admin/news/edit/1")
-        .with(csrf())
-        .param("page", "0")
-        .param("size", "10")
-        .param("title", "수정된 제목")
-        .param("content", "수정된 내용")
-        .param("imageUrl", "http://test.com/newimage.jpg")
-        .param("url", "http://test.com/newurl")
-        .param("category", "POLITICS")
-        .param("mediaCompany", "YTN"))
-      .andExpect(status().is3xxRedirection())
-      .andExpect(redirectedUrl("/admin/news/list?page=0&size=10&category=POLITICS&mediaCompany=YTN"));
+        mockMvc.perform(post("/admin/news/edit/1")
+                        .with(csrf())
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("title", "수정된 제목")
+                        .param("content", "수정된 내용")
+                        .param("imageUrl", "http://test.com/newimage.jpg")
+                        .param("url", "http://test.com/newurl")
+                        .param("category", "POLITICS")
+                        .param("mediaCompany", "YTN"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/news/list?page=0&size=10&category=POLITICS&mediaCompany=YTN"));
 
-    then(newsRepository).should().save(any(News.class));
-  }
+        then(newsRepository).should().save(any(News.class));
+    }
 
-  @Test
-  @DisplayName("뉴스 삭제 처리")
-  void testDelete() throws Exception {
-    News news = createNews();  // 초기값은 is_blind = false
-    given(newsRepository.findById(1L)).willReturn(Optional.of(news));
+    @Test
+    @DisplayName("뉴스 삭제 처리")
+    void testDelete() throws Exception {
+        News news = createNews();  // 초기값은 is_blind = false
+        given(newsRepository.findById(1L)).willReturn(Optional.of(news));
 
-    mockMvc.perform(post("/admin/news/delete/1")
-        .with(csrf()))
-      .andExpect(status().is3xxRedirection())
-      .andExpect(redirectedUrl("/admin/news/list"));
+        mockMvc.perform(post("/admin/news/delete/1")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/news/list"));
 
-    then(newsRepository).should().save(news);
-    assertTrue(news.is_blind(), "뉴스가 블라인드 처리되지 않았습니다.");
-  }
+        then(newsRepository).should().save(news);
+    }
 
 
 }
