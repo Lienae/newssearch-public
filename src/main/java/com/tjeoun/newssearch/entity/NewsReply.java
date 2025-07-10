@@ -47,9 +47,6 @@ public class NewsReply {
     public static NewsReply createNewsReply(NewsReplyDto dto) {
         return NewsReply.builder()
                 .content(dto.getContent())
-                .news(dto.getNews())
-                .member(dto.getMember())
-
                 .isBlind(false)
                 .build();
     }
