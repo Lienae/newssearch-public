@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.tjeoun.newssearch.util.HtmlUtils.*;
+
 @Service
 @RequiredArgsConstructor
 public class NewsSearchService {
@@ -56,23 +58,35 @@ public class NewsSearchService {
             .map(hit -> {
                 NewsDto dto = NewsDto.fromDocument(hit.getContent());
 
+                // 제목 highlight 처리
                 List<String> titleHighlights = hit.getHighlightField("title");
                 if (titleHighlights != null && !titleHighlights.isEmpty()) {
-                    dto.setTitle(titleHighlights.get(0));
+                    dto.setTitle(escapeAndConvertHighlight(titleHighlights.get(0)));
                 }
 
+                // 본문 highlight 처리
                 List<String> contentHighlights = hit.getHighlightField("content");
                 if (contentHighlights != null && !contentHighlights.isEmpty()) {
-                    dto.setContent(contentHighlights.get(0));
+                    String raw = contentHighlights.get(0);
+                    String highlighted = escapeAndConvertHighlight(raw);
+                    dto.setContent(abbreviateHtml(highlighted, 80)); // HTML-aware 요약
+                } else {
+                    // fallback: 원문 요약
+                    dto.setContent(abbreviate(hit.getContent().getContent(), 80)); // 80글자로 요약
                 }
 
                 return dto;
             })
             .collect(Collectors.toList());
 
-
         return new PageImpl<>(result, pageRequest, searchHits.getTotalHits());
     }
+
+    private String abbreviate(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() <= maxLength ? text : text.substring(0, maxLength) + "...";
+    }
+
 
     private Query buildKeywordQuery(String keyword) {
         if (keyword == null || keyword.isEmpty()) return null;

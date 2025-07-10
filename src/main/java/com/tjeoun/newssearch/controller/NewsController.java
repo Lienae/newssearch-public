@@ -47,7 +47,7 @@ public class NewsController {
         model.addAttribute("size", size);
         model.addAttribute("currentCategory", category);
         model.addAttribute("currentMediaCompany", mediaCompany);
-        model.addAttribute("query", query); // 검색어 유지
+        model.addAttribute("query", query);
         model.addAttribute("totalCount", newsPage.getTotalElements());
 
         if (url != null) {

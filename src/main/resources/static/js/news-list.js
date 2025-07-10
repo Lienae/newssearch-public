@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  const queryParam = new URLSearchParams(location.search).get("query");
+  if (!queryParam) document.querySelector("input[name='query']").value = "";
+
   const modal = document.getElementById("newsModal");
   const modalIframe = document.getElementById("modalIframe");
   const closeBtn = document.getElementById("closeModal");
