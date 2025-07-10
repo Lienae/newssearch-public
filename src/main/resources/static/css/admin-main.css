@@ -176,6 +176,30 @@ iframe {
     margin: 3px 0;
 }
 
+/* 뉴스 제목 링크 스타일 */
+.news-card a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    padding: 3px 0;
+    transition: color 0.3s ease;
+}.
+
+/* 뉴스 제목에 ellipsis 효과 추가 */
+.news-card h4 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;       /* 적절한 너비 지정 */
+}
+
+/* 뉴스 제목 링크 스타일 (hover 시 강조) */
+.news-card a:hover h4 {
+    color: #1976d2;         /* 링크 hover 시 색상 변화 */
+}
+
 .news-meta {
     font-size: 10px;
     color: #777;
