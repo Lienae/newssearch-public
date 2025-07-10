@@ -5,7 +5,8 @@ public enum NewsCategory {
     SOCIAL("사회"),
     SPORTS("스포츠"),
     CULTURE("문화"),
-    ECONOMY("경제");
+    ECONOMY("경제"),
+    MISC("기타");
 
     private final String displayName;
 
