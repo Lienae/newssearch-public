@@ -49,10 +49,16 @@ public class NewsSearchService {
             .withQuery(finalQuery)
             .withHighlightQuery(highlightQuery)
             .withPageable(pageRequest)
+            .withMinScore(27.0f) // score가 27.0 미만인 문서는 아예 반환 x
             .build();
 
         // 4. 검색 실행 및 결과 매핑
         SearchHits<NewsDocument> searchHits = elasticsearchOperations.search(nativeQuery, NewsDocument.class);
+
+        // === score 로그 출력 ===
+        searchHits.getSearchHits().forEach(hit -> {
+            System.out.println("score: " + hit.getScore() + " / title: " + hit.getContent().getTitle());
+        });
 
         List<NewsDto> result = searchHits.getSearchHits().stream()
             .map(hit -> {
@@ -109,7 +115,7 @@ public class NewsSearchService {
                 .operator(Operator.And) // 모든 단어 포함하도록
                 .boost(1.0f)  // 일반 유사검색은 점수 낮게
             )._toQuery())
-            .minimumShouldMatch("1")  // 둘 중 하나만 맞아도 검색
+            .minimumShouldMatch("1")  // 셋 중 하나만 맞아도 검색
         )._toQuery();
     }
 
