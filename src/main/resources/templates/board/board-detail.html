@@ -202,7 +202,7 @@
                     'Content-Type': 'application/json',
                     [csrfHeader]: csrfToken
                 },
-                body: JSON.stringify({ memberId: loginUserId })
+
             })
                 .then(response => {
                     if (response.ok) {

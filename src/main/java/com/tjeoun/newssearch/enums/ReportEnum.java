@@ -1,5 +1,5 @@
 package com.tjeoun.newssearch.enums;
 
 public enum ReportEnum {
-    NEWS, BOARD
+    NEWS_REPLY, BOARD, BOARD_REPLY
 }
