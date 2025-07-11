@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.entity;
 
+import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import jakarta.persistence.*;
