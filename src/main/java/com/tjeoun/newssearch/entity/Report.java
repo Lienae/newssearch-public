@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.entity;
 
+import com.tjeoun.newssearch.dto.ReportDto;
 import com.tjeoun.newssearch.enums.ReportEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "report_type"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "report_type", "target_id"}))
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +35,12 @@ public class Report {
     private LocalDateTime createdDate;
     private Long targetId;
 
+    public static Report fromDto(ReportDto dto) {
+        return Report.builder()
+                .member(dto.getMember())
+                .reportType(dto.getReportType())
+                .createdDate(LocalDateTime.now())
+                .targetId(dto.getTargetId())
+                .build();
+    }
 }

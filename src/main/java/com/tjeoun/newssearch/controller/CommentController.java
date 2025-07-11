@@ -1,13 +1,16 @@
 package com.tjeoun.newssearch.controller;
 
 import com.tjeoun.newssearch.dto.NewsReplyDto;
+import com.tjeoun.newssearch.enums.ReportEnum;
 import com.tjeoun.newssearch.service.NewsCommentService;
+import com.tjeoun.newssearch.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,7 +19,7 @@ import java.util.List;
 public class CommentController {
 
     private final NewsCommentService commentService;
-
+    private final ReportService reportService;
     // 댓글 작성: POST /api/v1/comment/create
     @PostMapping("/create")
     public ResponseEntity<NewsReplyDto> createComment(
@@ -60,11 +63,10 @@ public class CommentController {
     @PostMapping("/report")
     public ResponseEntity<String> reportComment(
             @RequestParam Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails
+            Principal principal
     ) {
-        String email = userDetails.getUsername();
-        // 현재는 실제 DB 처리 없이 알림용으로만 구현
-        System.out.println("신고 접수됨 - 댓글 ID: " + commentId + ", 신고자: " + email);
+        reportService.save(commentId, principal.getName(), ReportEnum.NEWS_REPLY);
+        System.out.println("신고 접수됨 - 댓글 ID: " + commentId + ", 신고자: " + principal.getName());
 
         return ResponseEntity.ok("신고 접수 완료");
     }
