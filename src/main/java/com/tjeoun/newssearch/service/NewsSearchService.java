@@ -91,12 +91,23 @@ public class NewsSearchService {
     private Query buildKeywordQuery(String keyword) {
         if (keyword == null || keyword.isEmpty()) return null;
 
-        return MultiMatchQuery.of(m -> m
-            .query(keyword)
-            .fields("title^3", "content^1")
-            .fuzziness("AUTO")
+        return BoolQuery.of(b -> b
+            .should(MatchPhraseQuery.of(mp -> mp
+                .field("title")
+                .query(keyword)
+                .boost(5.0f) // 완전 일치일 경우 높은 점수 부여
+            )._toQuery())
+            .should(MultiMatchQuery.of(m -> m
+                .query(keyword)
+                .fields("title^3", "content^1")
+                .fuzziness(keyword.length() >= 5 ? "AUTO" : null)  // 짧은 단어면 제외
+                .operator(Operator.And) // 모든 단어 포함하도록
+                .boost(1.0f)  // 일반 유사검색은 점수 낮게
+            )._toQuery())
+            .minimumShouldMatch("1")  // 둘 중 하나만 맞아도 검색
         )._toQuery();
     }
+
 
     private List<Query> buildFilters(String category, String mediaCompany) {
         List<Query> filters = new ArrayList<>();
