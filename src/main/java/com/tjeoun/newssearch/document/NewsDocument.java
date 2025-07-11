@@ -8,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.*;
 import java.time.LocalDate;
 
 @Document(indexName = "news_articles")
+@Setting(settingPath = "elasticsearch/settings/nori-settings.json")
 @Getter
 @Setter
 public class NewsDocument {
