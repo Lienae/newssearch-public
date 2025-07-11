@@ -55,11 +55,6 @@ public class NewsSearchService {
         // 4. 검색 실행 및 결과 매핑
         SearchHits<NewsDocument> searchHits = elasticsearchOperations.search(nativeQuery, NewsDocument.class);
 
-        // === score 로그 출력 ===
-        searchHits.getSearchHits().forEach(hit -> {
-            System.out.println("score: " + hit.getScore() + " / title: " + hit.getContent().getTitle());
-        });
-
         List<NewsDto> result = searchHits.getSearchHits().stream()
             .map(hit -> {
                 NewsDto dto = NewsDto.fromDocument(hit.getContent());
