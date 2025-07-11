@@ -49,7 +49,7 @@ public class NewsSearchService {
             .withQuery(finalQuery)
             .withHighlightQuery(highlightQuery)
             .withPageable(pageRequest)
-            .withMinScore(27.0f) // score가 27.0 미만인 문서는 아예 반환 x
+            .withMinScore(2.0f)
             .build();
 
         // 4. 검색 실행 및 결과 매핑
@@ -97,25 +97,58 @@ public class NewsSearchService {
     private Query buildKeywordQuery(String keyword) {
         if (keyword == null || keyword.isEmpty()) return null;
 
+        boolean isShortKeyword = keyword.length() < 5;
+        int wordCount = keyword.trim().split("\\s+").length;
+
         return BoolQuery.of(b -> b
+            // 1. 정확히 일치하는 경우
+            .should(TermQuery.of(t -> t
+                .field("title.keyword")
+                .value(keyword)
+                .boost(6.0f)
+            )._toQuery())
+            .should(TermQuery.of(t -> t
+                .field("content.keyword")
+                .value(keyword)
+                .boost(5.0f)
+            )._toQuery())
+
+            // 2. 문장 유사 (phrase 기반)
             .should(MatchPhraseQuery.of(mp -> mp
                 .field("title")
                 .query(keyword)
-                .boost(3.0f) // 완전 일치일 경우 높은 점수 부여
+                .boost(12.0f)
             )._toQuery())
             .should(MatchPhraseQuery.of(mp -> mp
                 .field("content")
                 .query(keyword)
-                .boost(5.0f) // 본문은 가중치를 조금 더 높게 부여
+                .boost(11.0f)
             )._toQuery())
+
+            // 3. 일반 match (AND 필수)
+            .should(MatchQuery.of(m -> m
+                .field("title")
+                .query(keyword)
+                .operator(Operator.And)
+                .boost(3.0f)
+            )._toQuery())
+            .should(MatchQuery.of(m -> m
+                .field("content")
+                .query(keyword)
+                .operator(Operator.And)
+                .boost(2.5f)
+            )._toQuery())
+
+            // 4. multi_match: 낮은 boost, 긴 키워드일 때만 fuzziness
             .should(MultiMatchQuery.of(m -> m
                 .query(keyword)
-                .fields("title^3", "content^1")
-                .fuzziness(keyword.length() >= 5 ? "AUTO" : null)  // 짧은 단어면 제외
-                .operator(Operator.And) // 모든 단어 포함하도록
-                .boost(1.0f)  // 일반 유사검색은 점수 낮게
+                .fields("title^2", "content^1")
+                .operator(Operator.And)
+                .fuzziness((isShortKeyword || wordCount == 1) ? null : "AUTO")
+                .boost(1.0f)
             )._toQuery())
-            .minimumShouldMatch("1")  // 셋 중 하나만 맞아도 검색
+
+            .minimumShouldMatch("1")
         )._toQuery();
     }
 
