@@ -97,6 +97,11 @@ public class NewsSearchService {
                 .query(keyword)
                 .boost(5.0f) // 완전 일치일 경우 높은 점수 부여
             )._toQuery())
+            .should(MatchPhraseQuery.of(mp -> mp
+                .field("content")
+                .query(keyword)
+                .boost(3.0f) // 본문은 가중치를 조금 낮게 부여
+            )._toQuery())
             .should(MultiMatchQuery.of(m -> m
                 .query(keyword)
                 .fields("title^3", "content^1")
