@@ -34,7 +34,10 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf-> csrf
-                .csrfTokenRepository(new CookieCsrfTokenRepository()))
+
+                .ignoringRequestMatchers("/api/Ytn/test", "/api/khan/collect", "/api/donga/collect", "/api/v1/comment/**")
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(whitelist).permitAll()

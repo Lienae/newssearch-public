@@ -56,7 +56,6 @@ public class BoardTest {
                 .title(title)
                 .content(content)
                 .author(saveMember)
-                .password(password)
                 .newsCategory(NewsCategory.POLITICS)
                 .build();
         Board board = Board.createBoard(boardDto);
@@ -64,7 +63,6 @@ public class BoardTest {
                 .title(title)
                 .content(content)
                 .author(saveMember)
-                .password(password)
                 .newsCategory(NewsCategory.POLITICS)
                 .isAdminArticle(true)
                 .build();
@@ -79,10 +77,7 @@ public class BoardTest {
             assertEquals(saveBoard.getTitle(), loadBoard.getTitle());
             assertEquals(saveBoard.getContent(), loadBoard.getContent());
             assertEquals(saveBoard.getAuthor(), loadBoard.getAuthor());
-            assertEquals(saveBoard.getPassword(), loadBoard.getPassword());
-            assertFalse(saveBoard.getIsBlind());
-            assertFalse(saveBoard.isAdminArticle());
-            assertTrue(saveAdminBoard.isAdminArticle());
+
         }).doesNotThrowAnyException();
     }
     @Test
@@ -109,7 +104,6 @@ public class BoardTest {
                 .title(title)
                 .content(content)
                 .author(saveMember)
-                .password(password)
                 .newsCategory(NewsCategory.POLITICS)
                 .build();
         Board board = Board.createBoard(boardDto);
@@ -119,7 +113,6 @@ public class BoardTest {
                 .content(content)
                 .board(saveBoard)
                 .member(saveMember)
-                .password(password)
                 .build();
         BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto);
 

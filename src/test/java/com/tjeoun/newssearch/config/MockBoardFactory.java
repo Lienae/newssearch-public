@@ -24,7 +24,6 @@ public class MockBoardFactory {
                         .author(member)
                         .news(news)
                         .content("test")
-                        .password("test")
                         .title("test")
                         .newsCategory(NewsCategory.SOCIAL)
                         .build()
@@ -34,7 +33,6 @@ public class MockBoardFactory {
                     Board.builder()
                             .author(member)
                             .content("test")
-                            .password("test")
                             .title("test")
                             .newsCategory(NewsCategory.MISC)
                             .build()
@@ -47,10 +45,9 @@ public class MockBoardFactory {
                         .author(member)
                         .news(news)
                         .content("test")
-                        .password("test")
                         .title("test")
                         .newsCategory(NewsCategory.SOCIAL)
-                        .is_admin_article(true)
+                        .isAdminArticle(true)
                         .build()
         );
     }

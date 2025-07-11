@@ -1,6 +1,5 @@
 package com.tjeoun.newssearch.entity;
 
-import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import jakarta.persistence.*;
@@ -8,6 +7,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +27,7 @@ public class Board {
 
     @Column(nullable = false)
     private String title;
+
 
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
@@ -68,6 +69,8 @@ public class Board {
     public static Board createBoard(BoardDto dto) {
 
 
+        System.out.println("DEBUG: author = " + dto.getAuthor());
+        System.out.println("DEBUG: author pw = " + dto.getAuthor().getPassword());
         return Board.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())

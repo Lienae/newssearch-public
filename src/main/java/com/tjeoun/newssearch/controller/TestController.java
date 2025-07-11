@@ -20,11 +20,11 @@ public class TestController {
     public TestController(MailService mailService) {
         this.mailService = mailService;
     }
-
-    @GetMapping("/")
-    public String index() {
-        return "main";
-    }
+//
+//    @GetMapping("/")
+//    public String index() {
+//        return "main";
+//    }
 
     // 이메일 전송 (첨부파일 포함) 예제
     @GetMapping("/mailtest")

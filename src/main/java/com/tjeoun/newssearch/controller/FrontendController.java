@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FrontendController {
 
-  @GetMapping("/main")
-  public String home() {
-    return "main";
-  }
+//  @GetMapping("/main")
+//  public String home() {
+//    return "main";
+//  }
 
 
 //  @GetMapping("/admin/main")
@@ -60,10 +60,10 @@ public class FrontendController {
     return "board/board-detail";
   }
 
-  @GetMapping("/news/list")
-  public String newsList() {
-    return "news/news-list";
-  }
+//  @GetMapping("/news/list")
+//  public String newsList() {
+//    return "news/news-list";
+//  }
 
   @GetMapping("/error")
   public String error404() {

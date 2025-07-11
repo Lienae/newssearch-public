@@ -24,12 +24,16 @@ public class AdminMemberController {
 
         Page<AdminMemberDto> members = adminMemberService.getMembers(page, size, searchType, keyword);
 
-        model.addAttribute("members", members);
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("totalCount", members.getTotalElements());
-        return "admin/user-list";
-    }
+
+    model.addAttribute("members", members);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
+    model.addAttribute("totalCount", members.getTotalElements());
+    model.addAttribute("searchType", searchType);
+    model.addAttribute("keyword", keyword);
+    return "admin/user-list";
+  }
+
 
     @GetMapping("/edit")
     public String editForm(@RequestParam Long id,

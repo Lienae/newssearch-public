@@ -120,9 +120,6 @@ public class NewsTest {
         NewsReply newsReply = NewsReply.createNewsReply(
                 NewsReplyDto.builder()
                         .content(content)
-                        .news(savedNews)
-                        .member(savedMember)
-                        .password(password)
                         .build()
         );
         // when
