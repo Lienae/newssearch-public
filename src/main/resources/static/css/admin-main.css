@@ -192,12 +192,12 @@ iframe {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 200px;       /* 적절한 너비 지정 */
+    max-width: 200px;
 }
 
 /* 뉴스 제목 링크 스타일 (hover 시 강조) */
 .news-card a:hover h4 {
-    color: #1976d2;         /* 링크 hover 시 색상 변화 */
+    color: #1976d2;
 }
 
 .news-meta {
@@ -253,7 +253,7 @@ iframe {
 .board-list a {
     font-weight: bold;
     text-decoration: none;
-    color: #1976d2;
+    color: inherit;
     display: block;
     margin-bottom: 4px;
 }
