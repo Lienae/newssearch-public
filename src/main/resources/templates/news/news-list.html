@@ -136,27 +136,7 @@
             </div>
         </div>
     </div>
-
-
-
 </div>
-
 <script src="/js/news-list.js"></script>
-<script>
-    function search() {
-        const query = document.querySelector("input[name='query']").value.trim();
-        const currentParams = new URLSearchParams(window.location.search);
-
-        const category = currentParams.get("category") || 'ALL';
-        const mediaCompany = currentParams.get("mediaCompany") || 'ALL';
-
-        let searchUrl = `/news/list?category=${category}&mediaCompany=${mediaCompany}`;
-        if (query !== "") {
-            searchUrl += `&query=${encodeURIComponent(query)}`;
-        }
-
-        location.href = searchUrl;
-    }
-</script>
 </body>
 </html>

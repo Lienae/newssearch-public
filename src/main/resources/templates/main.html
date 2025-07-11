@@ -108,28 +108,4 @@
 
 <script src="/js/main.js"></script>
 </body>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".news-card").forEach((card) => {
-        card.addEventListener("click", () => {
-          const category = card.dataset.category;
-          const media = card.dataset.media;
-          const url = encodeURIComponent(card.dataset.url);
-
-          if (category && media && url) {
-            window.location.href = `/news/list?category=${category}&mediaCompany=${media}&url=${url}`;
-          }
-        });
-      });
-    });
-    function search() {
-        const query = document.querySelector("input[name='query']").value;
-        const category = "ALL"; // 기본값
-        const mediaCompany = "ALL"; // 기본값
-        const url = `/news/list?query=${encodeURIComponent(query)}&category=${category}&mediaCompany=${mediaCompany}`;
-        window.location.href = url;
-    }
-</script>
-
 </html>
