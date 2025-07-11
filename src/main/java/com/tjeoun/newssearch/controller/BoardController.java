@@ -34,18 +34,33 @@ public class BoardController {
 
   // 글쓰기
   @GetMapping("/write")
-  public String boardWrite(Model model) {
+  public String boardWrite(@RequestParam(value = "newsUrl", required = false) String newsUrl,
+                           Model model) {
+
     model.addAttribute("boardDto", new BoardDto());
+
+    if (newsUrl != null && !newsUrl.isEmpty()) {
+      var news = boardService.findNewsByUrl(newsUrl); // 뉴스 정보 가져오기
+
+      if (news != null) {
+        model.addAttribute("newsTitle", news.getTitle());
+        model.addAttribute("newsCategory", news.getCategory());
+        model.addAttribute("newsUrl", news.getUrl());
+      }
+    }
+
     model.addAttribute("categories", NewsCategory.values());
     return "board/board-write";
   }
 
+
   // 글 저장
   @PostMapping
   public String saveBoard(@ModelAttribute BoardDto boardDto,
+                          @RequestParam(value = "newsUrl", required = false) String newsUrl,
                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
     Member loginUser = principalDetails.getMember();
-    boardService.saveBoard(boardDto, loginUser);
+    boardService.saveBoard(boardDto, loginUser, newsUrl);
     return "redirect:/board/search";
   }
 
