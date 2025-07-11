@@ -3,9 +3,7 @@ package com.tjeoun.newssearch.document;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import java.time.LocalDate;
 
@@ -16,19 +14,21 @@ public class NewsDocument {
     @Id
     private String id;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String url;
 
-    @Field(type = FieldType.Text, analyzer = "nori")
+    @MultiField(mainField = @Field(type = FieldType.Text, analyzer = "nori"),
+            otherFields = {@InnerField(suffix = "keyword", type = FieldType.Keyword)})
     private String title;
 
     @Field(type = FieldType.Text)
     private String imageUrl;
 
-    @Field(type = FieldType.Text, analyzer = "nori")
+    @MultiField(mainField = @Field(type = FieldType.Text, analyzer = "nori"),
+            otherFields = {@InnerField(suffix = "keyword", type = FieldType.Keyword)})
     private String content;
 
-    @Field(type = FieldType.Date)
+    @Field(type = FieldType.Date, pattern = "yyyy-MM-dd")
     private LocalDate publishDate;
 
     @Field(type = FieldType.Keyword)
