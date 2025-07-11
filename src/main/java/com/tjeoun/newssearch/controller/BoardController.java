@@ -46,54 +46,7 @@ public class BoardController {
                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
     Member loginUser = principalDetails.getMember();
     boardService.saveBoard(boardDto, loginUser);
-    return "redirect:/board/list";
-  }
-
-  // 글 목록 조회 (카테고리별)
-  @GetMapping("/list")
-  public String boardList(Model model,
-                            @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "15") int size,
-                            @RequestParam(defaultValue = "ALL") String category,
-                            @RequestParam(required = false) String filter,
-                            @RequestParam(required = false) String searchType,
-                            @RequestParam(required = false) String keyword,
-                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
-
-    Member loginUser = (principalDetails != null) ? principalDetails.getMember() : boardService.getDefaultMember();
-
-    // 게시글 총 개수 조회 (관리자, 사용자 분리)
-    long totalVisibleBoards = ("admin".equalsIgnoreCase(filter)) ?
-      boardService.countAllBoards() : boardService.countByIsBlind(false);
-
-    model.addAttribute("totalVisibleBoards", totalVisibleBoards);
-
-    Page<Board> boardPage = boardService.getFilteredBoards(category, filter, searchType, keyword, page, size);
-
-    // 관리자 필터 + 카테고리 분기
-    if ("admin".equalsIgnoreCase(filter)) {
-      if (!"ALL".equalsIgnoreCase(category)) {
-        boardPage = boardService.getAdminBoardsByCategory(category, page, size);
-      } else {
-        boardPage = boardService.getAdminBoards(page, size);
-      }
-    } else {
-      if (!"ALL".equalsIgnoreCase(category)) {
-        boardPage = boardService.getBoardsByCategory(category, page, size);
-      } else {
-        boardPage = boardService.getBoards(page, size);
-      }
-    }
-
-    model.addAttribute("boardPage", boardPage);
-    model.addAttribute("currentPage", page);
-    model.addAttribute("pageSize", size);
-    model.addAttribute("category", category.toUpperCase());
-    model.addAttribute("filter", filter);
-    model.addAttribute("searchType", searchType);
-    model.addAttribute("keyword", keyword);
-    model.addAttribute("loginUser", loginUser);
-    return "board/board-list";
+    return "redirect:/board/search";
   }
 
 
@@ -103,7 +56,7 @@ public class BoardController {
   public String boardDetail(@PathVariable Long id,
                             Model model,
                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
-    Member loginUser = (principalDetails != null) ? principalDetails.getMember() : boardService.getDefaultMember();
+    Member loginUser = principalDetails.getMember();
     model.addAllAttributes(boardService.getBoardDetail(id, loginUser));
 
     List<BoardReply> replies = boardReplyService.findRepliesByBoardId(id);

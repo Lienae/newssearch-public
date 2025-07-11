@@ -1,14 +1,12 @@
 package com.tjeoun.newssearch.service;
 
+import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.BoardDto;
 import com.tjeoun.newssearch.entity.AttachFile;
 import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.BoardReply;
 import com.tjeoun.newssearch.entity.Member;
-import com.tjeoun.newssearch.repository.AttachFileRepository;
-import com.tjeoun.newssearch.repository.BoardReplyRepository;
-import com.tjeoun.newssearch.repository.BoardRepository;
-import com.tjeoun.newssearch.repository.MemberRepository;
+import com.tjeoun.newssearch.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +30,7 @@ public class BoardModifyService {
   private final AttachFileRepository attachFileRepository;
   private final BoardReplyRepository boardReplyRepository;
   private final MemberRepository memberRepository;
+  private final BoardDocumentRepository boardDocumentRepository;
 
   private String uploadDir;
   @Value("${upload.dir}")
@@ -82,6 +82,28 @@ public class BoardModifyService {
     board.setNewsCategory(boardDto.getNewsCategory());
 
     boardRepository.save(board);
+
+    // 엘라스틱서치 BoardDocument 업데이트 및 저장
+    //    (ID는 String 타입이므로 Long -> String 변환)
+    BoardDocument boardDocument = boardDocumentRepository.findById(String.valueOf(id))
+      .orElseGet(BoardDocument::new); // 문서가 없을 경우 새로 생성 (보통은 존재해야 함)
+
+    boardDocument.setId(String.valueOf(board.getId())); // 항상 ID는 설정
+    boardDocument.setTitle(board.getTitle()); // DB에서 업데이트된 제목으로 설정
+    boardDocument.setContent(board.getContent()); // DB에서 업데이트된 내용으로 설정
+    boardDocument.setNewsCategory(board.getNewsCategory()); // DB에서 업데이트된 카테고리로 설정
+    if (board.getCreatedDate() != null) {
+      // BoardDocument의 @JsonFormat pattern과 동일하게 포맷터 생성
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+      boardDocument.setCreatedDate(board.getCreatedDate().format(formatter));
+    } else {
+      boardDocument.setCreatedDate(null); // 또는 적절한 기본값 설정
+    }
+    boardDocument.setBlind(board.isBlind()); // 숨김 여부도 동기화
+    boardDocument.setAdminArticle(board.isAdminArticle()); // 관리자 게시글 여부 동기화
+
+    boardDocumentRepository.save(boardDocument); // 엘라스틱서치 저장
+
 
     // 첨부파일 삭제 처리
     if (deleteFileIds != null && !deleteFileIds.isEmpty()) {
@@ -137,6 +159,13 @@ public class BoardModifyService {
     }
 
     board.setIsBlind(true);
+    boardRepository.save(board);
+
+    // 엘라스틱서치 BoardDocument 업데이트
+    BoardDocument boardDocument = boardDocumentRepository.findById(String.valueOf(boardId))
+      .orElseThrow(() -> new IllegalArgumentException("엘라스틱서치 문서를 찾을 수 없습니다."));
+    boardDocument.setBlind(board.isBlind());
+    boardDocumentRepository.save(boardDocument); // 엘라스틱서치 저장
 
     List<BoardReply> replies = boardReplyRepository.findByBoardId(boardId);
     for (BoardReply reply : replies) {

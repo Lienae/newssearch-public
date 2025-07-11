@@ -45,6 +45,7 @@ public class BoardService {
     private final BoardReplyService boardReplyService;
     private final BoardDocumentRepository boardDocumentRepository;
 
+    // --- saveAttachFiles 메서드 수정 (예외 래핑) ---
     private void saveAttachFiles(List<MultipartFile> files, Board board) {
         if (files == null || files.isEmpty()) return;
 
@@ -58,62 +59,92 @@ public class BoardService {
 
             try {
                 Path uploadPath = Paths.get(uploadDir, serverFilename);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+                // 디렉토리가 존재하지 않으면 생성합니다. 파일 경로가 아닌 디렉토리 경로를 확인해야 합니다.
+                if (!Files.exists(uploadPath.getParent())) { // ★ .getParent() 추가
+                    Files.createDirectories(uploadPath.getParent());
                 }
                 file.transferTo(uploadPath.toFile());
 
                 AttachFile attachFile = AttachFile.builder()
-                        .board(board)
-                        .size(size)
-                        .originalFilename(originalFilename)
-                        .serverFilename(serverFilename)
-                        .build();
+                  .board(board)
+                  .size(size)
+                  .originalFilename(originalFilename)
+                  .serverFilename(serverFilename)
+                  .build();
 
                 attachFileRepository.save(attachFile);
 
             } catch (IOException e) {
                 log.error("파일 업로드 중 오류 발생: {}", e.getMessage(), e);
-                throw new RuntimeException("파일 업로드에 실패했습니다.");
+                // ★ IOException을 RuntimeException으로 래핑하여 @Transactional이 롤백하도록 유도
+                throw new RuntimeException("파일 업로드에 실패했습니다.", e);
             }
         }
     }
 
-
-
-
-    @Transactional
+    // --- saveBoard 메서드 수정 (try-catch 및 롤백 로직 추가) ---
+    @Transactional // DB 트랜잭션 관리 어노테이션
     public void saveBoard(BoardDto boardDto, Member loginUser) {
-        // 작성자 설정
-        boardDto.setAuthor(loginUser);
+        // board와 boardDocument를 try 블록 밖에서 선언하여 catch 블록에서 접근 가능하도록 합니다.
+        Board board = null; // 초기화
+        BoardDocument boardDocument = null; // 초기화
 
-        // 관리자 여부 설정
-        boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
-        boardDto.setIsAdminArticle(isAdmin);
+        try {
+            // 작성자 설정
+            boardDto.setAuthor(loginUser);
 
-        // 카테고리가 null이면 기본값 설정
-        if (boardDto.getNewsCategory() == null) {
-            boardDto.setNewsCategory(NewsCategory.MISC);  // 기본 카테고리
+            // 관리자 여부 설정
+            boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
+            boardDto.setIsAdminArticle(isAdmin);
+
+            // 카테고리가 null이면 기본값 설정
+            if (boardDto.getNewsCategory() == null) {
+                boardDto.setNewsCategory(NewsCategory.MISC);
+            }
+
+            // BoardDto → Board entity 생성
+            board = Board.createBoard(boardDto); // board 객체 생성
+
+            // DB에 Board 저장 (id 생성) - 이 시점에서 DB 트랜잭션 시작
+            boardRepository.save(board);
+            log.info("DB에 저장 완료: {}", board.getTitle());
+
+            // Elasticsearch에 저장 (BoardDocument 생성 및 색인)
+            boardDocument = Board.toDocument(board); // boardDocument 객체 생성
+            log.info("엘라스틱에 저장 직전: {}", board.getTitle());
+            log.info("엘라스틱에 저장될 createdDate: {}", boardDocument.getCreatedDate());
+            boardDocumentRepository.save(boardDocument); // Elasticsearch 저장 시도
+            log.info("엘라스틱에 저장 완료");
+
+            // 첨부파일 처리
+            List<MultipartFile> files = boardDto.getFiles();
+            saveAttachFiles(files, board); // 이 메서드 내에서 예외 발생 시, @Transactional 롤백 발생
+
+        } catch (Exception e) {
+            // 게시글 저장, 엘라스틱서치 색인, 파일 업로드 중 어떤 단계에서든 예외 발생 시 이 블록 실행
+
+            log.error("게시글 생성 및 색인 중 오류 발생: {}", e.getMessage(), e);
+
+            // 엘라스틱서치 롤백 시도:
+            // 만약 boardDocument가 생성되었고, 엘라스틱서치에 저장 시도 후 (부분적으로라도) 성공했으나
+            // 이후 단계(예: 첨부파일 저장)에서 실패하여 현재 트랜잭션이 롤백되어야 할 경우,
+            // 엘라스틱서치에 남아있는 해당 문서를 삭제하여 일관성을 유지합니다.
+            if (boardDocument != null && boardDocument.getId() != null) {
+                try {
+                    boardDocumentRepository.deleteById(boardDocument.getId());
+                    log.warn("오류 발생으로 인해 엘라스틱서치 문서 롤백 완료: ID={}", boardDocument.getId());
+                } catch (Exception esDeleteException) {
+                    // 엘라스틱서치 문서 삭제 중 오류가 발생했음을 로깅 (수동 처리 필요 가능성)
+                    log.error("엘라스틱서치 문서 롤백 중 추가 오류 발생: ID={}, Error: {}", boardDocument.getId(), esDeleteException.getMessage());
+                }
+            }
+
+            // DB 트랜잭션은 @Transactional 어노테이션에 의해 자동으로 롤백됩니다.
+            // 따라서 boardRepository.delete()와 같은 명시적인 DB 롤백 코드는 필요 없습니다.
+
+            // 발생한 예외를 다시 던져서 상위 호출자에게 알리고, 스프링의 @Transactional 롤백을 확정시킵니다.
+            throw new RuntimeException("게시글 저장 중 예상치 못한 오류가 발생했습니다.", e);
         }
-
-        // BoardDto → Board entity 생성
-        Board board = Board.createBoard(boardDto);
-
-        // DB에 Board 저장 (id 생성)
-        boardRepository.save(board);
-        log.info("DB에 저장 완료: {}", board.getTitle());
-
-        // Elasticsearch에 저장하기 전에 createdDate 포맷팅
-        BoardDocument boardDocument = Board.toDocument(board);
-
-        log.info("엘라스틱에 저장 직전: {}", board.getTitle());
-        log.info("엘라스틱에 저장될 createdDate: {}", boardDocument.getCreatedDate()); // 로그 추가
-        boardDocumentRepository.save(boardDocument);  // Elasticsearch에 BoardDocument 저장
-        log.info("엘라스틱에 저장 완료");
-
-        // 첨부파일 처리
-        List<MultipartFile> files = boardDto.getFiles();
-        saveAttachFiles(files, board);
     }
 
 
@@ -152,6 +183,8 @@ public class BoardService {
     public List<AttachFile> findAttachFilesByBoardId(Long boardId) {
         return attachFileRepository.findAllByBoardId(boardId);
     }
+
+    /*
 
     // 숨김 처리된 게시글 제외 + 최신순 조회
     public List<Board> getAllBoards() {
@@ -200,16 +233,7 @@ public class BoardService {
         NewsCategory newsCategory = NewsCategory.valueOf(category.toUpperCase());
         return boardRepository.findAdminBoardsByCategory(newsCategory, pageable);
     }
-    public Member getDefaultMember() {
-        Member defaultMember = new Member();
-        defaultMember.setId(0L);
-        defaultMember.setName("비회원");
-        defaultMember.setEmail("guest@exam.com");
-        defaultMember.setPassword("1234");
-        defaultMember.setRole(UserRole.GUEST); // GUEST 새로 생성
-        defaultMember.setCreatedDate(LocalDateTime.now());
-        return defaultMember;
-    }
+
 
     // 검색 기능
     public Page<Board> getFilteredBoards(String categoryStr, String filter, String searchType, String keyword, int page, int size) {
@@ -260,7 +284,7 @@ public class BoardService {
               boardRepository.findByIsBlindFalseOrderByCreatedDateDesc(pageable);
         }
     }
-
+*/
 
 
 

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const toggleBtn = document.getElementById("toggleFilterBtn");
+  const toggleBtn = document.getElementById("toggleFilterBtnEN");
   if (!toggleBtn) return;
 
   const baseUrl = "/board/list"; // localhost 생략 가능

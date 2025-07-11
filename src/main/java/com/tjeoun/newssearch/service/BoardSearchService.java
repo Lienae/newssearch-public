@@ -1,52 +1,105 @@
 package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.document.BoardDocument;
-import com.tjeoun.newssearch.entity.Board; // Board 엔티티 임포트
-import com.tjeoun.newssearch.entity.Member; // Member 엔티티 임포트
-import com.tjeoun.newssearch.enums.NewsCategory; // NewsCategory 임포트 (Board 변환 시 필요)
+import com.tjeoun.newssearch.entity.Board;
+import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.enums.NewsCategory;
+import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.BoardDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page; // Page 임포트
-import org.springframework.data.domain.PageImpl; // PageImpl 임포트
-import org.springframework.data.domain.Pageable; // Pageable 임포트
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime; // LocalDateTime 임포트 (날짜 변환 시 필요)
-import java.time.format.DateTimeFormatter; // DateTimeFormatter 임포트 (날짜 변환 시 필요)
-import java.time.temporal.ChronoUnit; // ChronoUnit 임포트 (날짜 변환 시 필요)
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors; // Collectors 임포트
-
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor // Lombok이 생성자를 자동으로 만들어주므로 수동 생성자 필요 없음
+@RequiredArgsConstructor
 public class BoardSearchService {
 
   private final BoardDocumentRepository boardDocumentRepository;
 
-  // 기존 수동 생성자 제거: @RequiredArgsConstructor가 이미 모든 final 필드에 대한 생성자를 만들어 줍니다.
-  // public BoardSearchService(BoardDocumentRepository boardDocumentRepository) {
-  //   this.boardDocumentRepository = boardDocumentRepository;
-  // }
-
-  // List<BoardDocument> 대신 Page<Board>를 반환하도록 변경
-  // 검색 타입(searchType)을 인자로 받아, 제목/내용 검색을 선택적으로 수행하도록 개선
-  public Page<Board> searchBoards(String keyword, String searchType, Pageable pageable) {
+  // BoardService의 getFilteredBoards 로직을 여기에 통합
+  public Page<Board> getFilteredAndSearchedBoards(String keyword, String searchType, Pageable pageable, String categoryStr, String filter, Member loginUser) {
     Page<BoardDocument> esBoardDocuments;
+    NewsCategory newsCategory = null;
+    boolean isLoginUserAdmin = loginUser.getRole() == UserRole.ADMIN;
+    boolean isAdminFilter = "admin".equalsIgnoreCase(filter) && isLoginUserAdmin;
+    boolean isAllCategory = "ALL".equalsIgnoreCase(categoryStr) || categoryStr == null;
 
-    // 검색 타입에 따라 엘라스틱서치 쿼리 분기
-    if ("title".equalsIgnoreCase(searchType)) {
-      esBoardDocuments = boardDocumentRepository.findByTitleContaining(keyword, pageable);
-    } else if ("content".equalsIgnoreCase(searchType)) {
-      esBoardDocuments = boardDocumentRepository.findByContentContaining(keyword, pageable);
-    } else { // searchType이 없거나 title, content 외의 값일 경우 (기본값 또는 통합 검색)
-      // BoardDocumentRepository에 searchByTitleOrContent 메서드가 정의되어 있어야 합니다.
-      esBoardDocuments = boardDocumentRepository.searchByTitleOrContent(keyword, pageable);
+    // 카테고리 ENUM 파싱
+    if (!isAllCategory) {
+      try {
+        newsCategory = NewsCategory.valueOf(categoryStr.toUpperCase());
+      } catch (IllegalArgumentException e) {
+        log.warn("유효하지 않은 카테고리: {}", categoryStr);
+        // 유효하지 않은 카테고리인 경우, 빈 페이지 반환
+        return Page.empty(pageable);
+      }
     }
 
-
+    // --- 검색 로직 (키워드 유무에 따라 분기) ---
+    if (keyword != null && !keyword.isBlank()) { // 키워드가 있는 경우 (검색 요청)
+      if (isAdminFilter) { // 관리자 모드 + 관리자 계정 로그인
+        if (isAllCategory) { // 모든 카테고리
+          if ("title".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByTitleContainingAndIsAdminArticle(keyword, true, pageable);
+          } else if ("content".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByContentContainingAndIsAdminArticle(keyword, true, pageable);
+          } else { // 'all' (제목 또는 내용)
+            esBoardDocuments = boardDocumentRepository.searchByTitleOrContentAndIsAdminArticle(keyword, true, pageable);
+          }
+        } else { // 특정 카테고리
+          if ("title".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByTitleContainingAndNewsCategoryAndIsAdminArticle(keyword, newsCategory, true, pageable);
+          } else if ("content".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByContentContainingAndNewsCategoryAndIsAdminArticle(keyword, newsCategory, true, pageable);
+          } else { // 'all' (제목 또는 내용)
+            esBoardDocuments = boardDocumentRepository.searchByTitleOrContentAndNewsCategoryAndIsAdminArticle(keyword, newsCategory, true, pageable);
+          }
+        }
+      } else { // 일반 사용자 모드 (또는 관리자 모드지만 로그인한 사용자가 관리자가 아닌 경우)
+        // 블라인드되지 않은 글만 검색
+        if (isAllCategory) { // 모든 카테고리
+          if ("title".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByTitleContainingAndIsBlindFalse(keyword, pageable);
+          } else if ("content".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByContentContainingAndIsBlindFalse(keyword, pageable);
+          } else { // 'all' (제목 또는 내용)
+            esBoardDocuments = boardDocumentRepository.searchByTitleOrContentAndIsBlindFalse(keyword, pageable);
+          }
+        } else { // 특정 카테고리
+          if ("title".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByTitleContainingAndNewsCategoryAndIsBlindFalse(keyword, newsCategory, pageable);
+          } else if ("content".equalsIgnoreCase(searchType)) {
+            esBoardDocuments = boardDocumentRepository.findByContentContainingAndNewsCategoryAndIsBlindFalse(keyword, newsCategory, pageable);
+          } else { // 'all' (제목 또는 내용)
+            esBoardDocuments = boardDocumentRepository.searchByTitleOrContentAndNewsCategoryAndIsBlindFalse(keyword, newsCategory, pageable);
+          }
+        }
+      }
+    } else { // 키워드가 없는 경우 (일반 목록 조회 또는 카테고리/필터링만)
+      if (isAdminFilter) { // 관리자 모드 + 관리자 계정 로그인
+        if (isAllCategory) {
+          esBoardDocuments = boardDocumentRepository.findByIsAdminArticle(true, pageable); // 모든 관리자 글
+        } else {
+          esBoardDocuments = boardDocumentRepository.findByNewsCategoryAndIsAdminArticle(newsCategory, true, pageable); // 특정 카테고리 관리자 글
+        }
+      } else { // 일반 사용자 모드 (또는 관리자 모드지만 로그인한 사용자가 관리자가 아닌 경우)
+        if (isAllCategory) {
+          esBoardDocuments = boardDocumentRepository.findByIsBlindFalse(pageable); // 모든 블라인드되지 않은 글
+        } else {
+          esBoardDocuments = boardDocumentRepository.findByNewsCategoryAndIsBlindFalse(newsCategory, pageable); // 특정 카테고리, 블라인드되지 않은 글
+        }
+      }
+    }
     // BoardDocument 리스트를 Board 엔티티 리스트로 변환
     List<Board> boardsFromEs = esBoardDocuments.getContent().stream().map(doc -> {
       Board board = new Board();
@@ -55,9 +108,8 @@ public class BoardSearchService {
       board.setContent(doc.getContent());
 
       Member author = new Member();
-      author.setName(doc.getWriter()); // BoardDocument의 writer 이름을 그대로 사용
-      author.setId(0L); // 검색 결과에서는 실제 ID가 필요 없으므로 임시 ID 또는 null 설정
-      // (Long 타입이라 0L을 쓰는 게 안전합니다)
+      author.setName(doc.getWriter());
+      author.setId(0L); // DB에서 가져오지 않으면 임시 ID 또는 null 설정
       board.setAuthor(author);
 
       // createdDate (String -> LocalDateTime) 변환
@@ -67,23 +119,19 @@ public class BoardSearchService {
           board.setCreatedDate(LocalDateTime.parse(doc.getCreatedDate(), formatter));
         } catch (Exception e) {
           log.error("Elasticsearch createdDate '{}' 파싱 오류: {}", doc.getCreatedDate(), e.getMessage());
-          board.setCreatedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)); // 오류 시 현재 시간으로 대체
+          board.setCreatedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         }
       } else {
         board.setCreatedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
       }
 
-      // isBlind, isAdminArticle, newsCategory 등 BoardDocument에 없는 필드는
-      // 필요하다면 BoardDocument에 추가하거나, 해당 board.getId()로 DB에서 Board를 다시 조회하여 채워야 합니다.
-      // 현재는 검색 시 필수 정보가 아니라고 가정하고 임시 값 설정 (DB 조회는 추가적인 성능 오버헤드 발생)
-      board.setIsBlind(false); // 검색 결과는 블라인드 처리 안된 것으로 가정
-      board.setAdminArticle(false); // 검색 결과는 관리자 글이 아닌 것으로 가정
-      board.setNewsCategory(NewsCategory.MISC); // 적절한 기본값 설정
+      board.setNewsCategory(doc.getNewsCategory());
+      board.setAdminArticle(doc.isAdminArticle());
+      board.setIsBlind(doc.isBlind());
 
       return board;
     }).collect(Collectors.toList());
 
-    // Page<BoardDocument>의 페이징 정보를 그대로 사용하여 Page<Board> 객체 생성 및 반환
     return new PageImpl<>(boardsFromEs, pageable, esBoardDocuments.getTotalElements());
   }
 }

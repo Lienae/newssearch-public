@@ -80,6 +80,7 @@ public class Board {
     }
 
 
+    // Board.java 파일 내 toDocument 메서드
     public static BoardDocument toDocument(Board board) {
         System.out.println("board.getCreatedDate() (toDocument 내부, 원본) = " + board.getCreatedDate());
         BoardDocument doc = new BoardDocument();
@@ -87,18 +88,21 @@ public class Board {
         doc.setTitle(board.getTitle());
         doc.setContent(board.getContent());
         doc.setWriter(board.getAuthor().getName());
+        // BoardService에서 사용되는 포맷터와 동일하게 명시적으로 지정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         if (board.getCreatedDate() != null) {
-            // createdDate에서 밀리초 부분을 잘라내고 (truncatedTo) -> String으로 포맷팅
             LocalDateTime createdDateWithoutNanos = board.getCreatedDate().truncatedTo(ChronoUnit.SECONDS);
-            doc.setCreatedDate(createdDateWithoutNanos.format(formatter)); // ★ 이 부분을 수정합니다.
+            doc.setCreatedDate(createdDateWithoutNanos.format(formatter));
         } else {
-            // null 처리 (예: 현재 시간으로 대체)
-            doc.setCreatedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(formatter)); // ★ 이 부분도 수정합니다.
+            doc.setCreatedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(formatter));
         }
 
         System.out.println("BoardDocument createdDate (toDocument 내부, 밀리초 제거 후) = " + doc.getCreatedDate());
+
+        doc.setNewsCategory(board.getNewsCategory());
+        doc.setAdminArticle(board.isAdminArticle());
+        doc.setBlind(board.isBlind());
 
         return doc;
     }
