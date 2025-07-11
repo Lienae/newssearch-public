@@ -16,35 +16,36 @@
   <div class="category-section">
     <div class="press-filter-wrap">
       <select id="press-filter" onchange="location.href=this.value">
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='ALL')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='ALL', query=${query})}"
                 th:selected="${currentMediaCompany == 'ALL'}">전체</option>
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='YTN')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='YTN', query=${query})}"
                 th:selected="${currentMediaCompany == 'YTN'}">YTN</option>
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='DONGA')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='DONGA', query=${query})}"
                 th:selected="${currentMediaCompany == 'DONGA'}">동아일보</option>
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='JOONGANG')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='JOONGANG', query=${query})}"
                 th:selected="${currentMediaCompany == 'JOONGANG'}">중앙일보</option>
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='HANI')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='HANI', query=${query})}"
                 th:selected="${currentMediaCompany == 'HANI'}">한겨레</option>
-        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='KHAN')}"
+        <option th:value="@{/admin/news/list(category=${currentCategory}, mediaCompany='KHAN', query=${query})}"
                 th:selected="${currentMediaCompany == 'KHAN'}">경향신문</option>
       </select>
+
     </div>
 
     <div class="category-buttons">
-      <a th:href="@{/admin/news/list(category='ALL', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='ALL', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'ALL'} ? 'active' : ''">전체</a>
-      <a th:href="@{/admin/news/list(category='POLITICS', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='POLITICS', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'POLITICS'} ? 'active' : ''">정치</a>
-      <a th:href="@{/admin/news/list(category='ECONOMY', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='ECONOMY', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'ECONOMY'} ? 'active' : ''">경제</a>
-      <a th:href="@{/admin/news/list(category='SOCIAL', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='SOCIAL', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'SOCIAL'} ? 'active' : ''">사회</a>
-      <a th:href="@{/admin/news/list(category='CULTURE', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='CULTURE', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'CULTURE'} ? 'active' : ''">문화</a>
-      <a th:href="@{/admin/news/list(category='SPORTS', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='SPORTS', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'SPORTS'} ? 'active' : ''">스포츠</a>
-      <a th:href="@{/admin/news/list(category='MISC', mediaCompany=${currentMediaCompany})}"
+      <a th:href="@{/admin/news/list(category='MISC', mediaCompany=${currentMediaCompany}, query=${query})}"
          th:classappend="${currentCategory == 'MISC'} ? 'active' : ''">기타</a>
     </div>
   </div>
@@ -70,7 +71,7 @@
     <tr th:each="news : ${newsPage.content}"
         th:classappend="${news.isBlind} ? 'blind-row' : ''">
       <td th:text="${news.id}">1</td>
-      <td th:text="${news.title}"  class="ellipsis-lg">첫 뉴스 제목</td>
+      <td th:utext="${news.title}" class="ellipsis-lg">제목</td>
       <td th:text="${#messages.msgOrNull('NewsCategory.' + news.category) ?: news.category}"></td>
       <td th:text="${#messages.msgOrNull('NewsMediaCompany.' + news.mediaCompany) ?: news.mediaCompany}"></td>
       <td th:text="${news.author}" class="ellipsis-sm">홍길동</td>
@@ -87,7 +88,7 @@
 
   <div class="pagination">
     <a class="btn" th:if="${!newsPage.first}"
-       th:href="@{/admin/news/list(page=${newsPage.number - 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">«</a>
+       th:href="@{/admin/news/list(page=${newsPage.number - 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany}, query=${query})}">«</a>
     <a class="btn disabled" th:if="${newsPage.first}">«</a>
 
     <span th:with="
@@ -97,7 +98,7 @@
     ">
       <span th:each="i : ${#numbers.sequence(start, end)}">
         <a class="btn" th:if="${i != newsPage.number}"
-           th:href="@{/admin/news/list(page=${i}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}"
+           th:href="@{/admin/news/list(page=${i}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany}, query=${query})}"
            th:text="${i + 1}"></a>
         <a class="btn active disabled" th:if="${i == newsPage.number}"
            th:text="${i + 1}"></a>
@@ -105,17 +106,13 @@
     </span>
 
     <a class="btn" th:if="${!newsPage.last}"
-       th:href="@{/admin/news/list(page=${newsPage.number + 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany})}">»</a>
+       th:href="@{/admin/news/list(page=${newsPage.number + 1}, size=${newsPage.size}, category=${currentCategory}, mediaCompany=${currentMediaCompany}, query=${query})}">»</a>
     <a class="btn disabled" th:if="${newsPage.last}">»</a>
   </div>
 
   <div class="board-search">
-    <select id="search-type">
-      <option value="title">제목</option>
-      <option value="content">내용</option>
-    </select>
-    <input type="text" placeholder="검색어를 입력해주세요." />
-    <button>검색</button>
+    <input type="text" name="query" placeholder="검색어를 입력해주세요." th:value="${query}" />
+    <button onclick="search()">검색</button>
   </div>
 </div>
 
@@ -127,6 +124,22 @@
   } else if (success === 'update') {
     alert("수정이 완료되었습니다.");
   }
+
+  function search() {
+    const query = document.querySelector("input[name='query']").value.trim(); // 입력된 검색어
+    const currentParams = new URLSearchParams(window.location.search);
+
+    const category = currentParams.get("category") || 'ALL';  // 현재 카테고리
+    const mediaCompany = currentParams.get("mediaCompany") || 'ALL';  // 현재 언론사
+
+    let searchUrl = `/admin/news/list?category=${category}&mediaCompany=${mediaCompany}`;
+    if (query !== "") {
+      searchUrl += `&query=${encodeURIComponent(query)}`; // 검색어를 URL에 추가
+    }
+
+    location.href = searchUrl; // 새로운 URL로 페이지 이동
+  }
+
 </script>
 </body>
 </html>

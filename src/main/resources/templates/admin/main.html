@@ -22,7 +22,9 @@
           <div class="news-list">
             <div class="news-card">
               <img src="/img/default.png" alt="테스트 이미지" />
-              <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
+              <a th:href="@{/admin/news/edit(id=${news.id})}">
+                <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
+              </a>
               <div class="news-meta" th:text="${news.mediaCompany.name()}">언론사</div>
             </div>
           </div>
@@ -79,7 +81,7 @@
   </div>
 </div>
 
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="/js/admin-main.js"></script>
 </body>
 </html>
