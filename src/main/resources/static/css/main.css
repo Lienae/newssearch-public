@@ -17,6 +17,15 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.sidebar .box ul li {
+  font-size: 13px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
 .banner {
   margin-top: 60px;
   background: #23355e url("https://source.unsplash.com/1600x400/?technology")
@@ -163,30 +172,51 @@
   gap: 10px;
 }
 
+.news-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* flex 간격 */
+}
+
 .news-card {
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 5px;
-  background: #fafafa;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+  width: calc(20% - 20px); /* 4개씩, gap 고려 */
+  min-width: 250px; /* 너무 작아지지 않도록 */
+}
+
+.news-card:hover {
+  box-shadow: 0 0 0 2px #1976d2;
 }
 
 .news-card img {
   width: 100%;
-  height: 100px;
   object-fit: cover;
-  border-radius: 3px;
+}
+
+.news-card-content {
+  padding: 15px;
 }
 
 .news-card h4 {
-  font-size: 14px;
-  margin: 5px 0;
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.news-card p {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
 }
 
 .news-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  font-size: 12px;
+  color: #888;
+  margin-top: 10px;
 }
 
 .summary-text {
@@ -326,4 +356,13 @@
 }
 .withdraw-section button:hover {
   background: #b71c1c;
+}
+.no-underline,
+.no-underline:visited {
+  color: black;
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  color: #007BFF; /* hover 시 파란색 */
 }

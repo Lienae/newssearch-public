@@ -8,6 +8,7 @@ import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ public class NewsService {
         category = category.toUpperCase();
         mediaCompany = mediaCompany.toUpperCase();
 
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishDate"));
         Page<News> news;
 
         if ("ALL".equals(category) && "ALL".equals(mediaCompany)) {

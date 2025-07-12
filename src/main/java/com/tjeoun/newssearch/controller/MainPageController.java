@@ -23,11 +23,14 @@ public class MainPageController {
 
     @GetMapping
     public String mainPage(Model model) {
-        Map<NewsCategory, List<NewsDto>> newsByCategory = mainPageService.getTop2NewsByCategory();
+        Map<NewsCategory, List<NewsDto>> newsByCategory = mainPageService.getTop1NewsByCategory();
         model.addAttribute("newsByCategory", newsByCategory);
 
-        Map<NewsMediaCompany, List<NewsDto>> newsByCompany = mainPageService.getTop2NewsByMediaCompany();
+        Map<NewsMediaCompany, List<NewsDto>> newsByCompany = mainPageService.getTop1NewsByMediaCompany();
         model.addAttribute("newsByCompany", newsByCompany);
+
+        List<NewsDto> recentNews = mainPageService.getRecentNews();
+        model.addAttribute("recentNews", recentNews);
 
         return "main";
     }
