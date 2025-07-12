@@ -1,4 +1,24 @@
+function search() {
+  const query = document.querySelector("input[name='query']").value.trim();
+  const currentParams = new URLSearchParams(window.location.search);
+
+  const category = currentParams.get("category") || 'ALL';
+  const mediaCompany = currentParams.get("mediaCompany") || 'ALL';
+
+  let searchUrl = `/news/list?category=${category}&mediaCompany=${mediaCompany}`;
+  if (query !== "") {
+    searchUrl += `&query=${encodeURIComponent(query)}`;
+  }
+
+  location.href = searchUrl;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  const queryParam = new URLSearchParams(location.search).get("query");
+  if (!queryParam) document.querySelector("input[name='query']").value = "";
+
   const modal = document.getElementById("newsModal");
   const modalIframe = document.getElementById("modalIframe");
   const closeBtn = document.getElementById("closeModal");
@@ -8,6 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const commentInput = document.getElementById("commentInput");
   const commentList = document.getElementById("commentList");
   const commentCount = document.getElementById("commentCount");
+
+  const searchBtn = document.querySelector(".search-bar button");
+  if (searchBtn) {
+    searchBtn.addEventListener("click", search);
+  }
 
   let currentUrl = "";
 

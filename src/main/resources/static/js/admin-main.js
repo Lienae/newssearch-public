@@ -1,62 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    // 모달 열기 및 Ajax로 작업 목록 불러오기
     const openBtn = document.getElementById("openAdminJobsModal");
     const closeBtn = document.getElementById("closeModal");
     const modal = document.getElementById("adminJobsModal");
     const jobList = document.querySelector(".job-list");
 
-    openBtn.onclick = function () {
-        modal.style.display = "block";
-        fetch("/api/v1/admin-jobs")
-            .then((res) => {
-                    if (res.status === 204){
-                        return null;
-                    }
-                    return res.json();
-                })
-            .then((data) => {
-                jobList.innerHTML = ""; // 기존 리스트 초기화
-
-                if (!data || data.length === 0) {
-                    jobList.innerHTML = "<li>처리해야 할 작업이 없습니다.</li>";
-                    return;
-                }
-
-                // 관리자가 작업 목록 확인 완료 -> 작업 수 업데이트
-                lastJobCount = data.length;
-
-                data.forEach((job) => {
-                    const li = document.createElement("li");
-                    li.innerHTML = `
-                      <a href="/admin/main/job?jobId=${job.id}&filter=UNRESOLVED">
-                        <strong>${job.job}</strong> - <span>${job.url}</span>
-                      </a>
-                      <span class="meta">${formatDate(job.recordedTime)}</span>
-                    `;
-                    jobList.appendChild(li);
-                });
-                // 확인 했으니 강조도 제거
-                openBtn.classList.remove("has-jobs");
-            })
-            .catch((err) => {
-                console.error("작업 목록 로드 실패:", err);
-                jobList.innerHTML = "<li>목록을 불러오는 데 실패했습니다.</li>";
-            });
-    };
-
-
-    // 모달 닫기
-    closeBtn.onclick = function () {
-        modal.style.display = "none";
-    };
-
-    // 모달 바깥 클릭 시 닫기
-    window.onclick = function (event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    };
+    let lastJobCount = 0;
 
     // 날짜 포맷 함수
     function formatDate(dateTimeString) {
@@ -69,16 +17,67 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${y}-${m}-${d} ${h}:${min}`;
     }
 
-    let lastJobCount = 0;
+    // 모달 열기 및 작업 목록 불러오기
+    openBtn.onclick = function () {
+        modal.style.display = "block";
 
-    // 작업이 새로 생기면 float 버튼에 디자인 추가
+        $.ajax({
+            url: "/api/v1/admin-jobs",
+            method: "GET",
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                jobList.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    jobList.innerHTML = "<li>처리해야 할 작업이 없습니다.</li>";
+                    return;
+                }
+
+                lastJobCount = data.length;
+
+                data.forEach((job) => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+            <a href="/admin/main/job?jobId=${job.id}&filter=UNRESOLVED">
+              <strong>${job.job}</strong> - <span>${job.url}</span>
+            </a>
+            <span class="meta">${formatDate(job.recordedTime)}</span>
+          `;
+                    jobList.appendChild(li);
+                });
+
+                openBtn.classList.remove("has-jobs");
+            },
+            statusCode: {
+                204: function () {
+                    jobList.innerHTML = "<li>처리해야 할 작업이 없습니다.</li>";
+                },
+            },
+            error: function (xhr, status, error) {
+                console.error("작업 목록 로드 실패:", error);
+                jobList.innerHTML = "<li>목록을 불러오는 데 실패했습니다.</li>";
+            },
+        });
+    };
+
+    // 모달 닫기
+    closeBtn.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    // 작업 존재 여부 확인 후 플로팅 버튼 상태 반영
     function checkPendingJobs() {
-        fetch("/api/v1/admin-jobs")
-            .then(res => {
-                if (res.status === 204) return [];
-                return res.json();
-            })
-            .then(data => {
+        $.ajax({
+            url: "/api/v1/admin-jobs",
+            method: "GET",
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
                 const currentCount = data.length;
 
                 if (currentCount > lastJobCount) {
@@ -88,16 +87,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 lastJobCount = currentCount;
-
-            })
-            .catch(err => console.error("작업 상태 확인 실패:", err));
+            },
+            statusCode: {
+                204: function () {
+                    openBtn.classList.remove("has-jobs");
+                    lastJobCount = 0;
+                },
+            },
+            error: function (xhr, status, error) {
+                console.error("작업 상태 확인 실패:", error);
+            },
+        });
     }
 
-    // 페이지 진입 후 1회 초기화
     checkPendingJobs();
-
-    // 이후 주기적으로 비교
     setInterval(checkPendingJobs, 30000);
-
-
 });
