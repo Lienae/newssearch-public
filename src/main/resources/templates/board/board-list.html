@@ -16,43 +16,73 @@
 <div class="board-container">
   <div class="category-section">
     <div class="category-buttons">
-      <a th:href="@{/board/search(category='ALL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 전체 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='ALL', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='ALL', filter=${filter})}"
          th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
-      <a th:href="@{/board/search(category='POLITICS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 정치 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='POLITICS', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='POLITICS', filter=${filter})}"
          th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
-      <a th:href="@{/board/search(category='ECONOMY', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 경제 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='ECONOMY', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='ECONOMY', filter=${filter})}"
          th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
-      <a th:href="@{/board/search(category='SOCIAL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 사회 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='SOCIAL', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='SOCIAL', filter=${filter})}"
          th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
-      <a th:href="@{/board/search(category='CULTURE', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 문화 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='CULTURE', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='CULTURE', filter=${filter})}"
          th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
-      <a th:href="@{/board/search(category='SPORTS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 스포츠 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='SPORTS', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='SPORTS', filter=${filter})}"
          th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
-      <a th:href="@{/board/search(category='MISC', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+
+      <!-- 기타 -->
+      <a th:href="${keyword != null and keyword != ''} ?
+                   @{/board/search(category='MISC', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
+                   @{/board/search(category='MISC', filter=${filter})}"
          th:classappend="${category == 'MISC'} ? 'active'">기타</a>
+
     </div>
   </div>
 
-  <div class="board-header">
-    <div class="board-count">전체  <strong><span th:text="${totalVisibleBoards}">0</span></strong>건</div>
-    <div th:if="${loginUser != null and loginUser.role.name() == 'ADMIN'}" class="editor-filter">
-      <form method="get" action="/board/search">
-        <input type="hidden" name="filter" value="admin">
-        <input type="hidden" name="category" th:value="${category}" />
-        <input type="hidden" name="keyword" th:value="${keyword}" />
-        <input type="hidden" name="searchType" th:value="${searchType}" />
-        <button id="toggleFilterBtnEN" type="button">Editor's Note</button>
 
-      </form>
-    </div>
 
+  <!-- 검색 결과 텍스트 -->
+  <div class="search-result-info" th:if="${keyword != null and keyword != ''}">
+    <strong th:text="'\'' + ${keyword} + '\'' + '에 대한 검색 결과'"></strong>
   </div>
+
+  <!-- 게시글 수 텍스트 -->
+  <div class="board-count">
+    총 <span th:text="${boardPage.totalElements}">0</span>건
+  </div>
+
+
+
 
   <table class="board-table">
     <thead>
     <tr>
       <th>번호</th>
       <th>제목</th>
+<!--      <th>카테고리</th>-->
       <th>등록일</th>
     </tr>
     </thead>
@@ -64,6 +94,17 @@
              th:text="${board.title}"
              th:classappend="${board.isBlind} ? 'blind-title'">></a>
         </td>
+<!--        <td>-->
+<!--          <span th:switch="${board.newsCategory}">-->
+<!--            <span th:case="'POLITICS'">정치</span>-->
+<!--            <span th:case="'ECONOMY'">경제</span>-->
+<!--            <span th:case="'SOCIAL'">사회</span>-->
+<!--            <span th:case="'CULTURE'">문화</span>-->
+<!--            <span th:case="'SPORTS'">스포츠</span>-->
+<!--            <span th:case="'MISC'">기타</span>-->
+<!--            <span th:case="*">기타</span> &lt;!&ndash; 기본값 &ndash;&gt;-->
+<!--          </span>-->
+<!--        </td>-->
         <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
       </tr>
     </tbody>
@@ -77,15 +118,15 @@
       «
     </button>
     <button th:unless="${boardPage.hasPrevious()}" disabled>«</button>
-
-    <th:block>
-      <button th:each="i : ${#numbers.sequence(0, boardPage.totalPages > 0 ? boardPage.totalPages - 1 : 0)}"
+    <th:block th:with="lastPage=${boardPage.totalPages > 0 ? boardPage.totalPages - 1 : 0}">
+      <button th:each="i : ${#numbers.sequence(0, lastPage)}"
               th:text="${i + 1}"
               th:classappend="${i == boardPage.number} ? 'active'"
               th:attr="data-url=@{/board/search(page=${i}, size=${pageSize}, category=${category}, filter=${filter}, searchType=${searchType}, keyword=${keyword})}"
               onclick="location.href=this.getAttribute('data-url')">
       </button>
     </th:block>
+
 
     <button th:if="${boardPage.hasNext()}"
             th:attr="data-url=@{/board/search(page=${boardPage.number + 1}, size=${pageSize}, category=${category}, filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
@@ -96,7 +137,7 @@
   </div>
 
   <div class="board-search">
-    <form method="get" action="/board/search">
+    <form method="get" action="/board/search"class="search-form">
       <select name="searchType">
         <option value="title" th:selected="${searchType} == 'title'">제목</option>
         <option value="content" th:selected="${searchType} == 'content'">내용</option>

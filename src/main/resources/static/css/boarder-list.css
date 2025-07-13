@@ -1,7 +1,7 @@
 .board-container {
   max-width: 100%;
   margin: 100px auto 50px;
-  padding: 0 20px;
+  padding: 0 70px;
 }
 
 .category-section {
@@ -73,55 +73,105 @@
   justify-content: space-between;
   align-items: center;
 }
+.board-meta-info {
+  max-width: 1000px;
+  margin: 20px auto 0;
+  padding: 10px 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-result-info {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  color: #1976d2;
+}
 
 .board-count {
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
+  margin: 20px 0px;
+}
+.board-count span {
+  font-weight: bold;
 }
 
 .board-search {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-  padding: 5px;
-  max-width: 700px;
-  margin: 20px auto 0;
+  max-width: 800px;
+  margin: 30px auto 0;
+  padding: 0;
 }
 
+.board-search form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+/* SELECT */
 .board-search select {
-  padding: 10px;
-  border: none;
-  font-size: 14px;
-}
-
-.board-search input {
-  border: none;
+  flex: 0 0 100px;
   padding: 10px 12px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #fff;
   outline: none;
-  width: 540px;
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5'%3E%3Cpath fill='%23333' d='M0 0l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 5px;
+  padding-right: 30px;
+  text-align: center;
+  text-align-last: center;
 }
 
+
+.board-search input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #fff;
+  outline: none;
+  min-width: 0;
+}
+
+
 .board-search button {
-  background-color: #1976d2;
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  font-size: 14px;
   border: none;
-  padding: 5px 16px;
-  font-weight: bold;
+  border-radius: 12px;
+  background-color: #1976d2;
   color: white;
+  font-weight: bold;
   cursor: pointer;
-  border-left: 1px solid #ccc;
-  height: 40px;
-  font-size: 12px ;
+  white-space: nowrap;
 }
 
 .board-search button:hover {
-  background-color: #cce4ff;
+  background-color: #155fa0;
 }
+
+
 .board-table {
   width: 100%;
   border-collapse: collapse;
@@ -142,6 +192,13 @@
   padding: 14px 16px;
   border-bottom: 1px solid #eee;
 }
+.board-table td.title-cell {
+  max-width: 350px; /* 너비 제한, 필요에 따라 조절 */
+  white-space: nowrap; /* 줄바꿈 없이 한 줄로 */
+  overflow: hidden; /* 넘친 내용 숨김 */
+  text-overflow: ellipsis; /* ... 표시 */
+}
+
 
 .board-table td:nth-child(1),
 th:nth-child(1) {
@@ -202,8 +259,8 @@ th:nth-child(1) {
 
 
 .pagination button:hover {
-   background-color: #eee;
- }
+  background-color: #eee;
+}
 
 #toggleFilterBtnEN {
   background-color: #1976d2;

@@ -22,12 +22,16 @@
   </p>
 
   <form th:action="@{/board}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
+
+    <input type="hidden" name="newsCategory" th:value="${newsCategory}" />
+    <input type="hidden" name="newsUrl" th:value="${newsUrl}" />
+
     <div class="form-group">
       <label for="newsCategory">뉴스 카테고리</label>
       <input
               type="text"
               id="newsCategory"
-              th:field="*{newsCategory}"
+              th:value="${newsCategory}"
               readonly
               class="readonly-input"
       />
@@ -39,7 +43,7 @@
               type="text"
               id="news_title"
               name="news_title"
-              value="여기에 기사 제목이 표시됩니다"
+              th:value="${newsTitle}"
               readonly
               class="readonly-input"
       />
