@@ -21,18 +21,20 @@ public class NewsService {
         category = category.toUpperCase();
         mediaCompany = mediaCompany.toUpperCase();
 
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishDate"));
+        // id 기준 내림차순 정렬
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<News> news;
 
         if ("ALL".equals(category) && "ALL".equals(mediaCompany)) {
-            news = newsRepository.findByIsBlindFalse(PageRequest.of(page, size));
+            // news = newsRepository.findByIsBlindFalse(pageRequest);
+            news = newsRepository.findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG, pageRequest);
         } else if (!"ALL".equals(category) && "ALL".equals(mediaCompany)) {
-            news = newsRepository.findByCategoryAndIsBlindFalse(NewsCategory.valueOf(category), PageRequest.of(page, size));
+            news = newsRepository.findByCategoryAndIsBlindFalse(NewsCategory.valueOf(category), pageRequest);
         } else if ("ALL".equals(category)) {
-            news = newsRepository.findByMediaCompanyAndIsBlindFalse(NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
+            news = newsRepository.findByMediaCompanyAndIsBlindFalse(NewsMediaCompany.valueOf(mediaCompany), pageRequest);
         } else {
             news = newsRepository.findByCategoryAndMediaCompanyAndIsBlindFalse(
-                    NewsCategory.valueOf(category), NewsMediaCompany.valueOf(mediaCompany), PageRequest.of(page, size));
+                    NewsCategory.valueOf(category), NewsMediaCompany.valueOf(mediaCompany), pageRequest);
         }
 
         return news.map(NewsDto::fromEntity); // DTO로 변환

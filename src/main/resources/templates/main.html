@@ -84,14 +84,11 @@
                      th:data-url="${news.url}">
 
                     <!-- 이미지 URL, 없으면 기본 이미지 -->
-                    <img th:src="@{'/images/upload/' + ${#strings.replace(news.imageUrl, '\\', '/')}}"
-                         onerror="this.src='/img/default.png'"
-                         alt="뉴스 이미지" />
-
+                    <img th:src="@{${news.imageUrl}}" onerror="this.src='/img/default.png'" alt="뉴스 이미지" />
                     <!-- 카드 내용 -->
                     <div class="news-card-content">
                         <h4 th:text="${news.title}">뉴스 제목</h4>
-                        <p th:text="${#strings.abbreviate(news.content, 80)}">내용 요약</p>
+                            <p th:text="${#strings.abbreviate(news.content, 80)}">내용 요약</p>
                         <div class="news-meta" th:text="${#temporals.format(news.publishDate, 'yyyy.MM.dd')} + ' | ' + ${news.mediaCompany}">날짜 | 언론사</div>
                     </div>
                 </div>
@@ -112,8 +109,8 @@
                          th:data-url="${news.url}">
 
                         <!-- 이미지 URL, 없으면 기본 이미지 -->
-                        <img th:src="@{'/images/upload/' + ${#strings.replace(news.imageUrl, '\\', '/')}}"
-                             onerror="this.src='/img/default.png'"
+                        <img th:src="@{${news.imageUrl}}"
+                             onerror="this.onerror=null; this.src='/img/default.png'"
                              alt="뉴스 이미지" />
 
                         <!-- 카드 내용 -->

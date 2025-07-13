@@ -25,11 +25,16 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     // 언론사별 최신 뉴스 2건
     List<News> findByMediaCompanyAndIsBlindFalseOrderByPublishDateDesc(NewsMediaCompany mediaCompany, Pageable pageable);
 
+    List<News> findByIsBlindFalseOrderByIdDesc();
+
+
     // 뉴스 URL 존재 여부 확인
     boolean existsByUrl(String url);
 
 
     Page<News> findByIsBlindFalse(Pageable pageable);
+    Page<News> findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany newsMediaCompany, Pageable pageable); // ✅ 올바른 방법
+
 
     Page<News> findAll(Pageable pageable);
 
@@ -38,6 +43,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     Page<News> findByMediaCompany(NewsMediaCompany mediaCompany, Pageable pageable);
 
     Page<News> findByCategoryAndMediaCompany(NewsCategory category, NewsMediaCompany mediaCompany, Pageable pageable);
+
+    Page<News> findByIsBlindFalseOrderByPublishDateDesc(Pageable pageable);
 
 
     List<News> findTop5ByOrderByPublishDateDesc();
