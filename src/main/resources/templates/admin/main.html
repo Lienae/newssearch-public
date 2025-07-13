@@ -21,7 +21,8 @@
           <h3 class="category-title" th:text="${news.category.name()}">카테고리</h3>
           <div class="news-list">
             <div class="news-card">
-              <img src="/img/default.png" alt="테스트 이미지" />
+              <!-- 이미지 URL, 없으면 기본 이미지 -->
+              <img th:src="@{${news.imageUrl}}" onerror="this.src='/img/default.png'" alt="뉴스 이미지" />
               <a th:href="@{/admin/news/edit(id=${news.id})}">
                 <h4 th:text="${news.title}" class="ellipsis">뉴스 제목</h4>
               </a>

@@ -31,7 +31,8 @@ public class AdminNewsService {
   private final NewsSearchService newsSearchService;
 
   public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany, String query) {
-    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishDate"));
+    Sort sort = Sort.by(Sort.Order.desc("publishDate"), Sort.Order.desc("id"));
+    Pageable pageable = PageRequest.of(page, size, sort);
     Page<News> news;
 
     boolean isAllCategory = "ALL".equals(category);
@@ -119,10 +120,19 @@ public class AdminNewsService {
   }
 
   public List<AdminNewsDto> getRecentNewsList() {
-    return newsRepository.findTop5ByOrderByPublishDateDesc()
-      .stream()
-      .map(AdminNewsDto::fromEntity)
-      .toList();
+    return newsRepository.findTop5ByOrderByIdDesc()
+            .stream()
+            .map(AdminNewsDto::fromEntity)
+            .toList();
   }
+
+  // PPT 캡처용
+  public List<AdminNewsDto> getTestNewsList() {
+    return newsRepository.findTop5ByMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG)
+            .stream()
+            .map(AdminNewsDto::fromEntity)
+            .toList();
+  }
+
 }
 

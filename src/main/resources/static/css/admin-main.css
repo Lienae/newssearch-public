@@ -160,7 +160,9 @@ iframe {
 
 .news-card img {
     width: 100%;
-    height: auto;
+    height: 197px; /* 원하는 높이로 조정 가능 */
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 .news-card h4,
