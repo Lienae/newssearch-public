@@ -40,7 +40,7 @@ public class MainPageService {
         Map<NewsMediaCompany, List<NewsDto>> result = new LinkedHashMap<>();
 
         for (NewsMediaCompany company : NewsMediaCompany.values()) {
-            List<NewsDto> top1 = newsRepository.findByMediaCompanyAndIsBlindFalseOrderByPublishDateDesc(company, PageRequest.of(0, 1))
+            List<NewsDto> top1 = newsRepository.findByMediaCompanyAndIsBlindFalseOrderByIdDesc(company, PageRequest.of(0, 1))
                     .stream()
                     .map(NewsDto::fromEntity)
                     .toList();

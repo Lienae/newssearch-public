@@ -24,6 +24,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
     // 언론사별 최신 뉴스 2건
     List<News> findByMediaCompanyAndIsBlindFalseOrderByPublishDateDesc(NewsMediaCompany mediaCompany, Pageable pageable);
+    List<News> findByMediaCompanyAndIsBlindFalseOrderByIdDesc(NewsMediaCompany mediaCompany, Pageable pageable);
 
     List<News> findByIsBlindFalseOrderByIdDesc();
 
