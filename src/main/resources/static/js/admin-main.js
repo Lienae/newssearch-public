@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const li = document.createElement("li");
                     li.innerHTML = `
             <a href="/admin/main/job?jobId=${job.id}&filter=UNRESOLVED">
-              <strong>${job.job}</strong> - <span>${job.url}</span>
+              <strong>${job.job}</strong> - <span>${job.targetId}</span>
             </a>
             <span class="meta">${formatDate(job.recordedTime)}</span>
           `;
