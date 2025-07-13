@@ -24,7 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/upload/**")
                 .addResourceLocations("file:///" + UPLOAD_DIR + "/");
 
-        // /news_images/폴더 밑에 있는 기사 사진 불러오기 위해 추가 -> 동아일보 사진 저장이 잘못된 경로로 저장되고 있음 
         registry.addResourceHandler("/news_images/**")
                 .addResourceLocations("file:///C:/news_images/");
     }
