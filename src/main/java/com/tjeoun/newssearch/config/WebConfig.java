@@ -25,13 +25,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/upload/**")
-                .addResourceLocations("file:///" + UPLOAD_DIR + "/")
-        ;
+                .addResourceLocations("file:///" + UPLOAD_DIR + "/");
+
+        registry.addResourceHandler("/news_images/**")
+                .addResourceLocations("file:///C:/news_images/");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminLogInterceptor)
+
                 .addPathPatterns("/**");
     }
 

@@ -12,9 +12,10 @@
   <div class="logo">
     <img src="/img/logo.png" alt="Newsquare 로고" style="height: 150px" />
   </div>
-  <span th:if="${errorMessage}" th:text="${errorMessage}"></span>
+  <span th:text="${errorMessage} ?: '예기치 못한 오류가 발생했습니다.'">예기치 못한 오류가 발생했습니다.</span>
+  <!--span th:if="${errorMessage}" th:text="${errorMessage}"></span-->
   <div class="error-actions">
-    <a href="/main">메인으로 가기</a>
+    <a href="/">메인으로 가기</a>
     <a href="javascript:history.back()">이전 페이지</a>
   </div>
 </div>

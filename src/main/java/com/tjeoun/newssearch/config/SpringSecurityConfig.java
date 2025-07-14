@@ -29,7 +29,8 @@ public class SpringSecurityConfig {
             "/js/**",
             "/images/**",
             "/member/findpassword",
-            "/member/resetpassword"
+            "/member/resetpassword",
+            "/error"
     };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

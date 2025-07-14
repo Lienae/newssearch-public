@@ -35,10 +35,10 @@ public class AdminBoardService {
         Page<Board> boards;
 
         if ("ALL".equals(category)) {
-            boards = boardRepository.findAll(pageable); // blind 관계없이 전체
+            boards = boardRepository.findAll(pageable);
         } else {
             NewsCategory newsCategory = NewsCategory.valueOf(category);
-            boards = boardRepository.findByNewsCategory(newsCategory, pageable); // blind 관계없이
+            boards = boardRepository.findByNewsCategory(newsCategory, pageable);
         }
 
         return boards.map(AdminBoardDto::fromEntity);

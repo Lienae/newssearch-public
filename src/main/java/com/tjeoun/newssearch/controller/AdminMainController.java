@@ -38,8 +38,11 @@ public class AdminMainController {
         // 게시판 최근글 5개
         List<AdminBoardDto> recentBoardList = adminBoardService.getRecentBoardList();
 
-        // 최근 등록 뉴스 기사 5개 (카테고리/언론사별) 필터링해야 될 듯?
+        // 최근 등록 뉴스 기사 5개
         List<AdminNewsDto> recentNewsList = adminNewsService.getRecentNewsList();
+
+        // PPT 캡처용
+        // List<AdminNewsDto> recentNewsList = adminNewsService.getTestNewsList();
 
 
         model.addAttribute("recentBoardList", recentBoardList);
@@ -74,7 +77,7 @@ public class AdminMainController {
 
 
   @PostMapping("/job/update")
-  public String updateJobStatus(@ModelAttribute AdminJobUpdateDto dto, RedirectAttributes redirectAttributes) {
+  public String updateJobStatus(@ModelAttribute AdminJobUpdateDto dto) {
     adminJobService.updateJobStatus(dto.getId(), dto.getIsResolved());
     return "redirect:/admin/main/job";
   }

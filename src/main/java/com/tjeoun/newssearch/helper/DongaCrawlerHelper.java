@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.tjeoun.newssearch.util.NewsCrawlUtils.DONGA_RSS_MAP;
-import static com.tjeoun.newssearch.util.NewsCrawlUtils.downloadImage;
+import static com.tjeoun.newssearch.util.NewsCrawlUtils.*;
 
 public class DongaCrawlerHelper {
 
@@ -71,7 +70,7 @@ public class DongaCrawlerHelper {
             String imageUrl = extractThumbnailUrl(link);
             String savedImagePath = StringUtils.isBlank(imageUrl)
                     ? ""
-                    :downloadImage(imageUrl, publishedDate); // 저장된 경로
+                    :downloadImage(imageUrl, dongaImageBasePath); // 저장된 경로
 
             return NewsCrawlUtils.createNewsMap("동아일보", category, entry.getTitle(),
                     content, reporter, publishedDate, link, savedImagePath);

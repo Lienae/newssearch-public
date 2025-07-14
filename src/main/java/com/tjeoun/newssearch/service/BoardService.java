@@ -11,20 +11,10 @@ import com.tjeoun.newssearch.repository.BoardRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -32,9 +22,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BoardService {
 
-    private String uploadDir;
-    private final NewsRepository newsRepository;
 
+    private final NewsRepository newsRepository;
 
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
@@ -42,46 +31,9 @@ public class BoardService {
     private final BoardDocumentRepository boardDocumentRepository;
     private final AttachFileService attachFileService;
 
-    // --- saveAttachFiles 메서드 수정 (예외 래핑) ---
-    private void saveAttachFiles(List<MultipartFile> files, Board board) {
-        if (files == null || files.isEmpty()) return;
-
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
-
-            String originalFilename = file.getOriginalFilename();
-            long size = file.getSize();
-            String uuid = UUID.randomUUID().toString();
-            String serverFilename = uuid + "_" + originalFilename;
-
-            try {
-                Path uploadPath = Paths.get(uploadDir, serverFilename);
-                // 디렉토리가 존재하지 않으면 생성합니다. 파일 경로가 아닌 디렉토리 경로를 확인해야 합니다.
-                if (!Files.exists(uploadPath.getParent())) { // ★ .getParent() 추가
-                    Files.createDirectories(uploadPath.getParent());
-                }
-                file.transferTo(uploadPath.toFile());
-
-                AttachFile attachFile = AttachFile.builder()
-                  .board(board)
-                  .size(size)
-                  .originalFilename(originalFilename)
-                  .serverFilename(serverFilename)
-                  .build();
-
-                attachFileRepository.save(attachFile);
-
-            } catch (IOException e) {
-                log.error("파일 업로드 중 오류 발생: {}", e.getMessage(), e);
-                // ★ IOException을 RuntimeException으로 래핑하여 @Transactional이 롤백하도록 유도
-                throw new RuntimeException("파일 업로드에 실패했습니다.", e);
-            }
-        }
-    }
-
     @Transactional
     public void saveBoard(BoardDto boardDto, Member loginUser, String newsUrl) {
-        Board board = null;
+        Board board;
         BoardDocument boardDocument = null;
 
         try {
@@ -154,10 +106,6 @@ public class BoardService {
         return newsRepository.findByUrl(newsUrl).orElse(null);
     }
 
-
-
-
-
     public Map<String, Object> getBoardDetail(Long id, Member loginUser) {
         Map<String, Object> result = new HashMap<>();
 
@@ -177,20 +125,9 @@ public class BoardService {
         return result;
     }
 
-
-    public List<AttachFile> getAttachFilesByBoardId(Long boardId) {
-        return attachFileRepository.findByBoardId(boardId);
-    }
-
     public Board findById(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
-    }
-
-
-    // boardId로 첨부파일 리스트 조회
-    public List<AttachFile> findAttachFilesByBoardId(Long boardId) {
-        return attachFileRepository.findAllByBoardId(boardId);
     }
 
 }

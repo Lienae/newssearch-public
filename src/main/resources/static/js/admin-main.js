@@ -25,27 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
             url: "/api/v1/admin-jobs",
             method: "GET",
             dataType: "json",
-            success: function (data, textStatus, jqXHR) {
+            success: function (data) {
                 jobList.innerHTML = "";
-
                 if (!data || data.length === 0) {
                     jobList.innerHTML = "<li>처리해야 할 작업이 없습니다.</li>";
                     return;
                 }
-
                 lastJobCount = data.length;
-
                 data.forEach((job) => {
                     const li = document.createElement("li");
                     li.innerHTML = `
             <a href="/admin/main/job?jobId=${job.id}&filter=UNRESOLVED">
-              <strong>${job.job}</strong> - <span>${job.url}</span>
+              <strong>${job.job}</strong> - <span>${job.targetId}</span>
             </a>
             <span class="meta">${formatDate(job.recordedTime)}</span>
           `;
                     jobList.appendChild(li);
                 });
-
                 openBtn.classList.remove("has-jobs");
             },
             statusCode: {
