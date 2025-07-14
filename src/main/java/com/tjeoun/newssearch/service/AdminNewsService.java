@@ -127,12 +127,12 @@ public class AdminNewsService {
   }
 
   // PPT 캡처용
-  public List<AdminNewsDto> getTestNewsList() {
-    return newsRepository.findTop5ByMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG)
-            .stream()
-            .map(AdminNewsDto::fromEntity)
-            .toList();
-  }
+  //  public List<AdminNewsDto> getTestNewsList() {
+  //    return newsRepository.findTop5ByMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG)
+  //            .stream()
+  //            .map(AdminNewsDto::fromEntity)
+  //            .toList();
+  //  }
 
 }
 
