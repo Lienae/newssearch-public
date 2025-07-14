@@ -18,26 +18,19 @@ public class BoardDocument {
 
   @MultiField(
           mainField = @Field(type = FieldType.Text, analyzer = "nori"),
-          otherFields = {
-                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
-          }
-  )
+          otherFields = {@InnerField(suffix = "keyword", type = FieldType.Keyword)})
   private String title;
 
 
   @MultiField(
           mainField = @Field(type = FieldType.Text, analyzer = "nori"),
-          otherFields = {
-                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
-          }
-  )
+          otherFields = {@InnerField(suffix = "keyword", type = FieldType.Keyword)})
   private String content;
 
 
   @Field(type = FieldType.Keyword)
   private String writer;
 
-  // createdDate는 여전히 keyword 타입으로 유지하며, 저장 시 String으로 포맷팅
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   @Field(type = FieldType.Keyword)
   private String createdDate;
