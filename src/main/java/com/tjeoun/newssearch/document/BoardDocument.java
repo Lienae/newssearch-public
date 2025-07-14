@@ -1,53 +1,42 @@
 package com.tjeoun.newssearch.document;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tjeoun.newssearch.enums.NewsCategory;
-import org.springframework.data.elasticsearch.annotations.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(indexName = "board")
+@Setting(settingPath = "elasticsearch/settings/nori-settings.json")
 public class BoardDocument {
-  @Id
-  private String id;
 
+    @Id
+    private String id;
 
-  @MultiField(
-          mainField = @Field(type = FieldType.Text, analyzer = "nori"),
-          otherFields = {
-                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
-          }
-  )
-  private String title;
+    @Field(type = FieldType.Text, analyzer = "nori", fielddata = true)
+    private String title;
 
+    @Field(type = FieldType.Text, analyzer = "nori", fielddata = true)
+    private String content;
 
-  @MultiField(
-          mainField = @Field(type = FieldType.Text, analyzer = "nori"),
-          otherFields = {
-                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
-          }
-  )
-  private String content;
+    @Field(type = FieldType.Keyword)
+    private String writer;
 
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time)
+    private OffsetDateTime createdDate;
 
-  @Field(type = FieldType.Keyword)
-  private String writer;
+    @Field(type = FieldType.Keyword)
+    private NewsCategory newsCategory;
 
-  // createdDate는 여전히 keyword 타입으로 유지하며, 저장 시 String으로 포맷팅
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-  @Field(type = FieldType.Keyword)
-  private String createdDate;
+    @Field(type = FieldType.Boolean)
+    private boolean isAdminArticle;
 
-  @Field(type = FieldType.Keyword)
-  private NewsCategory newsCategory;
-
-  @Field(type = FieldType.Boolean)
-  private boolean isAdminArticle;
-
-  @Field(type = FieldType.Boolean)
-  private boolean isBlind;
+    @Field(type = FieldType.Boolean)
+    private boolean isBlind;
 }
