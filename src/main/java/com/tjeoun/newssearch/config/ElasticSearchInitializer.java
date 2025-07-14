@@ -13,20 +13,7 @@ import org.springframework.stereotype.Component;
 public class ElasticSearchInitializer implements ApplicationRunner {
     private final ElasticsearchOperations elasticsearchOperations;
 
-//    @Override
-//    public void run(ApplicationArguments args) throws Exception {
-//        IndexOperations indexOps = elasticsearchOperations.indexOps(NewsDocument.class);
-//        if(indexOps.exists()){
-//            System.out.println("deleting existing index" + indexOps.getIndexCoordinates().getIndexName());
-//            indexOps.delete();
-//        }
-//
-//        System.out.println("creating new index" + indexOps.getIndexCoordinates().getIndexName());
-//        indexOps.create();
-//
-//        indexOps.putMapping();
-//        System.out.println("index initialization complete");
-//    }
+
         @Override
         public void run(ApplicationArguments args) {
             IndexOperations indexOps = elasticsearchOperations.indexOps(NewsDocument.class);

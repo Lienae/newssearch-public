@@ -8,12 +8,13 @@
 <body>
 <div class="navbar" th:fragment="header">
     <a href="/" class="logo">
-        <img src="/img/NewsHub.png" alt="News Hub 로고" />
+        <img src="/img/logo.png" alt="Newsquare 로고" />
     </a>
     <nav>
         <a href="/news/list">뉴스</a>
         <a href="/board/list">커뮤니티</a>
         <th:block th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <a href="/admin/main" class="admin-link">관리자 메인</a>
             <a href="/admin/members/list" class="admin-link">사용자 관리</a>
             <a href="/admin/boards/list" class="admin-link">커뮤니티 관리</a>
             <a href="/admin/news/list" class="admin-link">뉴스 관리</a>

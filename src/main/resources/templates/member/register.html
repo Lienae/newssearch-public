@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BIGKinds 회원가입</title>
+  <title>뉴스퀘어 회원가입</title>
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/register.css" />
 </head>
@@ -12,7 +12,7 @@
   <div th:replace="~{fragments/header :: header}"></div>
 </header>
 <div class="signup-container">
-  <img src="/img/NewsHub.png" alt="News Hub 로고" />
+  <img src="/img/logo.png" alt="Newsquare 로고" />
   <form th:action="@{/member/register}" th:object="${SignUpDto}" method="post">
     <label for="email" class="required">아이디(E-mail)</label>
     <input type="email" id="email" placeholder="보유하신 이메일 주소를 정확히 입력해주세요." th:field="*{email}" required />
