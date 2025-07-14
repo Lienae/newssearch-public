@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,14 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     Page<News> findByCategoryAndMediaCompany(NewsCategory category, NewsMediaCompany mediaCompany, Pageable pageable);
 
 
-    List<News> findTop5ByOrderByPublishDateDesc();
+    // List<News> findTop5ByOrderByPublishDateDesc();
+
+    // publishDate로 정렬하면 같은날짜 인게 너무 많으면 최근 수집된 기사가 안보여서 수정
+    List<News> findTop5ByOrderByIdDesc();
+
+    // ppt 용 캡처
+    // List<News> findTop5ByMediaCompanyOrderByIdDesc(NewsMediaCompany mediaCompany);
+
 
     // 카테고리별 blind = false
     Page<News> findByCategoryAndIsBlindFalse(NewsCategory category, Pageable pageable);
@@ -56,4 +64,5 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
     // 전체 뉴스 중 최신 2건
     List<News> findTop2ByIsBlindFalseOrderByPublishDateDesc();
+
 }
