@@ -36,8 +36,8 @@ public class AdminJobDto {
                 .url(switch(job.getJob()) {
                     case NEWS -> "/admin/news/edit?id=" + job.getTargetId();
                     case BOARD_REPORT -> "/admin/board/edit?id=" + job.getTargetId();
-                    // todo : change this url after board, news is merged
                     case BOARD_REPLY_REPORT -> "/board/detail?id=" + job.getTargetId();
+                    // todo : change this url after 진한's work done
                     case NEWS_REPLY_REPORT -> "/news/edit?id=" + job.getTargetId();
                 })
                 .build();
