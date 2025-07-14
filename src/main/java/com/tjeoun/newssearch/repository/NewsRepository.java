@@ -34,7 +34,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
 
     Page<News> findByIsBlindFalse(Pageable pageable);
-    Page<News> findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany newsMediaCompany, Pageable pageable); // ✅ 올바른 방법
+    Page<News> findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany newsMediaCompany, Pageable pageable); // 올바른 방법
 
 
     Page<News> findAll(Pageable pageable);
