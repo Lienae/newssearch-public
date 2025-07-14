@@ -18,61 +18,65 @@
     <div class="category-buttons">
 
       <!-- 전체 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='ALL', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='ALL', filter=${filter})}"
+      <a th:href="@{/board/search(category='ALL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
 
       <!-- 정치 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='POLITICS', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='POLITICS', filter=${filter})}"
+      <a th:href="@{/board/search(category='POLITICS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
 
       <!-- 경제 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='ECONOMY', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='ECONOMY', filter=${filter})}"
+      <a th:href="@{/board/search(category='ECONOMY', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
 
       <!-- 사회 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='SOCIAL', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='SOCIAL', filter=${filter})}"
+      <a th:href="@{/board/search(category='SOCIAL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
 
       <!-- 문화 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='CULTURE', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='CULTURE', filter=${filter})}"
+      <a th:href="@{/board/search(category='CULTURE', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
 
       <!-- 스포츠 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='SPORTS', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='SPORTS', filter=${filter})}"
+      <a th:href="@{/board/search(category='SPORTS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
 
       <!-- 기타 -->
-      <a th:href="${keyword != null and keyword != ''} ?
-                   @{/board/search(category='MISC', filter=${filter}, keyword=${keyword}, searchType=${searchType})} :
-                   @{/board/search(category='MISC', filter=${filter})}"
+      <a th:href="@{/board/search(category='MISC', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
          th:classappend="${category == 'MISC'} ? 'active'">기타</a>
 
     </div>
   </div>
 
 
+  <!-- 게시글 상단 헤더 -->
+  <div class="board-header">
 
-  <!-- 검색 결과 텍스트 -->
-  <div class="search-result-info" th:if="${keyword != null and keyword != ''}">
-    <strong th:text="'\'' + ${keyword} + '\'' + '에 대한 검색 결과'"></strong>
+    <!-- 총 게시글 수 -->
+    <div class="board-count">
+      총 <strong><span th:text="${boardPage.totalElements}">0</span></strong>건
+    </div>
+
+    <!-- 검색 결과 텍스트 -->
+    <div class="search-result-info" th:if="${keyword != null and keyword != ''}">
+      <strong th:text="'\'' + ${keyword} + '\'' + '에 대한 검색 결과'"></strong>
+    </div>
+
+    <!-- Editor's Note 필터 (관리자 전용) -->
+    <div th:if="${loginUser != null and loginUser.role.name() == 'ADMIN'}" class="editor-filter">
+      <form method="get" action="/board/search">
+        <input type="hidden" name="filter" value="admin">
+        <input type="hidden" name="category" th:value="${category}" />
+        <input type="hidden" name="keyword" th:value="${keyword}" />
+        <input type="hidden" name="searchType" th:value="${searchType}" />
+        <button type="button" id="toggleFilterBtnEN">Editor's Note</button>
+      </form>
+    </div>
+
+
+
   </div>
 
-  <!-- 게시글 수 텍스트 -->
-  <div class="board-count">
-    총 <span th:text="${boardPage.totalElements}">0</span>건
-  </div>
 
 
 

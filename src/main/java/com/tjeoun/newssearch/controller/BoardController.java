@@ -14,6 +14,7 @@ import com.tjeoun.newssearch.service.BoardReplyService;
 import com.tjeoun.newssearch.service.BoardService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -61,6 +63,15 @@ public class BoardController {
                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
     Member loginUser = principalDetails.getMember();
     boardService.saveBoard(boardDto, loginUser, newsUrl);
+    if (boardDto.getFiles() != null) {
+      log.info("첨부파일 개수: {}", boardDto.getFiles().size());
+      boardDto.getFiles().forEach(file ->
+              log.info("파일 이름: {}, 크기: {}", file.getOriginalFilename(), file.getSize()));
+    } else {
+      log.info("첨부파일 리스트가 null 입니다.");
+    }
+
+
     return "redirect:/board/search";
   }
 

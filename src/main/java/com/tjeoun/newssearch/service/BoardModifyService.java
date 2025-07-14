@@ -31,12 +31,8 @@ public class BoardModifyService {
   private final BoardReplyRepository boardReplyRepository;
   private final MemberRepository memberRepository;
   private final BoardDocumentRepository boardDocumentRepository;
+  private final AttachFileService attachFileService;
 
-  private String uploadDir;
-  @Value("${upload.dir}")
-  public void setUploadDir(String uploadDir) {
-    this.uploadDir = uploadDir;
-  }
 
 
   public BoardDto getEditableBoard(Long boardId, Principal principal) {
@@ -69,7 +65,7 @@ public class BoardModifyService {
                                        List<Long> deleteFileIds,
                                        Principal principal) {
     Board board = boardRepository.findById(id)
-      .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + id));
+            .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + id));
 
     Member loginUser = getMemberFromPrincipal(principal);
 
@@ -83,27 +79,24 @@ public class BoardModifyService {
 
     boardRepository.save(board);
 
-    // 엘라스틱서치 BoardDocument 업데이트 및 저장
-    //    (ID는 String 타입이므로 Long -> String 변환)
+    // 엘라스틱서치 동기화
     BoardDocument boardDocument = boardDocumentRepository.findById(String.valueOf(id))
-      .orElseGet(BoardDocument::new); // 문서가 없을 경우 새로 생성 (보통은 존재해야 함)
+            .orElseGet(BoardDocument::new);
 
-    boardDocument.setId(String.valueOf(board.getId())); // 항상 ID는 설정
-    boardDocument.setTitle(board.getTitle()); // DB에서 업데이트된 제목으로 설정
-    boardDocument.setContent(board.getContent()); // DB에서 업데이트된 내용으로 설정
-    boardDocument.setNewsCategory(board.getNewsCategory()); // DB에서 업데이트된 카테고리로 설정
+    boardDocument.setId(String.valueOf(board.getId()));
+    boardDocument.setTitle(board.getTitle());
+    boardDocument.setContent(board.getContent());
+    boardDocument.setNewsCategory(board.getNewsCategory());
     if (board.getCreatedDate() != null) {
-      // BoardDocument의 @JsonFormat pattern과 동일하게 포맷터 생성
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
       boardDocument.setCreatedDate(board.getCreatedDate().format(formatter));
     } else {
-      boardDocument.setCreatedDate(null); // 또는 적절한 기본값 설정
+      boardDocument.setCreatedDate(null);
     }
-    boardDocument.setBlind(board.isBlind()); // 숨김 여부도 동기화
-    boardDocument.setAdminArticle(board.isAdminArticle()); // 관리자 게시글 여부 동기화
+    boardDocument.setBlind(board.isBlind());
+    boardDocument.setAdminArticle(board.isAdminArticle());
 
-    boardDocumentRepository.save(boardDocument); // 엘라스틱서치 저장
-
+    boardDocumentRepository.save(boardDocument);
 
     // 첨부파일 삭제 처리
     if (deleteFileIds != null && !deleteFileIds.isEmpty()) {
@@ -112,7 +105,8 @@ public class BoardModifyService {
           if (!file.getBoard().getId().equals(id)) {
             throw new SecurityException("파일이 해당 게시글에 속하지 않습니다.");
           }
-          File realFile = new java.io.File(uploadDir, file.getServerFilename());
+          // 로컬 파일 삭제
+          File realFile = new File(attachFileService.getUploadDir(), file.getServerFilename()); // ※ getUploadDir() 메서드가 필요
           if (realFile.exists()) {
             realFile.delete();
           }
@@ -126,26 +120,27 @@ public class BoardModifyService {
       for (MultipartFile file : files) {
         if (file.isEmpty()) continue;
 
-        String serverFilename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path savePath = Paths.get(uploadDir).resolve(serverFilename);
-
         try {
-          Files.copy(file.getInputStream(), savePath);
+          String serverFilename = attachFileService.saveFile(
+                  file.getOriginalFilename(),
+                  file.getBytes()
+          );
+
+          AttachFile attachFile = AttachFile.builder()
+                  .board(board)
+                  .originalFilename(file.getOriginalFilename())
+                  .serverFilename(serverFilename)
+                  .size(file.getSize())
+                  .build();
+
+          attachFileRepository.save(attachFile);
         } catch (IOException e) {
           throw new RuntimeException("파일 저장 실패", e);
         }
-
-        AttachFile attachFile = AttachFile.builder()
-          .board(board)
-          .originalFilename(file.getOriginalFilename())
-          .serverFilename(serverFilename)
-          .size(file.getSize())
-          .build();
-
-        attachFileRepository.save(attachFile);
       }
     }
   }
+
 
   @Transactional
   public void blindBoard(Long boardId, Principal principal) {

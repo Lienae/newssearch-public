@@ -36,15 +36,11 @@ public class BoardService {
     private final NewsRepository newsRepository;
 
 
-    @Value("${upload.dir}")
-    public void setUploadDir(String uploadDir) {
-        this.uploadDir = uploadDir;
-    }
-
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final BoardReplyService boardReplyService;
     private final BoardDocumentRepository boardDocumentRepository;
+    private final AttachFileService attachFileService;
 
     // --- saveAttachFiles 메서드 수정 (예외 래핑) ---
     private void saveAttachFiles(List<MultipartFile> files, Board board) {
@@ -83,7 +79,6 @@ public class BoardService {
         }
     }
 
-    // --- saveBoard 메서드 수정 (try-catch 및 롤백 로직 추가) ---
     @Transactional
     public void saveBoard(BoardDto boardDto, Member loginUser, String newsUrl) {
         Board board = null;
@@ -94,28 +89,25 @@ public class BoardService {
             boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
             boardDto.setIsAdminArticle(isAdmin);
 
-            // newsUrl로 뉴스 조회
             News news = null;
             if (newsUrl != null && !newsUrl.isEmpty()) {
                 news = newsRepository.findByUrl(newsUrl).orElse(null);
             }
 
-            // 카테고리 기본값 설정
             if (boardDto.getNewsCategory() == null) {
                 boardDto.setNewsCategory(NewsCategory.MISC);
             }
 
-            // Board 엔티티 생성, news 필드 직접 연결
             board = Board.builder()
-              .id(boardDto.getId())
-              .title(boardDto.getTitle())
-              .content(boardDto.getContent())
-              .author(boardDto.getAuthor())
-              .newsCategory(boardDto.getNewsCategory())
-              .news(news)  // news 연결
-              .isAdminArticle(boardDto.getIsAdminArticle() != null ? boardDto.getIsAdminArticle() : false)
-              .isBlind(false)
-              .build();
+                    .id(boardDto.getId())
+                    .title(boardDto.getTitle())
+                    .content(boardDto.getContent())
+                    .author(boardDto.getAuthor())
+                    .newsCategory(boardDto.getNewsCategory())
+                    .news(news)
+                    .isAdminArticle(boardDto.getIsAdminArticle() != null ? boardDto.getIsAdminArticle() : false)
+                    .isBlind(false)
+                    .build();
 
             boardRepository.save(board);
 
@@ -123,7 +115,26 @@ public class BoardService {
             boardDocumentRepository.save(boardDocument);
 
             List<MultipartFile> files = boardDto.getFiles();
-            saveAttachFiles(files, board);
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                    if (file.isEmpty()) continue;
+
+                    String serverFilename = attachFileService.saveFile(
+                            file.getOriginalFilename(),
+                            file.getBytes()
+                    );
+
+                    AttachFile attachFile = AttachFile.builder()
+                            .board(board)
+                            .size(file.getSize())
+                            .originalFilename(file.getOriginalFilename())
+                            .serverFilename(serverFilename)
+                            .build();
+
+                    attachFileRepository.save(attachFile);
+                }
+            }
+
 
         } catch (Exception e) {
             log.error("게시글 생성 및 색인 중 오류 발생: {}", e.getMessage(), e);

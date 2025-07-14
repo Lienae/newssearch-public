@@ -311,7 +311,7 @@ th:nth-child(1) {
 
 }
 .blind-title {
-  color: #cc0404;
+  color: #cc0404 !important;
   font-weight: bold;
 }
 .checkbox-label {

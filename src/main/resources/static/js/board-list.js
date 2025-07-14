@@ -2,17 +2,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 카테고리 버튼 active 토글
   document.querySelectorAll(".category-buttons a").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".category-buttons a")
-        .forEach((el) => el.classList.remove("active"));
+      document.querySelectorAll(".category-buttons a").forEach((el) => el.classList.remove("active"));
       btn.classList.add("active");
     });
+
   });
 
   const toggleBtn = document.getElementById("toggleFilterBtnEN");
   if (!toggleBtn) return;
 
-  const baseUrl = "/board/list"; // localhost 생략 가능
+  const baseUrl = "/board/search"; // localhost 생략 가능
 
   // 현재 URL 파라미터 읽기
   const currentUrl = new URL(window.location.href);
