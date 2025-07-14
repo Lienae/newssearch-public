@@ -77,7 +77,7 @@ public class Board {
         doc.setId(String.valueOf(board.getId()));
         doc.setTitle(board.getTitle());
         doc.setContent(board.getContent());
-        doc.setWriter(board.getAuthor().getName());
+        doc.setEmail(board.getAuthor().getEmail());
         // BoardService에서 사용되는 포맷터와 동일하게 명시적으로 지정
         LocalDateTime createdDate = Optional.ofNullable(board.getCreatedDate()).orElse(LocalDateTime.now());
         OffsetDateTime offsetDateTime = createdDate.atOffset(ZoneOffset.ofHours(9));

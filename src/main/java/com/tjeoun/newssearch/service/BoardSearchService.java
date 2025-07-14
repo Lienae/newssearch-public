@@ -107,7 +107,7 @@ public class BoardSearchService {
             board.setContent(doc.getContent());
 
             Member author = new Member();
-            author.setName(doc.getWriter());
+            author.setName(doc.getEmail());
             author.setId(0L); // DB에서 가져오지 않으면 임시 ID 또는 null 설정
             board.setAuthor(author);
             OffsetDateTime createdDate = Optional.ofNullable(doc.getCreatedDate()).orElse(OffsetDateTime.now().withNano(0));

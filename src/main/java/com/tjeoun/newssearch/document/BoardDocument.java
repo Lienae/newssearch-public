@@ -26,7 +26,7 @@ public class BoardDocument {
     private String content;
 
     @Field(type = FieldType.Keyword)
-    private String writer;
+    private String email;
 
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time)
     private OffsetDateTime createdDate;
