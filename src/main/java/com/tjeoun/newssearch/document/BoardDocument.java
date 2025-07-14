@@ -15,11 +15,24 @@ public class BoardDocument {
   @Id
   private String id;
 
-    @Field(type = FieldType.Text, analyzer = "korean_analyzer", searchAnalyzer = "korean_analyzer")
+
+  @MultiField(
+          mainField = @Field(type = FieldType.Text, analyzer = "nori"),
+          otherFields = {
+                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
+          }
+  )
   private String title;
 
-  @Field(type = FieldType.Text, analyzer = "korean_analyzer", searchAnalyzer = "korean_analyzer")
+
+  @MultiField(
+          mainField = @Field(type = FieldType.Text, analyzer = "nori"),
+          otherFields = {
+                  @InnerField(suffix = "keyword", type = FieldType.Keyword)
+          }
+  )
   private String content;
+
 
   @Field(type = FieldType.Keyword)
   private String writer;
