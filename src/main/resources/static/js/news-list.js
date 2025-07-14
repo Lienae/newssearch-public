@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modalIframe.src = fullUrl;
       modal.style.display = "flex";
 
-      writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(baseUrl)}`;
+      writePostBtn.href = `/board/write?newsUrl=${encodeURIComponent(baseUrl)}`;
       loadComments(baseUrl);
 
     });
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentUrl = baseUrl;
     modalIframe.src = popupUrl;
     modal.style.display = "flex";
-    writePostBtn.href = `/boarder/write?newsUrl=${encodeURIComponent(popupUrl)}`;
+    writePostBtn.href = `/board/write?newsUrl=${encodeURIComponent(popupUrl)}`;
     loadComments(baseUrl);
   }
 

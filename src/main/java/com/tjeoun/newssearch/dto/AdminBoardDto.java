@@ -37,7 +37,7 @@ public class AdminBoardDto {
       .newsTitle(board.getNews() != null ? board.getNews().getTitle() : null) // 현재 데이터에 News가 없는 경우
       .createdDate(board.getCreatedDate())
       .modifiedDate(board.getModifiedDate())
-      .isBlind(board.isBlind())
+      .isBlind(board.getIsBlind())
       .build();
   }
 
