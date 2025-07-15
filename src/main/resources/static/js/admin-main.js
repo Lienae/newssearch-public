@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
             url: "/api/v1/admin-jobs",
             method: "GET",
             dataType: "json",
-            success: function (data, textStatus, jqXHR) {
+            success: function (data) {
                 const currentCount = data.length;
 
                 if (currentCount > lastJobCount) {
