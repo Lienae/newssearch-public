@@ -62,8 +62,8 @@
       <strong th:text="'\'' + ${keyword} + '\'' + '에 대한 검색 결과'"></strong>
     </div>
 
-    <!-- Editor's Note 필터 (관리자 전용) -->
-    <div th:if="${loginUser != null and loginUser.role.name() == 'ADMIN'}" class="editor-filter">
+    <!-- Editor's Note 필터 -->
+    <div th:if="${loginUser != null}" class="editor-filter">
       <form method="get" action="/board/search">
         <input type="hidden" name="filter" value="admin">
         <input type="hidden" name="category" th:value="${category}" />

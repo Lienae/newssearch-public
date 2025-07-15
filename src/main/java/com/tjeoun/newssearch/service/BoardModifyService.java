@@ -81,7 +81,7 @@ public class BoardModifyService {
         boardDocument.setId(String.valueOf(board.getId()));
         boardDocument.setTitle(board.getTitle());
         boardDocument.setContent(board.getContent());
-        boardDocument.setNewsCategory(board.getNewsCategory());
+        boardDocument.setNewsCategory(board.getNewsCategory().name());
         boardDocument.setCreatedDate(board.getCreatedDate().atOffset(ZoneOffset.ofHours(9)).withNano(0));
         boardDocument.setBlind(board.getIsBlind());
         boardDocument.setAdminArticle(board.isAdminArticle());
