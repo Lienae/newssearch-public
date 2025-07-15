@@ -21,7 +21,7 @@
 
     <div class="post-info">
         <span>카테고리: <span th:text="${board.newsCategory}">POLITICS</span></span>
-        <span>작성자 ID: <span th:text="${board.author.id}">101</span></span>
+        <span>작성자: <span th:text="${board.author.name}">101</span></span>
         <span>등록 일자: <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2025-07-01</span></span>
         <span>최근 수정일: <span th:text="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd')}">2025-07-02</span></span>
 

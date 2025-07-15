@@ -8,6 +8,7 @@ import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.BoardDocumentRepository;
+import com.tjeoun.newssearch.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class BoardSearchService {
 
     private final BoardDocumentRepository boardDocumentRepository;
+    private final MemberRepository memberRepository;
 
     // BoardService의 getFilteredBoards 로직을 여기에 통합
     public Page<Board> getFilteredAndSearchedBoards(String keyword, String searchType, Pageable pageable, String categoryStr, String filter, Member loginUser) {
@@ -115,9 +117,7 @@ public class BoardSearchService {
             board.setTitle(doc.getTitle());
             board.setContent(doc.getContent());
 
-            Member author = new Member();
-            author.setName(doc.getEmail());
-            author.setId(0L); // DB에서 가져오지 않으면 임시 ID 또는 null 설정
+            Member author = memberRepository.findByEmail(doc.getEmail()).get();
             board.setAuthor(author);
             OffsetDateTime createdDate = Optional.ofNullable(doc.getCreatedDate()).orElse(OffsetDateTime.now().withNano(0));
             board.setCreatedDate(createdDate.toLocalDateTime());
