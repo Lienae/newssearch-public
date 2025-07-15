@@ -22,14 +22,15 @@
 }
 
 .search-bar input {
-  width: 40%;
+  width: 80%;
   padding: 12px;
+  border-radius: 0;
   border: 1px solid #ccc;
   font-size: 14px;
 }
 
 .search-bar button {
-  padding: 6px 10px;
+  padding: 12px 20px;
   background-color: #1976d2;
   border: none;
   color: white;

@@ -21,32 +21,40 @@ public class MainPageService {
 
     private final NewsRepository newsRepository;
 
-    public Map<NewsCategory, List<NewsDto>> getTop2NewsByCategory() {
+    public Map<NewsCategory, List<NewsDto>> getTop1NewsByCategory() {
         Map<NewsCategory, List<NewsDto>> result = new LinkedHashMap<>();
 
         for (NewsCategory category : NewsCategory.values()) {
-            List<NewsDto> top2 = newsRepository.findByCategoryAndIsBlindFalseOrderByPublishDateDesc(category, PageRequest.of(0, 2))
+            if (category == NewsCategory.MISC) continue;
+            List<NewsDto> top1 = newsRepository.findByCategoryAndIsBlindFalseOrderByPublishDateDesc(category, PageRequest.of(0, 1))
                     .stream()
                     .map(NewsDto::fromEntity)
                     .collect(Collectors.toList());
-            result.put(category, top2);
+            result.put(category, top1);
         }
 
         return result;
     }
 
-    public Map<NewsMediaCompany, List<NewsDto>> getTop2NewsByMediaCompany() {
+    public Map<NewsMediaCompany, List<NewsDto>> getTop1NewsByMediaCompany() {
         Map<NewsMediaCompany, List<NewsDto>> result = new LinkedHashMap<>();
 
         for (NewsMediaCompany company : NewsMediaCompany.values()) {
-            List<NewsDto> top2 = newsRepository.findByMediaCompanyAndIsBlindFalseOrderByPublishDateDesc(company, PageRequest.of(0, 2))
+            List<NewsDto> top1 = newsRepository.findByMediaCompanyAndIsBlindFalseOrderByIdDesc(company, PageRequest.of(0, 1))
                     .stream()
                     .map(NewsDto::fromEntity)
                     .toList();
-            result.put(company, top2);
+            result.put(company, top1);
         }
 
         return result;
+    }
+
+    public List<NewsDto> getRecentNews() {
+        return newsRepository.findTop5ByOrderByPublishDateDesc()
+                .stream()
+                .map(NewsDto::fromEntity)
+                .toList();
     }
 
 }
