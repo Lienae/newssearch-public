@@ -52,7 +52,9 @@
             </div>
             <div th:each="news : ${newsPage}" class="news-card" th:data-link="${news.url}" th:data-id="${news.id}">
                 <!-- 이미지 URL, 없으면 기본 이미지 -->
-                <img th:src="@{${news.imageUrl}}" onerror="this.src='/img/default.png'" alt="뉴스 이미지" />
+                <img th:src="@{${#strings.replace(news.imageUrl, 'C:/workspace/news_images', '/news_images')}}"
+                     onerror="this.src='/img/default.png'"
+                     alt="뉴스 이미지" />
                 <div class="news-card-content">
                     <h4 th:utext="${news.title}">뉴스 제목</h4>
                     <p th:utext="${news.content}">내용 요약</p>
