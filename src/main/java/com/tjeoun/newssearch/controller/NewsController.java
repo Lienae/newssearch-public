@@ -63,18 +63,4 @@ public class NewsController {
         return "news/news-list";
     }
 
-    @GetMapping("/view/{id}")
-    public String viewNews(@PathVariable Long id, Model model) {
-        // 뉴스 조회
-        News news = newsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("뉴스 없음"));
-
-        // 댓글 목록 조회 (news.url 기준)
-        List<NewsReplyDto> replies = newsCommentService.findCommentsByNewsUrl(news.getUrl());
-
-        model.addAttribute("news", news);
-        model.addAttribute("replies", replies);
-        return "news/news-view";
-    }
-
 }
