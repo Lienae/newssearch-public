@@ -19,7 +19,7 @@ build/
 .DS_Store
 Thumbs.db
 
-news_images/
+/news_images/
 *.jpg
 *.jpeg
 *.png
