@@ -22,23 +22,29 @@
     </div>
     <div class="box">
         <strong>언론사별 바로가기</strong><br />
-        <a href="/news/list?mediaCompany=DONGA">· 동아일보</a><br />
-        <a href="/news/list?mediaCompany=YTN">· YTN</a><br />
-        <a href="/news/list?mediaCompany=HANI">· 한겨레</a><br />
-        <a href="/news/list?mediaCompany=JOONGANG">· 중앙일보</a><br />
-        <a href="/news/list?mediaCompany=KYUNGHYANG">· 경향신문</a><br />
+        <a href="/news/list?mediaCompany=DONGA" class="no-underline">· 동아일보</a><br />
+        <a href="/news/list?mediaCompany=YTN" class="no-underline">· YTN</a><br />
+        <a href="/news/list?mediaCompany=HANI" class="no-underline">· 한겨레</a><br />
+        <a href="/news/list?mediaCompany=JOONGANG" class="no-underline">· 중앙일보</a><br />
+        <a href="/news/list?mediaCompany=KYUNGHYANG" class="no-underline">· 경향신문</a><br />
     </div>
     <div class="box">
         <strong>최근 수집된 기사</strong><br />
-        · 정치: 제목1<br />
-        · 경제: 제목2<br />
-        · 사회: 제목3
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li th:each="news : ${recentNews}" style="margin-bottom: 6px;">
+                · <span th:text="${news.category.displayName}">카테고리</span>:<br />
+                <a th:href="@{'/news/list'(category=${news.category},mediaCompany=${news.mediaCompany},url=${news.url})}"
+                   style="display: inline-block; font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                   th:text="${#strings.abbreviate(news.title, 30)}"></a>
+                </span>
+            </li>
+        </ul>
     </div>
 </div>
 
 <div class="banner">
     <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
-    <h2>빅카인즈 오늘의 이슈</h2>
+    <h2>오늘의 이슈</h2>
     <div class="search-box">
         <input type="text" name="query" placeholder="기본 검색어를 입력해주세요" />
         <button onclick="search()">검색</button>
@@ -52,33 +58,25 @@
     </ul>
 </div>
 
-<div class="category-section">
-  <div class="category-buttons">
-    <a href="#" class="active">키워드1</a>
-    <a href="#">키워드2</a>
-    <a href="#">키워드3</a>
-    <a href="#">키워드4</a>
-    <a href="#">키워드5</a>
-    <a href="#">키워드6</a>
-    <a href="#">키워드7</a>
-    <a href="#">키워드8</a>
-  </div>
-</div>
-
 <div class="news-section">
     <div class="category-row">
         <!-- Map<NewsCategory, List<News>> newsByCategory 기준 반복 -->
         <div class="category-block" th:each="entry : ${newsByCategory}">
             <h3 class="category-title" th:text="${entry.key.displayName}" th:data-category="${entry.key.name()}">>카테고리명</h3>
 
-            <div class="news-list">
-                <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}"
-                     th:data-category="${news.category}" th:data-media="${news.mediaCompany}" th:data-url="${news.url}">
-                    <img src="/img/default.png" alt="테스트 이미지" />
-                    <h4 th:text="${#strings.abbreviate(news.title, 10)}">뉴스 제목</h4>
-                    <div class="news-meta">
-                        <span class="summary-text" th:text="${#strings.abbreviate(news.content, 40)}">요약</span>
-                        <span class="extra-info" th:text="${news.mediaCompany.name()}">언론사</span>
+            <div class="news-grid">
+                <div class="news-card" th:each="news : ${entry.value}"
+                     th:data-category="${news.category}"
+                     th:data-media="${news.mediaCompany}"
+                     th:data-url="${news.url}">
+
+                    <!-- 이미지 URL, 없으면 기본 이미지 -->
+                    <img th:src="@{${news.imageUrl}}" onerror="this.src='/img/default.png'" alt="뉴스 이미지" />
+                    <!-- 카드 내용 -->
+                    <div class="news-card-content">
+                        <h4 th:text="${news.title}">뉴스 제목</h4>
+                            <p th:text="${#strings.abbreviate(news.content, 80)}">내용 요약</p>
+                        <div class="news-meta" th:text="${#temporals.format(news.publishDate, 'yyyy.MM.dd')} + ' | ' + ${news.mediaCompany}">날짜 | 언론사</div>
                     </div>
                 </div>
             </div>
@@ -91,13 +89,25 @@
         <div class="category-row">
             <div class="category-block" th:each="entry : ${newsByCompany}">
                 <h3 class="category-title" th:text="${entry.key.displayName}">언론사</h3>
-                <div class="news-list">
-                    <div class="news-card" style="height: 180px;" th:each="news : ${entry.value}">
-                        <img src="/img/default.png" alt="테스트 이미지" />
-                        <h4 th:text="${#strings.abbreviate(news.title, 10)}">뉴스 제목</h4>
-                        <div class="news-meta">
-                            <span class="summary-text" th:text="${#strings.abbreviate(news.content, 40)}">요약</span>
-                            <span class="extra-info" th:text="${news.category.name()}">카테고리</span>
+                <div class="news-grid">
+                    <div class="news-card" th:each="news : ${entry.value}"
+                         th:data-category="${news.category}"
+                         th:data-media="${news.mediaCompany}"
+                         th:data-url="${news.url}">
+
+                        <!-- 이미지 URL, 없으면 기본 이미지 -->
+                        <img th:src="@{${news.imageUrl}}"
+                             onerror="this.onerror=null; this.src='/img/default.png'"
+                             alt="뉴스 이미지" />
+
+                        <!-- 카드 내용 -->
+                        <div class="news-card-content">
+                            <h4 th:text="${news.title}">뉴스 제목</h4>
+                            <p th:text="${#strings.abbreviate(news.content, 80)}">내용 요약</p>
+                            <div class="news-meta"
+                                 th:text="${#temporals.format(news.publishDate, 'yyyy.MM.dd')} + ' | ' + ${news.mediaCompany}">
+                                날짜 | 언론사
+                            </div>
                         </div>
                     </div>
                 </div>

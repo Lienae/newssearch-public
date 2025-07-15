@@ -23,7 +23,7 @@
 
   <form th:action="@{/board}" method="post" enctype="multipart/form-data" th:object="${boardDto}" class="post-form">
 
-    <input type="hidden" name="newsCategory" th:value="${newsCategory}" />
+    <input type="hidden" name="newsCategory" th:value="${newsCategory.name()}" />
     <input type="hidden" name="newsUrl" th:value="${newsUrl}" />
 
     <div class="form-group">

@@ -18,3 +18,8 @@ build/
 # OS 관련
 .DS_Store
 Thumbs.db
+
+/news_images/
+*.jpg
+*.jpeg
+*.png

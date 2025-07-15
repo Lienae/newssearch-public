@@ -181,6 +181,16 @@ hr {
   font-size: 16px;
 }
 
+.author-name, .comment-header strong {
+  display: inline-block;      /* 또는 block */
+  max-width: 150px;           /* 최대 너비 지정 (필요에 따라 조절) */
+  white-space: nowrap;        /* 한 줄로 만들기 */
+  overflow: hidden;           /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis;    /* 말줄임표(...) 표시 */
+  vertical-align: middle;     /* 텍스트 정렬 */
+}
+
+
 .comment-header .date {
   font-weight: normal;
   font-size: 13px;
