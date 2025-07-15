@@ -1,46 +1,50 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 카테고리 버튼 active 토글
+  // ⭐ 카테고리 버튼 클릭 시 category 파라미터만 바꾸고 나머지 유지
   document.querySelectorAll(".category-buttons a").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".category-buttons a")
-        .forEach((el) => el.classList.remove("active"));
-      btn.classList.add("active");
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const category = btn.getAttribute("data-category");
+      const url = new URL(window.location.href);
+      const params = url.searchParams;
+
+      params.set("category", category); // category만 교체
+
+      // 페이지 번호 초기화
+      params.set("page", 0);
+
+      // 이동
+      window.location.href = `${url.pathname}?${params.toString()}`;
     });
   });
 
-  const toggleBtn = document.getElementById("toggleFilterBtn");
-  if (!toggleBtn) return;
+  // 기존 Editor's Note 토글 버튼 로직 유지
+  const toggleBtn = document.getElementById("toggleFilterBtnEN");
+  if (toggleBtn) {
+    const currentUrl = new URL(window.location.href);
+    const currentParams = currentUrl.searchParams;
+    const currentFilter = currentParams.get("filter");
 
-  const baseUrl = "/board/list"; // localhost 생략 가능
+    toggleBtn.textContent = currentFilter === "admin" ? "일반 커뮤니티" : "Editor's Note";
 
-  // 현재 URL 파라미터 읽기
-  const currentUrl = new URL(window.location.href);
-  const currentParams = currentUrl.searchParams;
-  const currentFilter = currentParams.get("filter");
+    toggleBtn.addEventListener("click", () => {
+      const newUrl = new URL(currentUrl.pathname, window.location.origin);
 
-  // 초기 버튼 텍스트 설정
-  toggleBtn.textContent = currentFilter === "admin" ? "일반 커뮤니티" : "Editor's Note";
+      for (const [key, value] of currentParams.entries()) {
+        if (key !== "filter") {
+          newUrl.searchParams.set(key, value);
+        }
+      }
 
-  toggleBtn.addEventListener("click", () => {
-    const newUrl = new URL(baseUrl, window.location.origin);
-    const category = currentParams.get("category");
+      newUrl.searchParams.set("page", 0); // 필터 바꿀 때도 page=0으로 초기화
 
-    // category가 있으면 같이 붙여줌
-    if (category && category !== "ALL") {
-      newUrl.searchParams.set("category", category);
-    }
+      if (currentFilter !== "admin") {
+        newUrl.searchParams.set("filter", "admin");
+      } else {
+        newUrl.searchParams.delete("filter");
+      }
 
-    // 필터 전환
-    if (currentFilter === "admin") {
-      // filter 파라미터 제거: 일반 커뮤니티
-      // 아무 것도 안붙임
-    } else {
-      // filter=admin 추가: 에디터 게시판
-      newUrl.searchParams.set("filter", "admin");
-    }
-
-    // 최종 이동
-    window.location.href = newUrl.toString();
-  });
+      window.location.href = newUrl.toString();
+    });
+  }
 });

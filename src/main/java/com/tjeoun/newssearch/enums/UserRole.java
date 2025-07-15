@@ -1,5 +1,5 @@
 package com.tjeoun.newssearch.enums;
 
 public enum UserRole {
-    ADMIN, USER, SUSPENDED, WITHDRAWAL,GUEST
+    ADMIN, USER, SUSPENDED, WITHDRAWAL
 }

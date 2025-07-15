@@ -50,4 +50,7 @@ public class NewsService {
                 .publishDate(news.getPublishDate())
                 .build();
     }
+    public News findById(Long id) {
+        return newsRepository.findById(id).orElseThrow(() -> new RuntimeException("News not found"));
+    }
 }

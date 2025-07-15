@@ -1,30 +1,20 @@
 package com.tjeoun.newssearch.service;
 
+import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.BoardDto;
-import com.tjeoun.newssearch.entity.AttachFile;
-import com.tjeoun.newssearch.entity.Board;
-import com.tjeoun.newssearch.entity.BoardReply;
-import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.*;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.AttachFileRepository;
+import com.tjeoun.newssearch.repository.BoardDocumentRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
+import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -32,80 +22,89 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BoardService {
 
-    private String uploadDir;
-    @Value("${upload.dir}")
-    public void setUploadDir(String uploadDir) {
-        this.uploadDir = uploadDir;
-    }
+
+    private final NewsRepository newsRepository;
 
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final BoardReplyService boardReplyService;
-
-    private void saveAttachFiles(List<MultipartFile> files, Board board) {
-        if (files == null || files.isEmpty()) return;
-
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
-
-            String originalFilename = file.getOriginalFilename();
-            long size = file.getSize();
-            String uuid = UUID.randomUUID().toString();
-            String serverFilename = uuid + "_" + originalFilename;
-
-            try {
-                Path uploadPath = Paths.get(uploadDir, serverFilename);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                file.transferTo(uploadPath.toFile());
-
-                AttachFile attachFile = AttachFile.builder()
-                        .board(board)
-                        .size(size)
-                        .originalFilename(originalFilename)
-                        .serverFilename(serverFilename)
-                        .build();
-
-                attachFileRepository.save(attachFile);
-
-            } catch (IOException e) {
-                log.error("파일 업로드 중 오류 발생: {}", e.getMessage(), e);
-                throw new RuntimeException("파일 업로드에 실패했습니다.");
-            }
-        }
-    }
-
-
-
+    private final BoardDocumentRepository boardDocumentRepository;
+    private final AttachFileService attachFileService;
 
     @Transactional
-    public void saveBoard(BoardDto boardDto, Member loginUser) {
-        // 작성자 설정
-        boardDto.setAuthor(loginUser);
+    public void saveBoard(BoardDto boardDto, Member loginUser, String newsUrl) {
+        Board board;
+        BoardDocument boardDocument = null;
 
-        // 관리자 여부 설정
-        boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
-        boardDto.setIsAdminArticle(isAdmin);
+        try {
+            boardDto.setAuthor(loginUser);
+            boolean isAdmin = loginUser.getRole() == UserRole.ADMIN;
+            boardDto.setIsAdminArticle(isAdmin);
+
+            News news = null;
+            if (newsUrl != null && !newsUrl.isEmpty()) {
+                news = newsRepository.findByUrl(newsUrl).orElse(null);
+            }
+
+            if (boardDto.getNewsCategory() == null) {
+                boardDto.setNewsCategory(NewsCategory.MISC);
+            }
+
+            board = Board.builder()
+                    .id(boardDto.getId())
+                    .title(boardDto.getTitle())
+                    .content(boardDto.getContent())
+                    .author(boardDto.getAuthor())
+                    .newsCategory(boardDto.getNewsCategory())
+                    .news(news)
+                    .isAdminArticle(boardDto.getIsAdminArticle() != null ? boardDto.getIsAdminArticle() : false)
+                    .isBlind(false)
+                    .build();
+
+            boardRepository.save(board);
+
+            boardDocument = Board.toDocument(board);
+            boardDocumentRepository.save(boardDocument);
+
+            List<MultipartFile> files = boardDto.getFiles();
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                    if (file.isEmpty()) continue;
+
+                    String serverFilename = attachFileService.saveFile(
+                            file.getOriginalFilename(),
+                            file.getBytes()
+                    );
+
+                    AttachFile attachFile = AttachFile.builder()
+                            .board(board)
+                            .size(file.getSize())
+                            .originalFilename(file.getOriginalFilename())
+                            .serverFilename(serverFilename)
+                            .build();
+
+                    attachFileRepository.save(attachFile);
+                }
+            }
 
 
-
-        // 카테고리가 null이면 기본값 설정
-        if (boardDto.getNewsCategory() == null) {
-            boardDto.setNewsCategory(NewsCategory.MISC);  // 기본 카테고리
+        } catch (Exception e) {
+            log.error("게시글 생성 및 색인 중 오류 발생: {}", e.getMessage(), e);
+            if (boardDocument != null && boardDocument.getId() != null) {
+                try {
+                    boardDocumentRepository.deleteById(boardDocument.getId());
+                    log.warn("엘라스틱서치 문서 롤백 완료: ID={}", boardDocument.getId());
+                } catch (Exception esEx) {
+                    log.error("엘라스틱서치 문서 롤백 중 오류 발생: {}", esEx.getMessage());
+                }
+            }
+            throw new RuntimeException("게시글 저장 중 오류가 발생했습니다.", e);
         }
-
-        // BoardDto → Board entity 생성
-        Board board = Board.createBoard(boardDto);
-
-        // DB에 Board 저장 (id 생성)
-        boardRepository.save(board);
-
-        // 첨부파일 처리
-        List<MultipartFile> files = boardDto.getFiles();
-        saveAttachFiles(files, board);
     }
 
+    public News findNewsByUrl(String newsUrl) {
+        return newsRepository.findByUrl(newsUrl).orElse(null);
+    }
 
     public Map<String, Object> getBoardDetail(Long id, Member loginUser) {
         Map<String, Object> result = new HashMap<>();
@@ -126,86 +125,9 @@ public class BoardService {
         return result;
     }
 
-
-    public List<AttachFile> getAttachFilesByBoardId(Long boardId) {
-        return attachFileRepository.findByBoardId(boardId);
-    }
-
     public Board findById(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
     }
-
-
-    // boardId로 첨부파일 리스트 조회
-    public List<AttachFile> findAttachFilesByBoardId(Long boardId) {
-        return attachFileRepository.findAllByBoardId(boardId);
-    }
-
-    // 숨김 처리된 게시글 제외 + 최신순 조회
-    public List<Board> getAllBoards() {
-        return boardRepository.findByIsBlindFalseOrderByCreatedDateDesc();
-    }
-    // 게시글 보기
-    public Optional<Board> getBoardById(Long id) {
-        return boardRepository.findById(id);
-    }
-
-    // 페이징 + 숨김 제외 + 최신순
-    public Page<Board> getBoards(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return boardRepository.findByIsBlindFalseOrderByCreatedDateDesc(pageable);
-    }
-
-
-    //카테고리 + 숨김 제외 + 페이징
-    public Page<Board> getBoardsByCategory(String newsCategoryStr, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        try {
-            NewsCategory newsCategory = NewsCategory.valueOf(newsCategoryStr.toUpperCase());
-            return boardRepository.findByNewsCategoryAndIsBlindFalse(newsCategory, pageable);
-        } catch (IllegalArgumentException e) {
-            return Page.empty(pageable);
-        }
-    }
-
-    // 게시글 개수 ( 사용자 )
-    public long countByIsBlind(Boolean isBlind) {
-        return boardRepository.countByIsBlind(isBlind);
-    }
-    // 게시글 개수 ( 관리자 )
-    public long countAllBoards() {
-        return boardRepository.count();
-    }
-
-    // 관리자 글 조회
-    public Page<Board> getAdminBoards(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return boardRepository.findAdminBoards(pageable);
-    }
-
-    public Page<Board> getAdminBoardsByCategory(String category, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        NewsCategory newsCategory = NewsCategory.valueOf(category.toUpperCase());
-        return boardRepository.findAdminBoardsByCategory(newsCategory, pageable);
-    }
-    public Member getDefaultMember() {
-        Member defaultMember = new Member();
-        defaultMember.setId(0L);
-        defaultMember.setName("비회원");
-        defaultMember.setEmail("guest@exam.com");
-        defaultMember.setPassword("1234");
-        defaultMember.setRole(UserRole.GUEST); // GUEST 새로 생성
-        defaultMember.setCreatedDate(LocalDateTime.now());
-        return defaultMember;
-    }
-
-
-
-
-
-
-
-
 
 }

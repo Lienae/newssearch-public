@@ -16,93 +16,143 @@
 <div class="board-container">
   <div class="category-section">
     <div class="category-buttons">
-      <a th:href="@{/board/list(category='ALL', filter=${filter})}" th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
-      <a th:href="@{/board/list(category='POLITICS', filter=${filter})}" th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
-      <a th:href="@{/board/list(category='ECONOMY', filter=${filter})}" th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
-      <a th:href="@{/board/list(category='SOCIAL', filter=${filter})}" th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
-      <a th:href="@{/board/list(category='CULTURE', filter=${filter})}" th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
-      <a th:href="@{/board/list(category='SPORTS', filter=${filter})}" th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
-      <a th:href="@{/board/list(category='MISC', filter=${filter})}" th:classappend="${category == 'MISC'} ? 'active'">기타</a>
+
+      <!-- 전체 -->
+      <a href="#" data-category="ALL"
+         th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
+
+      <!-- 정치 -->
+      <a href="#" data-category="POLITICS"
+         th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
+
+      <!-- 경제 -->
+      <a href="#" data-category="ECONOMY"
+         th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
+
+      <!-- 사회 -->
+      <a href="#" data-category="SOCIAL"
+         th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
+
+      <!-- 문화 -->
+      <a href="#" data-category="CULTURE"
+         th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
+
+      <!-- 스포츠 -->
+      <a href="#" data-category="SPORTS"
+         th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
+
+      <!-- 기타 -->
+      <a href="#" data-category="MISC"
+         th:classappend="${category == 'MISC'} ? 'active'">기타</a>
+
     </div>
-
-
-
   </div>
 
+
+  <!-- 게시글 상단 헤더 -->
   <div class="board-header">
-    <div class="board-count">전체  <strong><span th:text="${totalVisibleBoards}">0</span></strong>건</div>
-    <div th:if="${loginUser != null and loginUser.role.name() == 'ADMIN'}" class="editor-filter">
-      <form method="get" action="/board/list">
-        <input type="hidden" name="filter" value="admin">
-        <button id="toggleFilterBtnEN" type="button">Editor's Note</button>
 
-      </form>
+    <!-- 총 게시글 수 -->
+    <div class="board-count">
+      총 <strong><span th:text="${boardPage.totalElements}">0</span></strong>건
     </div>
 
+    <!-- 검색 결과 텍스트 -->
+    <div class="search-result-info" th:if="${keyword != null and keyword != ''}">
+      <strong th:text="'\'' + ${keyword} + '\'' + '에 대한 검색 결과'"></strong>
+    </div>
+
+    <!-- Editor's Note 필터 -->
+    <div th:if="${loginUser != null}" class="editor-filter">
+      <button type="button" id="toggleFilterBtnEN"
+              th:text="${filter == 'admin'} ? '일반 커뮤니티' : 'Editor\'s Note'">
+      </button>
+    </div>
+
+
+
+
   </div>
+
+
+
+
 
   <table class="board-table">
     <thead>
     <tr>
-      <th>번호</th>
-      <th>제목</th>
-      <th>등록일</th>
+      <th style="width: 10%;">번호</th>
+      <th style="width: 60%;">제목</th>
+<!--      <th>카테고리</th>-->
+      <th style="width: 15%;">등록일</th>
+      <th style="width: 15%;">글쓴이</th>
     </tr>
     </thead>
     <tbody>
       <tr th:each="board, stat : ${boardPage.content}">
         <td th:text="${boardPage.totalElements - (boardPage.number * boardPage.size + stat.index)}"></td>
-        <td>
-          <a th:href="@{'/board/detail/' + ${board.id}}" th:text="${board.title}"></a>
+        <td class="title-cell">
+          <a th:href="@{'/board/detail/' + ${board.id}}"
+             th:text="${board.title}"
+             th:classappend="${board.isBlind} ? 'blind-title'">></a>
         </td>
+<!--        <td>-->
+<!--          <span th:switch="${board.newsCategory}">-->
+<!--            <span th:case="'POLITICS'">정치</span>-->
+<!--            <span th:case="'ECONOMY'">경제</span>-->
+<!--            <span th:case="'SOCIAL'">사회</span>-->
+<!--            <span th:case="'CULTURE'">문화</span>-->
+<!--            <span th:case="'SPORTS'">스포츠</span>-->
+<!--            <span th:case="'MISC'">기타</span>-->
+<!--            <span th:case="*">기타</span> &lt;!&ndash; 기본값 &ndash;&gt;-->
+<!--          </span>-->
+<!--        </td>-->
         <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
+        <td class="author-cell" th:text="${board.author.name}"></td>
       </tr>
     </tbody>
 
   </table>
 
   <div class="pagination">
-    <!-- 이전 페이지 버튼 -->
     <button th:if="${boardPage.hasPrevious()}"
-            th:attr="data-url=@{/board/list(page=${boardPage.number - 1}, size=${pageSize}, category=${category})}"
+            th:attr="data-url=@{/board/search(page=${boardPage.number - 1}, size=${pageSize}, category=${category}, filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
             onclick="location.href=this.getAttribute('data-url')">
       «
     </button>
     <button th:unless="${boardPage.hasPrevious()}" disabled>«</button>
-
-    <!-- 페이지 번호 버튼 -->
-    <!-- 페이지 번호 버튼 -->
-    <th:block>
-      <button th:each="i : ${#numbers.sequence(0, boardPage.totalPages > 0 ? boardPage.totalPages - 1 : 0)}"
+    <th:block th:with="lastPage=${boardPage.totalPages > 0 ? boardPage.totalPages - 1 : 0}">
+      <button th:each="i : ${#numbers.sequence(0, lastPage)}"
               th:text="${i + 1}"
               th:classappend="${i == boardPage.number} ? 'active'"
-              th:attr="data-url=@{/board/list(page=${i}, size=${pageSize}, category=${category})}"
+              th:attr="data-url=@{/board/search(page=${i}, size=${pageSize}, category=${category}, filter=${filter}, searchType=${searchType}, keyword=${keyword})}"
               onclick="location.href=this.getAttribute('data-url')">
       </button>
     </th:block>
 
 
-
-    <!-- 다음 페이지 버튼 -->
     <button th:if="${boardPage.hasNext()}"
-            th:attr="data-url=@{/board/list(page=${boardPage.number + 1}, size=${pageSize}, category=${category})}"
+            th:attr="data-url=@{/board/search(page=${boardPage.number + 1}, size=${pageSize}, category=${category}, filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
             onclick="location.href=this.getAttribute('data-url')">
       »
     </button>
     <button th:unless="${boardPage.hasNext()}" disabled>»</button>
   </div>
 
-
   <div class="board-search">
-    <select id="search-type" name="searchType">
-      <option value="title">제목</option>
-      <option value="content">내용</option>
-    </select>
-    <input type="text" id="searchKeyword" name="keyword" placeholder="검색어를 입력해주세요." />
-
-    <button>검색</button>
+    <form method="get" action="/board/search" class="search-form">
+      <select name="searchType">
+        <option value="title" th:selected="${searchType} == 'title'">제목</option>
+        <option value="content" th:selected="${searchType} == 'content'">내용</option>
+        <option value="all" th:selected="${searchType} == 'all'">제목+내용</option> </select>
+      <input type="text" name="keyword" th:value="${keyword}" placeholder="검색어를 입력해주세요." />
+      <input type="hidden" name="category" th:value="${category}" />
+      <input type="hidden" name="filter" th:value="${filter}" />
+      <button type="submit">검색</button>
+    </form>
   </div>
 </div>
+
 
 <script src="/js/board-list.js"></script>
 </body>
