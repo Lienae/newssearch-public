@@ -61,7 +61,7 @@
     <div class="category-row">
         <!-- Map<NewsCategory, List<News>> newsByCategory 기준 반복 -->
         <div class="category-block" th:each="entry : ${newsByCategory}">
-            <h3 class="category-title" th:text="${entry.key.displayName}">카테고리명</h3>
+            <h3 class="category-title" th:text="${entry.key.displayName}" th:data-category="${entry.key.name()}">>카테고리명</h3>
 
             <div class="news-grid">
                 <div class="news-card" th:each="news : ${entry.value}"
