@@ -1,19 +1,13 @@
 package com.tjeoun.newssearch.repository;
 
-import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +43,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     Page<News> findByIsBlindFalseOrderByPublishDateDesc(Pageable pageable);
 
 
-    // List<News> findTop5ByOrderByPublishDateDesc();
+    List<News> findTop5ByOrderByPublishDateDesc();
 
     // publishDate로 정렬하면 같은날짜 인게 너무 많으면 최근 수집된 기사가 안보여서 수정
     List<News> findTop5ByOrderByIdDesc();
