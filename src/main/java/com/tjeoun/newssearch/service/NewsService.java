@@ -26,8 +26,8 @@ public class NewsService {
         Page<News> news;
 
         if ("ALL".equals(category) && "ALL".equals(mediaCompany)) {
-            // news = newsRepository.findByIsBlindFalse(pageRequest);
-            news = newsRepository.findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG, pageRequest);
+            news = newsRepository.findByIsBlindFalse(pageRequest);
+            //news = newsRepository.findByIsBlindFalseAndMediaCompanyOrderByIdDesc(NewsMediaCompany.JOONGANG, pageRequest);
         } else if (!"ALL".equals(category) && "ALL".equals(mediaCompany)) {
             news = newsRepository.findByCategoryAndIsBlindFalse(NewsCategory.valueOf(category), pageRequest);
         } else if ("ALL".equals(category)) {
