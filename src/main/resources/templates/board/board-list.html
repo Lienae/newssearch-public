@@ -18,31 +18,31 @@
     <div class="category-buttons">
 
       <!-- 전체 -->
-      <a th:href="@{/board/search(category='ALL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="ALL"
          th:classappend="${category == null || category == 'ALL'} ? 'active'">전체</a>
 
       <!-- 정치 -->
-      <a th:href="@{/board/search(category='POLITICS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="POLITICS"
          th:classappend="${category == 'POLITICS'} ? 'active'">정치</a>
 
       <!-- 경제 -->
-      <a th:href="@{/board/search(category='ECONOMY', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="ECONOMY"
          th:classappend="${category == 'ECONOMY'} ? 'active'">경제</a>
 
       <!-- 사회 -->
-      <a th:href="@{/board/search(category='SOCIAL', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="SOCIAL"
          th:classappend="${category == 'SOCIAL'} ? 'active'">사회</a>
 
       <!-- 문화 -->
-      <a th:href="@{/board/search(category='CULTURE', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="CULTURE"
          th:classappend="${category == 'CULTURE'} ? 'active'">문화</a>
 
       <!-- 스포츠 -->
-      <a th:href="@{/board/search(category='SPORTS', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="SPORTS"
          th:classappend="${category == 'SPORTS'} ? 'active'">스포츠</a>
 
       <!-- 기타 -->
-      <a th:href="@{/board/search(category='MISC', filter=${filter}, keyword=${keyword}, searchType=${searchType})}"
+      <a href="#" data-category="MISC"
          th:classappend="${category == 'MISC'} ? 'active'">기타</a>
 
     </div>
@@ -64,14 +64,11 @@
 
     <!-- Editor's Note 필터 -->
     <div th:if="${loginUser != null}" class="editor-filter">
-      <form method="get" action="/board/search">
-        <input type="hidden" name="filter" value="admin">
-        <input type="hidden" name="category" th:value="${category}" />
-        <input type="hidden" name="keyword" th:value="${keyword}" />
-        <input type="hidden" name="searchType" th:value="${searchType}" />
-        <button type="button" id="toggleFilterBtnEN">Editor's Note</button>
-      </form>
+      <button type="button" id="toggleFilterBtnEN"
+              th:text="${filter == 'admin'} ? '일반 커뮤니티' : 'Editor\'s Note'">
+      </button>
     </div>
+
 
 
 
@@ -84,16 +81,17 @@
   <table class="board-table">
     <thead>
     <tr>
-      <th>번호</th>
-      <th>제목</th>
+      <th style="width: 10%;">번호</th>
+      <th style="width: 60%;">제목</th>
 <!--      <th>카테고리</th>-->
-      <th>등록일</th>
+      <th style="width: 15%;">등록일</th>
+      <th style="width: 15%;">글쓴이</th>
     </tr>
     </thead>
     <tbody>
       <tr th:each="board, stat : ${boardPage.content}">
         <td th:text="${boardPage.totalElements - (boardPage.number * boardPage.size + stat.index)}"></td>
-        <td>
+        <td class="title-cell">
           <a th:href="@{'/board/detail/' + ${board.id}}"
              th:text="${board.title}"
              th:classappend="${board.isBlind} ? 'blind-title'">></a>
@@ -110,6 +108,7 @@
 <!--          </span>-->
 <!--        </td>-->
         <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
+        <td class="author-cell" th:text="${board.author.name}"></td>
       </tr>
     </tbody>
 
@@ -141,7 +140,7 @@
   </div>
 
   <div class="board-search">
-    <form method="get" action="/board/search"class="search-form">
+    <form method="get" action="/board/search" class="search-form">
       <select name="searchType">
         <option value="title" th:selected="${searchType} == 'title'">제목</option>
         <option value="content" th:selected="${searchType} == 'content'">내용</option>

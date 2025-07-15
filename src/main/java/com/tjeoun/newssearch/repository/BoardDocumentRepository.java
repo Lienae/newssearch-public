@@ -59,7 +59,7 @@ public interface BoardDocumentRepository extends ElasticsearchRepository<BoardDo
   // 12. 제목/내용 검색 + 카테고리 + 관리자 글 여부
   @Query("{\"bool\": {\"must\": [" +
     "{\"term\": {\"isAdminArticle\": ?2}}," + // ?2는 세 번째 파라미터 (isAdminArticle)
-    "{\"term\": {\"newsCategory.keyword\": \"?1\"}}," + // ?1은 두 번째 파라미터 (newsCategory)
+    "{\"term\": {\"newsCategory\": \"?1\"}}," + // ?1은 두 번째 파라미터 (newsCategory)
     "{\"bool\": {\"should\": [{\"match\": {\"title\": \"?0\"}}, {\"match\": {\"content\": \"?0\"}}]}}" +
     "]}}")
   Page<BoardDocument> searchByTitleOrContentAndNewsCategoryAndIsAdminArticleAndIsBlindFalse(String keyword, String newsCategory, boolean isAdminArticle, Pageable pageable);

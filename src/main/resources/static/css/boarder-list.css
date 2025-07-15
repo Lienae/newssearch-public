@@ -202,10 +202,25 @@
   border-bottom: 1px solid #eee;
 }
 .board-table td.title-cell {
-  max-width: 350px; /* 너비 제한, 필요에 따라 조절 */
-  white-space: nowrap; /* 줄바꿈 없이 한 줄로 */
-  overflow: hidden; /* 넘친 내용 숨김 */
-  text-overflow: ellipsis; /* ... 표시 */
+  width: 60%;
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-table td.title-cell a {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-table td.author-cell {
+  width: 15%;
+  max-width: 0;              /* 중요: ellipsis 적용 필수 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 

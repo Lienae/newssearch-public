@@ -36,7 +36,7 @@ public class BoardSearchService {
         Page<BoardDocument> esBoardDocuments;
         NewsCategory newsCategory = null;
         boolean isLoginUserAdmin = loginUser.getRole() == UserRole.ADMIN;
-        boolean isAdminFilter = "admin".equalsIgnoreCase(filter) && isLoginUserAdmin;
+        boolean isAdminFilter = "admin".equalsIgnoreCase(filter);
         boolean isAllCategory = "ALL".equalsIgnoreCase(categoryStr) || categoryStr == null;
 
         // 카테고리 ENUM 파싱
