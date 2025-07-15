@@ -32,7 +32,7 @@ public class BoardDocument {
     private OffsetDateTime createdDate;
 
     @Field(type = FieldType.Keyword)
-    private NewsCategory newsCategory;
+    private String newsCategory;
 
     @Field(type = FieldType.Boolean)
     private boolean isAdminArticle;

@@ -82,7 +82,7 @@ public class Board {
         LocalDateTime createdDate = Optional.ofNullable(board.getCreatedDate()).orElse(LocalDateTime.now());
         OffsetDateTime offsetDateTime = createdDate.atOffset(ZoneOffset.ofHours(9));
         doc.setCreatedDate(offsetDateTime.withNano(0));
-        doc.setNewsCategory(board.getNewsCategory());
+        doc.setNewsCategory(board.getNewsCategory().name());
         doc.setAdminArticle(board.isAdminArticle());
         doc.setBlind(board.getIsBlind());
 
