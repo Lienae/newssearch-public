@@ -55,8 +55,7 @@
 
     <div class="form-group">
       <label>현재 이미지</label>
-      <img th:if="*{imageUrl != null}" th:src="*{imageUrl}" alt="이미지" style="max-width:300px" />
-      <span th:if="*{imageUrl == null}">이미지 없음</span>
+      <img th:src="*{imageUrl}" onerror="this.src='/img/default.png'" alt="뉴스 이미지" />
     </div>
 
     <div class="form-group">
