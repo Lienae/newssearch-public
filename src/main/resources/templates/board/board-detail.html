@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/boarder-detail.css" />
     <link rel="stylesheet" href="/css/main.css" />
+    <script th:inline="javascript">
+        const currentUserEmail = [[${#authentication.name}]];
+        const currentUserRoles = [[${#authentication.authorities}]];
+    </script>
 </head>
 <body>
 <header>
@@ -138,6 +142,8 @@
 
 </div>
 <script th:inline="javascript">
+
+    const isAdmin = currentUserRoles[0]['authority'] === "ROLE_ADMIN";
     /*<![CDATA[*/
     const boardId = [[${board.id}]];
     const loginUserId = [[${loginUser != null ? loginUser.id : -1}]];
@@ -169,8 +175,9 @@
                     let buttonsHtml = `<button class="btn btn-report" onclick="report(${reply.id}, 'reply')">댓글 신고</button>`;
                     if (isAuthor) {
                         buttonsHtml = `
-              <button class="edit-btn reply-edit-btn" type="button">수정</button>
-              <button class="delete-btn reply-delete-btn" type="button" data-reply-id="${reply.id}">삭제</button>
+              <button class="edit-btn reply-edit-btn" type="button">수정</button>` }
+                    if (isAuthor || isAdmin) {
+              buttonsHtml += `<button class="delete-btn reply-delete-btn" type="button" data-reply-id="${reply.id}">삭제</button>
             `;
                     }
 
