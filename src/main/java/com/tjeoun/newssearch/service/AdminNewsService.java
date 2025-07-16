@@ -1,6 +1,7 @@
 package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.dto.NewsDto;
+import com.tjeoun.newssearch.repository.NewsDocumentRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ public class AdminNewsService {
     private final NewsRepository newsRepository;
     private final AttachFileService attachFileService;
     private final NewsSearchService newsSearchService;
+    private final NewsDocumentRepository newsDocumentRepository;
 
     public Page<AdminNewsDto> getNewsPage(int page, int size, String category, String mediaCompany, String query) {
         Sort sort = Sort.by(Sort.Order.desc("publishDate"), Sort.Order.desc("id"));
@@ -82,6 +84,7 @@ public class AdminNewsService {
         News news = newsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("News not found"));
         news.setTitle(dto.getTitle());
+        news.setAuthor(dto.getAuthor());
         news.setContent(dto.getContent());
         news.setCategory(dto.getCategory());
         news.setMediaCompany(dto.getMediaCompany());
@@ -98,6 +101,7 @@ public class AdminNewsService {
             String imageUrl = "/images/upload/" + serverFilename;
             news.setImageUrl(imageUrl);
         }
+        newsDocumentRepository.save(News.toDocument(news));
     }
 
     private String extractFileNmaeFromUrl(String imageUrl) {

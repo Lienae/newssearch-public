@@ -16,8 +16,6 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
-
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
