@@ -3,6 +3,8 @@ package com.tjeoun.newssearch.service;
 import com.tjeoun.newssearch.dto.AdminJobDto;
 import com.tjeoun.newssearch.entity.AdminJob;
 import com.tjeoun.newssearch.repository.AdminJobRepository;
+import com.tjeoun.newssearch.repository.BoardReplyRepository;
+import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +20,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AdminJobService {
     private final AdminJobRepository adminJobRepository;
-
+    private final NewsReplyRepository newsReplyRepository;
+    private final BoardReplyRepository boardReplyRepository;
     public List<AdminJob> getJobs() {
         return adminJobRepository.findByIsResolvedFalseOrderByRecordedTimeDesc();
     }
@@ -32,24 +35,24 @@ public class AdminJobService {
 
             if (filterAll) {
                 return adminJobRepository.findByRecordedTimeBetween(start, end, pageable)
-                    .map(AdminJobDto::fromEntity);
+                    .map(adminJob -> AdminJobDto.fromEntity(adminJob, newsReplyRepository, boardReplyRepository));
             } else {
                 boolean resolved = "RESOLVED".equalsIgnoreCase(filter);
                 return adminJobRepository.findByIsResolvedAndRecordedTimeBetween(resolved, start, end, pageable)
-                    .map(AdminJobDto::fromEntity);
+                    .map(adminJob -> AdminJobDto.fromEntity(adminJob, newsReplyRepository, boardReplyRepository));
             }
         }
 
         // 날짜 검색 없으면 필터만 적용
         if ("RESOLVED".equalsIgnoreCase(filter)) {
             return adminJobRepository.findByIsResolved(true, pageable)
-                .map(AdminJobDto::fromEntity);
+                .map(adminJob -> AdminJobDto.fromEntity(adminJob, newsReplyRepository, boardReplyRepository));
         } else if ("UNRESOLVED".equalsIgnoreCase(filter)) {
             return adminJobRepository.findByIsResolved(false, pageable)
-                .map(AdminJobDto::fromEntity);
+                .map(adminJob -> AdminJobDto.fromEntity(adminJob, newsReplyRepository, boardReplyRepository));
         } else {
             return adminJobRepository.findAll(pageable)
-                .map(AdminJobDto::fromEntity);
+                .map(adminJob -> AdminJobDto.fromEntity(adminJob, newsReplyRepository, boardReplyRepository));
         }
     }
 

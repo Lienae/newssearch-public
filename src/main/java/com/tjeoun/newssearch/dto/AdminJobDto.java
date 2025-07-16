@@ -1,7 +1,10 @@
 package com.tjeoun.newssearch.dto;
 
 import com.tjeoun.newssearch.entity.AdminJob;
+import com.tjeoun.newssearch.entity.BoardReply;
 import com.tjeoun.newssearch.enums.AdminJobsEnum;
+import com.tjeoun.newssearch.repository.BoardReplyRepository;
+import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +24,9 @@ public class AdminJobDto {
     private Boolean isResolved;
     private String url;
 
-    public static AdminJobDto fromEntity(AdminJob job) {
+    public static AdminJobDto fromEntity(AdminJob job,
+                                         NewsReplyRepository newsReplyRepository,
+                                         BoardReplyRepository boardReplyRepository) {
         return AdminJobDto.builder()
                 .id(job.getId())
                 .jobString(switch(job.getJob()) {
@@ -35,9 +40,9 @@ public class AdminJobDto {
                 .isResolved(job.getIsResolved())
                 .url(switch(job.getJob()) {
                     case NEWS -> "/admin/news/edit?id=" + job.getTargetId();
-                    case BOARD_REPORT -> "/admin/board/edit?id=" + job.getTargetId();
-                    case BOARD_REPLY_REPORT -> "/board/detail?id=" + job.getTargetId();
-                    case NEWS_REPLY_REPORT -> "/news/view?id=" + job.getTargetId();
+                    case BOARD_REPORT -> "/admin/boards/edit?id=" + job.getTargetId();
+                    case BOARD_REPLY_REPORT -> "/board/detail/" + boardReplyRepository.findById(job.getTargetId()).get().getBoard().getId();
+                    case NEWS_REPLY_REPORT -> "/news/view?id=" + newsReplyRepository.findById(job.getTargetId()).get().getNews().getId();
                 })
                 .build();
     }

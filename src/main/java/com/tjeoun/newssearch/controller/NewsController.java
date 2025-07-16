@@ -66,7 +66,7 @@ public class NewsController {
     @GetMapping("/view")
     public String view(@RequestParam Long id) {
         News news = newsService.findById(id);
-        return "redirect:/news/list?category=" + news.getCategory()
+        return "redirect:/news/list?category=" + news.getCategory().name()
                 + "&mediaCompany=" + news.getMediaCompany()
                 + "&url=" + news.getUrl();
     }
