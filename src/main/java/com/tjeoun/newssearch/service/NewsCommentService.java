@@ -4,6 +4,7 @@ import com.tjeoun.newssearch.dto.NewsReplyDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.entity.NewsReply;
+import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
@@ -51,7 +52,7 @@ public class NewsCommentService {
         NewsReply reply = newsReplyRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("댓글 없음"));
 
-        if (!reply.getMember().getId().equals(member.getId())) {
+        if (!reply.getMember().getId().equals(member.getId()) && !member.getRole().equals(UserRole.ADMIN)) {
             throw new RuntimeException("본인 댓글만 삭제할 수 있습니다.");
         }
 
