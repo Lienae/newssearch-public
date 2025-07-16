@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>뉴스퀘어 메인</title>
+    <title>빅카인즈 메인</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/main.css" />
 </head>
@@ -33,9 +33,10 @@
         <ul style="list-style: none; padding: 0; margin: 0;">
             <li th:each="news : ${recentNews}" style="margin-bottom: 6px;">
                 · <span th:text="${news.category.displayName}">카테고리</span>:<br />
-                <a th:href="@{'/news/list'(category=${news.category},mediaCompany=${news.mediaCompany},url=${news.url})}"
+                <a th:href="@{'/news/list'(category=${news.category.name},mediaCompany=${news.mediaCompany},url=${news.url})}"
                    style="display: inline-block; font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                    th:text="${#strings.abbreviate(news.title, 30)}"></a>
+                </span>
             </li>
         </ul>
     </div>
@@ -43,7 +44,7 @@
 
 <div class="banner">
     <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
-
+    <h2>오늘의 이슈</h2>
     <div class="search-box">
         <input type="text" name="query" placeholder="기본 검색어를 입력해주세요" />
         <button onclick="search()">검색</button>
@@ -61,11 +62,11 @@
     <div class="category-row">
         <!-- Map<NewsCategory, List<News>> newsByCategory 기준 반복 -->
         <div class="category-block" th:each="entry : ${newsByCategory}">
-            <h3 class="category-title" th:text="${entry.key.displayName}" th:data-category="${entry.key.name()}">>카테고리명</h3>
+            <h3 class="category-title" th:text="${entry.key.displayName}">카테고리명</h3>
 
             <div class="news-grid">
                 <div class="news-card" th:each="news : ${entry.value}"
-                     th:data-category="${news.category}"
+                     th:data-category="${news.category.name}"
                      th:data-media="${news.mediaCompany}"
                      th:data-url="${news.url}">
 
@@ -90,13 +91,13 @@
                 <h3 class="category-title" th:text="${entry.key.displayName}">언론사</h3>
                 <div class="news-grid">
                     <div class="news-card" th:each="news : ${entry.value}"
-                         th:data-category="${news.category}"
+                         th:data-category="${news.category.name}"
                          th:data-media="${news.mediaCompany}"
                          th:data-url="${news.url}">
 
                         <!-- 이미지 URL, 없으면 기본 이미지 -->
-                        <img th:src="${#strings.isEmpty(news.imageUrl) ? '/img/default.png' : news.imageUrl}"
-                             th:onerror="|this.onerror=null;this.src='@{/img/default.png}'|"
+                        <img th:src="@{${news.imageUrl}}"
+                             onerror="this.onerror=null; this.src='/img/default.png'"
                              alt="뉴스 이미지" />
 
                         <!-- 카드 내용 -->
