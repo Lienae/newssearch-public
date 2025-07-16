@@ -1,8 +1,10 @@
 package com.tjeoun.newssearch.service;
 
+import com.tjeoun.newssearch.document.BoardDocument;
 import com.tjeoun.newssearch.dto.AdminAttachFileDto;
 import com.tjeoun.newssearch.entity.AttachFile;
 import com.tjeoun.newssearch.repository.AttachFileRepository;
+import com.tjeoun.newssearch.repository.BoardDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,6 +31,7 @@ public class AdminBoardService {
     private final BoardRepository boardRepository;
     private final AttachFileService attachFileService;
     private final AttachFileRepository attachFileRepository;
+    private final BoardDocumentRepository boardDocumentRepository;
 
     public Page<AdminBoardDto> getBoards(int page, int size, String category) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "modifiedDate"));
@@ -95,6 +98,8 @@ public class AdminBoardService {
                 }
             }
         }
+        boardDocumentRepository.save(BoardDocument.fromEntity(board));
+
     }
 
     @Transactional(readOnly = true)
