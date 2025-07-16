@@ -75,7 +75,7 @@ public class AdminLogInterceptor implements HandlerInterceptor {
         return AdminLogDTO.builder()
                 .action((AdminLogEnum)action.get("enum"))
                 .ipAddress(ipAddress)
-                .targetId((Long)action.get("targetId"))
+                .targetId(Long.parseLong(action.get("targetId").toString()))
                 .targetTable(extractTargetTable(uri))
                 .admin(admin)
                 .build();

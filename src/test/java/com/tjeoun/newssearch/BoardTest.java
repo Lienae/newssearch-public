@@ -1,22 +1,18 @@
 package com.tjeoun.newssearch;
 
-import com.tjeoun.newssearch.dto.BoardDto;
-import com.tjeoun.newssearch.dto.BoardReplyDto;
-import com.tjeoun.newssearch.dto.SignUpDto;
-import com.tjeoun.newssearch.entity.Board;
-import com.tjeoun.newssearch.entity.BoardReply;
-import com.tjeoun.newssearch.entity.Member;
-import com.tjeoun.newssearch.enums.NewsCategory;
-import com.tjeoun.newssearch.enums.UserRole;
+import com.tjeoun.newssearch.config.MockBoardFactory;
+import com.tjeoun.newssearch.config.MockMemberFactory;
+import com.tjeoun.newssearch.config.MockNewsFactory;
+import com.tjeoun.newssearch.config.MockReplyFactory;
+import com.tjeoun.newssearch.entity.*;
 import com.tjeoun.newssearch.repository.BoardReplyRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
-import com.tjeoun.newssearch.repository.MemberRepository;
+import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,48 +25,31 @@ public class BoardTest {
     @Autowired
     private BoardReplyRepository boardReplyRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private MockMemberFactory mockMemberFactory;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MockNewsFactory mockNewsFactory;
+    @Autowired
+    private MockBoardFactory mockBoardFactory;
+    @Autowired
+    private MockReplyFactory mockReplyFactory;
+    @Autowired
+    private NewsReplyRepository newsReplyRepository;
 
     @Test
     @DisplayName("게시글 저장 테스트")
     void boardSaveTest() {
         // given
-        String email = "testemail@test.com";
-        String password = "testpassword";
-        String name = "테스트";
-        UserRole role = UserRole.USER;
-        SignUpDto dto = SignUpDto.builder()
-                .email(email)
-                .password(password)
-                .name(name)
-                .role(role)
-                .build();
-        Member member = Member.createMember(dto, passwordEncoder);
-        Member saveMember = memberRepository.save(member);
 
-        String title = "testTitle";
-        String content = "testContent";
-        BoardDto boardDto = BoardDto.builder()
-                .title(title)
-                .content(content)
-                .author(saveMember)
-                .newsCategory(NewsCategory.POLITICS)
-                .build();
-        Board board = Board.createBoard(boardDto);
-        BoardDto adminBoardDto = BoardDto.builder()
-                .title(title)
-                .content(content)
-                .author(saveMember)
-                .newsCategory(NewsCategory.POLITICS)
-                .isAdminArticle(true)
-                .build();
-        Board adminBoard = Board.createBoard(adminBoardDto);
+        Member user = mockMemberFactory.createUser("mockuser1@gmail.com");
+        Member admin = mockMemberFactory.createAdmin("mockadmin1@gmail.com");
+        News news = mockNewsFactory.createNews();
+
+        Board board = mockBoardFactory.createBoard(user, news);
+        Board adminBoard = mockBoardFactory.createAdmin(admin, news);
 
         // when
         Board saveBoard = boardRepository.save(board);
-        Board saveAdminBoard = boardRepository.save(adminBoard);
+        boardRepository.save(adminBoard);
         // then
         assertThatCode(() -> {
             Board loadBoard = boardRepository.findById(saveBoard.getId()).orElseThrow();
@@ -84,40 +63,15 @@ public class BoardTest {
     @DisplayName("댓글 달기 테스트")
     void boardReplyTest() {
         // given
-        String email = "testemail@test.com";
-        String password = "testpassword";
-        String name = "테스트";
-        UserRole role = UserRole.USER;
-        SignUpDto dto = SignUpDto.builder()
-
-                .email(email)
-                .password(password)
-                .name(name)
-                .role(role)
-                .build();
-        Member member = Member.createMember(dto, passwordEncoder);
-        Member saveMember = memberRepository.save(member);
-
-        String title = "testTitle";
-        String content = "testContent";
-        BoardDto boardDto = BoardDto.builder()
-                .title(title)
-                .content(content)
-                .author(saveMember)
-                .newsCategory(NewsCategory.POLITICS)
-                .build();
-        Board board = Board.createBoard(boardDto);
-        Board saveBoard = boardRepository.save(board);
-
-        BoardReplyDto boardReplyDto = BoardReplyDto.builder()
-                .content(content)
-                .board(saveBoard)
-                .member(saveMember)
-                .build();
-        BoardReply boardReply = BoardReply.createBoardReply(boardReplyDto);
+        News news = mockNewsFactory.createNews();
+        Member user = mockMemberFactory.createUser("mockuser1@gmail.com");
+        Board board = mockBoardFactory.createBoard(user, news);
+        BoardReply boardReply = mockReplyFactory.createBoardReply(board, user, false);
+        NewsReply newsReply = mockReplyFactory.createNewsReply(news, user, false);
 
         // when
         BoardReply saveBoardReply = boardReplyRepository.save(boardReply);
+        NewsReply saveNewsReply = newsReplyRepository.save(newsReply);
 
         // then
         assertThatCode(() -> {
@@ -125,7 +79,14 @@ public class BoardTest {
             assertEquals(saveBoardReply.getContent(), loadBoardReply.getContent());
             assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
             assertEquals(saveBoardReply.getMember(), loadBoardReply.getMember());
-            assertEquals(saveBoardReply.getBoard(), loadBoardReply.getBoard());
+
+        }).doesNotThrowAnyException();
+
+        assertThatCode(() -> {
+            NewsReply loadNewsReply = newsReplyRepository.findById(saveNewsReply.getId()).orElseThrow();
+            assertEquals(saveNewsReply.getContent(), loadNewsReply.getContent());
+            assertEquals(saveNewsReply.getNews(), loadNewsReply.getNews());
+            assertEquals(saveNewsReply.getMember(), loadNewsReply.getMember());
 
         }).doesNotThrowAnyException();
 

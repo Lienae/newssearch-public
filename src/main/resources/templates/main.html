@@ -36,7 +36,6 @@
                 <a th:href="@{'/news/list'(category=${news.category},mediaCompany=${news.mediaCompany},url=${news.url})}"
                    style="display: inline-block; font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                    th:text="${#strings.abbreviate(news.title, 30)}"></a>
-                </span>
             </li>
         </ul>
     </div>
@@ -44,7 +43,7 @@
 
 <div class="banner">
     <h1>핫이슈 기사와 정보를 한눈에 확인하세요.</h1>
-    <h2>오늘의 이슈</h2>
+
     <div class="search-box">
         <input type="text" name="query" placeholder="기본 검색어를 입력해주세요" />
         <button onclick="search()">검색</button>
@@ -96,8 +95,8 @@
                          th:data-url="${news.url}">
 
                         <!-- 이미지 URL, 없으면 기본 이미지 -->
-                        <img th:src="@{${news.imageUrl}}"
-                             onerror="this.onerror=null; this.src='/img/default.png'"
+                        <img th:src="${#strings.isEmpty(news.imageUrl) ? '/img/default.png' : news.imageUrl}"
+                             th:onerror="|this.onerror=null;this.src='@{/img/default.png}'|"
                              alt="뉴스 이미지" />
 
                         <!-- 카드 내용 -->

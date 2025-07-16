@@ -50,8 +50,8 @@ public class AdminMemberController {
     @PostMapping("/edit/{id}")
     public String edit(@PathVariable Long id,
                        @ModelAttribute AdminMemberDto dto,
-                       @RequestParam int page,
-                       @RequestParam int size,
+                       @RequestParam(required = false, defaultValue = "0") int page,
+                       @RequestParam(required = false, defaultValue = "10") int size,
                        Model model) {
         try {
             adminMemberService.updateMember(id, dto);

@@ -1,16 +1,15 @@
 package com.tjeoun.newssearch;
 
+import com.tjeoun.newssearch.config.MockMemberFactory;
+import com.tjeoun.newssearch.config.MockNewsFactory;
 import com.tjeoun.newssearch.document.NewsDocument;
 import com.tjeoun.newssearch.dto.NewsDto;
 import com.tjeoun.newssearch.dto.NewsReplyDto;
-import com.tjeoun.newssearch.dto.SignUpDto;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.entity.NewsReply;
 import com.tjeoun.newssearch.enums.NewsCategory;
 import com.tjeoun.newssearch.enums.NewsMediaCompany;
-import com.tjeoun.newssearch.enums.UserRole;
-import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
 import com.tjeoun.newssearch.repository.NewsDocumentRepository;
@@ -20,7 +19,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
 
 import static java.time.LocalDate.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +36,9 @@ public class NewsTest {
     @Autowired
     private NewsDocumentRepository newsDocumentRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private MockNewsFactory mockNewsFactory;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MockMemberFactory mockMemberFactory;
 
     @Test
     @DisplayName("뉴스 등록 테스트")
@@ -59,6 +59,7 @@ public class NewsTest {
                 .author(author)
                 .category(category)
                 .mediaCompany(company)
+                .publishDate(LocalDate.now())
                 .build();
         News news = News.createNewsFromDto(newsDto);
 
@@ -83,45 +84,15 @@ public class NewsTest {
     @DisplayName("뉴스 댓글달기 테스트")
     void newsReplyTest() {
         // given
-        String url = "http://testUrl.kr";
-        String title = "testTitle";
-        String content = "testContent";
-        String imageUrl = "c:/testurl.jpg";
-        String author = "테스트";
-        NewsCategory category = NewsCategory.SOCIAL;
-        NewsMediaCompany company = NewsMediaCompany.YTN;
-
-        News savedNews = newsRepository.save(
-                News.createNewsFromDto(
-                        NewsDto.builder()
-                                .url(url)
-                                .title(title)
-                                .content(content)
-                                .imageUrl(imageUrl)
-                                .author(author)
-                                .category(category)
-                                .mediaCompany(company)
-                                .build()
-                )
-        );
-        String email = "testemail@test.com";
-        String password = "testpassword";
-        String name = "테스트";
-        UserRole role = UserRole.USER;
-        Member savedMember = memberRepository.save(
-                Member.createMember(SignUpDto.builder()
-                            .email(email)
-                            .password(password)
-                            .name(name)
-                            .role(role)
-                            .build(),
-                        passwordEncoder)
-        );
+        News news = mockNewsFactory.createNews();
+        Member user = mockMemberFactory.createUser("mockuser@test.com");
         NewsReply newsReply = NewsReply.createNewsReply(
                 NewsReplyDto.builder()
-                        .content(content)
+                        .content("test")
                         .build()
         );
+        newsReply.setMember(user);
+        newsReply.setNews(news);
         // when
         NewsReply savedNewsReply = newsReplyRepository.save(newsReply);
         // then

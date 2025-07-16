@@ -15,13 +15,13 @@ public class MockMemberFactory {
 
     public Member createUser(String email) {
         return memberRepository.save(
-                Member.builder().email(email).password("test").role(UserRole.USER).name("test").build()
+                Member.builder().email(email).password("test").role(UserRole.USER).name("testuser").build()
         );
     }
 
     public Member createAdmin(String email) {
         return memberRepository.save(
-                Member.builder().email(email).password("test").role(UserRole.ADMIN).name("test").build()
+                Member.builder().email(email).password("test").role(UserRole.ADMIN).name("testadmin").build()
         );
     }
 

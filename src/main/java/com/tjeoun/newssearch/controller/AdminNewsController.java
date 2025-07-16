@@ -54,8 +54,8 @@ public class AdminNewsController {
     public String edit(@PathVariable Long id,
                        @RequestParam int page,
                        @RequestParam int size,
-                       @RequestParam("filterCategory") String filterCategory,
-                       @RequestParam("filterMediaCompany") String filterMediaCompany,
+                       @RequestParam(defaultValue = "ALL", required = false) String filterCategory,
+                       @RequestParam(defaultValue = "ALL", required = false) String filterMediaCompany,
                        @ModelAttribute AdminNewsDto dto,
                        @RequestParam(value = "file", required = false) MultipartFile file,
                        Model model) {

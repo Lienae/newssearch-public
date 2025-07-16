@@ -4,9 +4,7 @@ import com.tjeoun.newssearch.entity.Board;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.enums.NewsCategory;
-import com.tjeoun.newssearch.enums.UserRole;
 import com.tjeoun.newssearch.repository.BoardRepository;
-import com.tjeoun.newssearch.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +24,7 @@ public class MockBoardFactory {
                         .content("test")
                         .title("test")
                         .newsCategory(NewsCategory.SOCIAL)
+                        .isBlind(false)
                         .build()
             );
         else
@@ -35,6 +34,7 @@ public class MockBoardFactory {
                             .content("test")
                             .title("test")
                             .newsCategory(NewsCategory.MISC)
+                            .isBlind(false)
                             .build()
             );
     }
@@ -48,6 +48,7 @@ public class MockBoardFactory {
                         .title("test")
                         .newsCategory(NewsCategory.SOCIAL)
                         .isAdminArticle(true)
+                        .isBlind(false)
                         .build()
         );
     }
