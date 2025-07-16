@@ -1,21 +1,25 @@
 package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.dto.BoardReplyDto;
-import com.tjeoun.newssearch.entity.Board;
-import com.tjeoun.newssearch.entity.BoardReply;
-import com.tjeoun.newssearch.entity.BoardReplyCountView;
-import com.tjeoun.newssearch.entity.Member;
+import com.tjeoun.newssearch.entity.*;
+import com.tjeoun.newssearch.enums.AdminLogEnum;
 import com.tjeoun.newssearch.enums.UserRole;
+import com.tjeoun.newssearch.interceptor.AdminLogInterceptor;
+import com.tjeoun.newssearch.repository.AdminLogRepository;
 import com.tjeoun.newssearch.repository.BoardReplyCountViewRepository;
 import com.tjeoun.newssearch.repository.BoardReplyRepository;
 import com.tjeoun.newssearch.repository.BoardRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.tjeoun.newssearch.util.AdminLogUtils.getClientIp;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +27,7 @@ public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
     private final BoardRepository boardRepository;
     private final BoardReplyCountViewRepository boardReplyCountViewRepository;
-
+    private final AdminLogRepository adminLogRepository;
     // 댓글 저장
     @Transactional
     public void saveReply(Long boardId, String content, Member loginUser) {
@@ -79,15 +83,26 @@ public class BoardReplyService {
 
     // 댓글 삭제 (숨김)
     @Transactional
-    public Long deleteReply(Long replyId, Member loginUser) {
+    public Long deleteReply(Long replyId, Member loginUser, HttpServletRequest request) {
         BoardReply reply = boardReplyRepository.findById(replyId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 없습니다."));
 
-        if (!reply.getMember().getId().equals(loginUser.getId()) && !loginUser.getRole().equals(UserRole.ADMIN)) {
+        if (!reply.getMember().getId().equals(loginUser.getId())) {
             throw new IllegalStateException("댓글 작성자만 삭제할 수 있습니다.");
         }
 
         reply.setIsBlind(true);
+        if(loginUser.getRole().equals(UserRole.ADMIN)) {
+            AdminLog adminLog = AdminLog.builder()
+                    .ipAddress(getClientIp(request))
+                    .action(AdminLogEnum.DELETE_BOARD_REPLY)
+                    .auditTime(LocalDateTime.now())
+                    .targetId(replyId)
+                    .targetTable("board_reply")
+                    .member(loginUser)
+                    .build();
+            adminLogRepository.save(adminLog);
+        }
         return reply.getBoard().getId(); // 삭제 후 리디렉션용
     }
 

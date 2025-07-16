@@ -4,6 +4,7 @@ import com.tjeoun.newssearch.dto.NewsReplyDto;
 import com.tjeoun.newssearch.enums.ReportEnum;
 import com.tjeoun.newssearch.service.NewsCommentService;
 import com.tjeoun.newssearch.service.ReportService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,10 +35,11 @@ public class CommentController {
     @PostMapping("/remove")
     public ResponseEntity<String> removeComment(
             @RequestParam Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest request
     ) {
         String email = userDetails.getUsername();
-        commentService.deleteComment(commentId, email);
+        commentService.deleteComment(commentId, email, request);
         return ResponseEntity.ok("댓글 삭제 완료 (isBlind = true)");
     }
 

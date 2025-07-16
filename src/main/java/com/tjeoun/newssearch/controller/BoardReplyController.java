@@ -5,6 +5,7 @@ import com.tjeoun.newssearch.entity.BoardReply;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.service.BoardReplyService;
 import com.tjeoun.newssearch.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -67,9 +68,9 @@ public class BoardReplyController {
 
   // 댓글 삭제 처리
   @DeleteMapping("/reply/{replyId}")
-  public ResponseEntity<?> deleteReply(@PathVariable Long replyId, Principal principal) {
+  public ResponseEntity<?> deleteReply(@PathVariable Long replyId, Principal principal, HttpServletRequest request) {
     Member loginUser = memberService.getLoginMember(principal);
-    Long boardId = boardReplyService.deleteReply(replyId, loginUser);
+    Long boardId = boardReplyService.deleteReply(replyId, loginUser, request);
 
     long replyCount = boardReplyService.getReplyCountByBoardId(boardId);
 

@@ -1,13 +1,17 @@
 package com.tjeoun.newssearch.service;
 
 import com.tjeoun.newssearch.dto.NewsReplyDto;
+import com.tjeoun.newssearch.entity.AdminLog;
 import com.tjeoun.newssearch.entity.Member;
 import com.tjeoun.newssearch.entity.News;
 import com.tjeoun.newssearch.entity.NewsReply;
+import com.tjeoun.newssearch.enums.AdminLogEnum;
 import com.tjeoun.newssearch.enums.UserRole;
+import com.tjeoun.newssearch.repository.AdminLogRepository;
 import com.tjeoun.newssearch.repository.MemberRepository;
 import com.tjeoun.newssearch.repository.NewsReplyRepository;
 import com.tjeoun.newssearch.repository.NewsRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.tjeoun.newssearch.util.AdminLogUtils.getClientIp;
+
 @Service
 @RequiredArgsConstructor
 public class NewsCommentService {
@@ -23,7 +29,7 @@ public class NewsCommentService {
     private final NewsReplyRepository newsReplyRepository;
     private final NewsRepository newsRepository;
     private final MemberRepository memberRepository;
-
+    private final AdminLogRepository adminLogRepository;
     @Transactional
     public NewsReplyDto addComment(NewsReplyDto dto, String email) {
         Member member = memberRepository.findByEmail(email)
@@ -45,7 +51,7 @@ public class NewsCommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, String email) {
+    public void deleteComment(Long commentId, String email, HttpServletRequest request) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
@@ -58,6 +64,17 @@ public class NewsCommentService {
 
         // soft delete 처리 (isBlind 필드 필요)
         reply.setIsBlind(true);
+        if(member.getRole().equals(UserRole.ADMIN)) {
+            AdminLog adminLog = AdminLog.builder()
+                    .ipAddress(getClientIp(request))
+                    .action(AdminLogEnum.DELETE_NEWS_REPLY)
+                    .auditTime(LocalDateTime.now())
+                    .targetId(commentId)
+                    .targetTable("news_reply")
+                    .member(member)
+                    .build();
+            adminLogRepository.save(adminLog);
+        }
     }
 
     @Transactional

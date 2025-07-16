@@ -17,6 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Map;
 
+import static com.tjeoun.newssearch.util.AdminLogUtils.getClientIp;
 import static com.tjeoun.newssearch.util.AdminLogUtils.parseUriToAdminLogAction;
 
 @Component
@@ -51,17 +52,7 @@ public class AdminLogInterceptor implements HandlerInterceptor {
         }
         return null;
     }
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            return ip.split(",")[0].trim();
-        }
-        ip = request.getHeader("X-Real-IP");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
-        return request.getRemoteAddr();
-    }
+
     public static String extractTargetTable(String uri) {
         if (uri.startsWith("/admin/boards/")) return "board";
         else if (uri.startsWith("/admin/news/")) return "news";
