@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +23,11 @@ public class AdminJobService {
     private final AdminJobRepository adminJobRepository;
     private final NewsReplyRepository newsReplyRepository;
     private final BoardReplyRepository boardReplyRepository;
-    public List<AdminJob> getJobs() {
-        return adminJobRepository.findByIsResolvedFalseOrderByRecordedTimeDesc();
+    public List<AdminJobDto> getJobs() {
+        List<AdminJob> jobs = adminJobRepository.findByIsResolvedFalseOrderByRecordedTimeDesc();
+        return jobs.stream()
+            .map(job -> AdminJobDto.fromEntity(job, newsReplyRepository, boardReplyRepository))
+            .collect(Collectors.toList());
     }
 
     public Page<AdminJobDto> getFilteredJobs(String filter, LocalDate searchDate, Pageable pageable) {

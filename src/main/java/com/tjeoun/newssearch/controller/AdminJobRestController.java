@@ -1,5 +1,6 @@
 package com.tjeoun.newssearch.controller;
 
+import com.tjeoun.newssearch.dto.AdminJobDto;
 import com.tjeoun.newssearch.entity.AdminJob;
 import com.tjeoun.newssearch.service.AdminJobService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class AdminJobRestController {
     private final AdminJobService adminJobService;
 
     @GetMapping("/admin-jobs")
-    public ResponseEntity<List<AdminJob>> getJobs() {
-        List<AdminJob> jobs = adminJobService.getJobs();
+    public ResponseEntity<List<AdminJobDto>> getJobs() {
+        List<AdminJobDto> jobs = adminJobService.getJobs();
 
         if(jobs.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content
