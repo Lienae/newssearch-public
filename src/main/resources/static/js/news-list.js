@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
           li.dataset.id = comment.id;
 
           const isAuthor = comment.writerEmail === currentUserEmail;
-          const isAdmin = currentUserRoles.includes("ROLE_ADMIN");
+          const isAdmin = currentUserRoles[0]['authority'] === "ROLE_ADMIN";
 
           let buttonsHtml = "";
           if (isAuthor) {
