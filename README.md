@@ -1,16 +1,54 @@
-# newssearch
-더조은 3rd - news search project
+# 📰 Newssquare: 언론사 기사 수집 및 사용자 커뮤니티 플랫폼
 
-# 기능
-뉴스 기사를 수집, 엘라스틱서치에 저장하여 카테고리별/키워드별로 검색가능  
-관리자는 뉴스 기사 입력, 수정, 삭제가 가능  
-  
-# 사용할 프로그램
-Spring boot v3.5.3 w/ Spring Security, JPA, Thymeleaf  
-Elasticsearch, Kibana v8.13.4 - 뉴스 기사 검색용 및 시각화  
-MariaDB v10.11.11 - 관리자 계정용  
+## 💡 프로젝트 개요
+언론사 기사를 수집하고 사용자 간 의견 공유 기능을 제공하는 뉴스 플랫폼입니다. **Elasticsearch**를 도입하여 대량의 기사 데이터에 대한 빠르고 정확한 검색 서비스를 구현했으며, 관리자가 플랫폼의 현황을 시각적으로 파악하고 관리할 수 있는 시스템을 구축했습니다.
 
-# 접속 주소
-MariaDB : jdbc:mariadb://mariadb.3rdproject.o-r.kr:53306/newssearch (news / 1234)  
-Elasticsearch : http://es.3rdproject.o-r.kr (elastic / 1234)  
-서버 주소 : http://tjoeun.3rdproject.o-r.kr
+| 구분 | 내용 |
+| :--- | :--- |
+| **개발 기간** | 2025.06 ~ 2025.07 (1개월) |
+| **개발 인원** | 4명 |
+| **주요 기능** | 언론사 기사 수집 및 RSS 파싱, Elasticsearch 기반 기사 검색, 사용자 게시판 및 댓글 CRUD, 관리자 페이지 (회원/게시글/뉴스 데이터 관리 및 Kibana 시각화) |
+
+---
+
+## 🛠️ 기술 스택 (Expertise Skill)
+
+| 분야 | 기술 스택 |
+| :--- | :--- |
+| **Back-End** | **Java (JDK 17)**, **Spring Boot 3.5.3**, Spring Data JPA, RESTful API |
+| **Front-End** | HTML/CSS, JavaScript, Thymeleaf |
+| **DB & Search** | MariaDB 10.11.11, **Elasticsearch 8.13.4** |
+| **Tool/IDE** | IntelliJ 2023.2, Nginx, Kibana |
+
+---
+
+## 🎯 주요 기여 및 담당 역할
+
+본 프로젝트에서 저는 특히 **검색 기능 구축** 및 **관리자 시스템 개발**에 집중적으로 기여했습니다.
+
+* **Elasticsearch 기반 기사 검색 기능 구현 (기여도 60%)**
+    * 기사 검색 쿼리 작성 및 검색 기능 구현을 통해 대용량 데이터 환경에서의 검색 효율성을 확보했습니다.
+* **관리자 페이지 설계 및 기능 개발 전반 담당 (기여도 80%)**
+    * 회원, 게시글, 뉴스 데이터 관리 및 작업 목록 확인/처리 기능을 개발했습니다.
+    * Kibana와 연동하여 수집된 기사 및 사용자 게시글 비율 등을 시각화하는 기능을 구현했습니다.
+* **뉴스 기사 수집 및 RSS 파싱 로직 구현 (기여도 25%)**
+* **프론트 페이지 (UI) 전체 디자인 및 구현 (기여도 100%)**
+
+---
+
+## 🖼️ 주요 화면 (Screenshots)
+
+### 1. 사용자 페이지 (User View)
+* 검색어 입력 시 해당 키워드가 포함된 기사 목록 표시
+* 기사 클릭 시 모달창으로 상세 내용 확인 가능
+* 기사에 관한 게시글 작성 기능
+* 댓글 작성 기능
+
+
+### 2. 관리자 페이지 (Admin View)
+* Kibana 연동을 통한 데이터 시각화
+* 회원 및 게시글, 기사 관리 (수정, 삭제/Blind 처리) 기능 제공
+* 관리자 작업 목록 처리 (게시글 및 댓글 신고, 뉴스 기사 수집 오류) 기능 제공
+
+
+---
